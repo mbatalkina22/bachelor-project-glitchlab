@@ -1,0 +1,107 @@
+{
+  "Navbar": {
+    "home": "Home",
+    "workshops": "Workshops",
+    "calendar": "Calendar",
+    "aboutUs": "About us"
+  },
+  "Hero": {
+    "title": "Workshop Manager",
+    "subtitle": "Organize and manage your workshops with ease",
+    "exploreButton": "Explore Now"
+  },
+  "Services": {
+    "title": "Our Services",
+    "workshopSchedule": {
+      "title": "Workshop Schedule",
+      "description": "Discover our comprehensive workshop schedule, featuring all upcoming sessions and events. Stay up-to-date with the latest offerings and find the perfect workshop for you."
+    },
+    "participantEngagement": {
+      "title": "Participant Engagement",
+      "description": "Earn achievement badges as you participate in workshops, helping you stay motivated and engaged throughout your learning journey. Track your progress and showcase your accomplishments."
+    },
+    "diverseLearningPaths": {
+      "title": "Diverse Learning Paths",
+      "description": "Explore workshops covering design, testing, and coding, carefully crafted for all skill levels. Whether you're a beginner or an expert, find the perfect learning path tailored to your experience."
+    }
+  },
+  "Footer": {
+    "companyName": "Workshop Manager",
+    "description": "Empowering learning through interactive workshops and hands-on experiences.",
+    "quickLinks": "Quick Links",
+    "home": "Home",
+    "calendar": "Calendar",
+    "workshops": "Workshops",
+    "contact": "Contact",
+    "email": "contact@workshopmanager.com",
+    "phone": "+1 (555) 123-4567",
+    "address": "123 Learning Street, Education City, EC 12345",
+    "allRightsReserved": "All rights reserved."
+  },
+  "FAQ": {
+    "title": "Frequently Asked Questions",
+    "items": [
+      {
+        "question": "How do I register for a workshop?",
+        "answer": "You can register for workshops through our platform by navigating to the Workshops page, selecting the workshop you're interested in, and clicking the 'Register' button. You'll need to create an account if you don't already have one."
+      },
+      {
+        "question": "Can I cancel my registration?",
+        "answer": "Yes, you can cancel your registration up to 48 hours before the workshop starts. Navigate to your profile, find the workshop under 'My Registrations', and click 'Cancel Registration'. Please note that some workshops may have specific cancellation policies."
+      },
+      {
+        "question": "Are the workshops available online?",
+        "answer": "Yes, many of our workshops are available in both in-person and online formats. The location and format details are clearly indicated on each workshop's information page."
+      },
+      {
+        "question": "How can I become a workshop presenter?",
+        "answer": "We're always looking for skilled presenters! To apply, go to the 'Become a Presenter' section in your profile and fill out the application form. Our team will review your application and get back to you within 5 business days."
+      },
+      {
+        "question": "Are certificates provided after completing a workshop?",
+        "answer": "Yes, certificates of completion are automatically generated and available for download from your profile after you've completed a workshop. For certain specialized workshops, additional certification may be available."
+      }
+    ]
+  },
+  "CallToAction": {
+    "title": "Ready to Enhance Your Skills?",
+    "description": "Join our community of learners and take your skills to the next level with our expert-led workshops.",
+    "button": "Browse Workshops"
+  },
+  "Testimonials": {
+    "title": "What Our Participants Say"
+  },
+  "FeaturedWorkshops": {
+    "title": "Featured Workshops",
+    "viewAllButton": "View All Workshops"
+  },
+  "WorkshopsPage": {
+    "title": "Workshops",
+    "subtitle": "Discover our range of expert-led workshops designed to enhance your skills and advance your career.",
+    "searchPlaceholder": "Search workshops...",
+    "filterBy": "Filter by:",
+    "allCategories": "All Categories",
+    "design": "Design",
+    "coding": "Coding",
+    "data": "Data",
+    "testing": "Testing",
+    "showing": "Showing",
+    "of": "of",
+    "workshops": "workshops",
+    "noWorkshopsFound": "No workshops found",
+    "tryAdjusting": "Try adjusting your search or filter to find what you're looking for."
+  },
+  "WorkshopDetail": {
+    "home": "Home",
+    "workshops": "Workshops",
+    "description": "Description",
+    "instructor": "Instructor",
+    "register": "Register for Workshop",
+    "unregister": "Cancel Registration",
+    "registered": "Registered",
+    "requiredLevel": "Required Level",
+    "reviews": "Reviews",
+    "similarWorkshops": "Similar Workshops",
+    "pastWorkshops": "Past Workshops"
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "Navbar": {
+    "home": "Home",
+    "workshops": "Workshop",
+    "calendar": "Calendario",
+    "aboutUs": "Chi siamo"
+  },
+  "Hero": {
+    "title": "Workshop Manager",
+    "subtitle": "Organizza e gestisci i tuoi workshop con facilità",
+    "exploreButton": "Esplora"
+  },
+  "Services": {
+    "title": "I Nostri Servizi",
+    "workshopSchedule": {
+      "title": "Calendario Workshop",
+      "description": "Scopri il nostro calendario completo dei workshop, con tutte le sessioni ed eventi imminenti. Rimani aggiornato con le ultime offerte e trova il workshop perfetto per te."
+    },
+    "participantEngagement": {
+      "title": "Coinvolgimento dei Partecipanti",
+      "description": "Guadagna badge di risultato mentre partecipi ai workshop, aiutandoti a rimanere motivato e coinvolto durante il tuo percorso di apprendimento. Tieni traccia dei tuoi progressi e mostra i tuoi successi."
+    },
+    "diverseLearningPaths": {
+      "title": "Percorsi di Apprendimento Diversificati",
+      "description": "Esplora workshop che coprono design, testing e coding, attentamente realizzati per tutti i livelli di abilità. Che tu sia un principiante o un esperto, trova il percorso di apprendimento perfetto su misura per la tua esperienza."
+    }
+  },
+  "Footer": {
+    "companyName": "Workshop Manager",
+    "description": "Potenziare l'apprendimento attraverso workshop interattivi ed esperienze pratiche.",
+    "quickLinks": "Link Rapidi",
+    "home": "Home",
+    "calendar": "Calendario",
+    "workshops": "Workshop",
+    "contact": "Contatti",
+    "email": "contatto@workshopmanager.com",
+    "phone": "+1 (555) 123-4567",
+    "address": "123 Learning Street, Education City, EC 12345",
+    "allRightsReserved": "Tutti i diritti riservati."
+  },
+  "FAQ": {
+    "title": "Domande Frequenti",
+    "items": [
+      {
+        "question": "Come mi registro per un workshop?",
+        "answer": "Puoi registrarti ai workshop attraverso la nostra piattaforma navigando alla pagina Workshop, selezionando il workshop che ti interessa e cliccando sul pulsante 'Registrati'. Dovrai creare un account se non ne hai già uno."
+      },
+      {
+        "question": "Posso annullare la mia registrazione?",
+        "answer": "Sì, puoi annullare la tua registrazione fino a 48 ore prima dell'inizio del workshop. Naviga nel tuo profilo, trova il workshop sotto 'Le mie registrazioni' e clicca su 'Annulla registrazione'. Si prega di notare che alcuni workshop potrebbero avere politiche di cancellazione specifiche."
+      },
+      {
+        "question": "I workshop sono disponibili online?",
+        "answer": "Sì, molti dei nostri workshop sono disponibili sia in formato in presenza che online. I dettagli sulla località e sul formato sono chiaramente indicati nella pagina informativa di ciascun workshop."
+      },
+      {
+        "question": "Come posso diventare un presentatore di workshop?",
+        "answer": "Siamo sempre alla ricerca di presentatori qualificati! Per candidarti, vai alla sezione 'Diventa un presentatore' nel tuo profilo e compila il modulo di candidatura. Il nostro team esaminerà la tua candidatura e ti risponderà entro 5 giorni lavorativi."
+      },
+      {
+        "question": "Vengono forniti certificati dopo aver completato un workshop?",
+        "answer": "Sì, i certificati di completamento vengono generati automaticamente e sono disponibili per il download dal tuo profilo dopo aver completato un workshop. Per alcuni workshop specializzati, potrebbe essere disponibile una certificazione aggiuntiva."
+      }
+    ]
+  },
+  "CallToAction": {
+    "title": "Pronto a migliorare le tue competenze?",
+    "description": "Unisciti alla nostra comunità di studenti e porta le tue competenze al livello successivo con i nostri workshop condotti da esperti.",
+    "button": "Sfoglia i Workshop"
+  },
+  "Testimonials": {
+    "title": "Cosa dicono i nostri partecipanti"
+  },
+  "FeaturedWorkshops": {
+    "title": "Workshop in evidenza",
+    "viewAllButton": "Visualizza tutti i workshop"
+  },
+  "WorkshopsPage": {
+    "title": "Workshop",
+    "subtitle": "Scopri la nostra gamma di workshop guidati da esperti progettati per migliorare le tue competenze e far progredire la tua carriera.",
+    "searchPlaceholder": "Cerca workshop...",
+    "filterBy": "Filtra per:",
+    "allCategories": "Tutte le categorie",
+    "design": "Design",
+    "coding": "Programmazione",
+    "data": "Dati",
+    "testing": "Testing",
+    "showing": "Mostrando",
+    "of": "di",
+    "workshops": "workshop",
+    "noWorkshopsFound": "Nessun workshop trovato",
+    "tryAdjusting": "Prova a modificare la tua ricerca o il filtro per trovare ciò che stai cercando."
+  },
+  "WorkshopDetail": {
+    "home": "Home",
+    "workshops": "Workshop",
+    "description": "Descrizione",
+    "instructor": "Istruttore",
+    "register": "Registrati al Workshop",
+    "unregister": "Annulla Registrazione",
+    "registered": "Registrati",
+    "requiredLevel": "Livello Richiesto",
+    "reviews": "Recensioni",
+    "similarWorkshops": "Workshop Simili",
+    "pastWorkshops": "Workshop Passati"
+  }
+}
