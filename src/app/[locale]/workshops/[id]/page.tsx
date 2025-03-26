@@ -7,24 +7,28 @@ import { Icon } from '@iconify/react';
 import ScrollReveal from '@/components/ScrollReveal';
 import WorkshopCard from '@/components/WorkshopCard';
 import TestimonialCard from '@/components/TestimonialCard';
+import ReviewList, { Review } from '@/components/ReviewList';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
+import HeroButton from '@/components/HeroButton';
 
 interface WorkshopReview {
   name: string;
-  role: string;
   quote: string;
   rating: number;
   avatarSrc: string;
   delay: string;
 }
 
-const WorkshopDetailPage = ({ params }: { params: { id: string } }) => {
+const WorkshopDetailPage = () => {
+  const params = useParams();
+  const id = params.id as string;
   const t = useTranslations('WorkshopDetail');
   const [isRegistered, setIsRegistered] = useState(false);
 
   // This would come from an API in a real application
   const workshop = {
-    id: params.id,
+    id: id,
     title: "UX Design Fundamentals",
     description: "Learn the basics of user experience design in this hands-on workshop. You'll discover essential UX principles and how to apply them to your projects. This workshop is designed for beginners who want to understand the fundamentals of UX design and start implementing these principles in their work. We'll cover user research, information architecture, wireframing, prototyping, and usability testing.",
     longDescription: "This comprehensive UX Design workshop is perfect for beginners and those looking to refresh their skills. Over the course of the session, we'll dive deep into the principles that make for exceptional user experiences.\n\nYou'll learn how to conduct effective user research, create user personas, develop information architecture, design intuitive navigation systems, create wireframes and prototypes, and conduct usability testing. All of these skills are essential for creating digital products that users love.\n\nThis workshop balances theory with hands-on practice. You'll work on real-world examples and leave with practical skills you can immediately apply to your projects. Whether you're a designer looking to expand your skillset, a developer wanting to better understand UX, or a product manager aiming to create more user-centered products, this workshop will provide valuable insights and techniques.",
@@ -47,7 +51,6 @@ const WorkshopDetailPage = ({ params }: { params: { id: string } }) => {
   const reviews: WorkshopReview[] = [
     { 
       name: "Michael Chen", 
-      role: "Frontend Developer", 
       quote: "This workshop completely changed how I think about user interfaces. The hands-on approach was super helpful!", 
       rating: 5, 
       avatarSrc: "/images/avatar.jpg", 
@@ -55,7 +58,6 @@ const WorkshopDetailPage = ({ params }: { params: { id: string } }) => {
     },
     { 
       name: "Emily Rodriguez", 
-      role: "Product Manager", 
       quote: "Sarah is an excellent instructor. The workshop was well-organized and packed with useful information.", 
       rating: 4, 
       avatarSrc: "/images/avatar.jpg", 
@@ -63,7 +65,6 @@ const WorkshopDetailPage = ({ params }: { params: { id: string } }) => {
     },
     { 
       name: "David Kim", 
-      role: "Graphic Designer", 
       quote: "Great introduction to UX principles. I'd recommend this to anyone looking to understand the basics.", 
       rating: 5, 
       avatarSrc: "/images/avatar.jpg", 
@@ -80,7 +81,8 @@ const WorkshopDetailPage = ({ params }: { params: { id: string } }) => {
       date: "July 10, 2023",
       time: "1:00 PM - 4:00 PM",
       imageSrc: "/images/workshop.jpg",
-      delay: "delay-100"
+      delay: "delay-100",
+      bgColor: "#7471f9"
     },
     {
       id: "3",
@@ -89,7 +91,8 @@ const WorkshopDetailPage = ({ params }: { params: { id: string } }) => {
       date: "July 18, 2023",
       time: "10:00 AM - 2:00 PM",
       imageSrc: "/images/workshop.jpg",
-      delay: "delay-200"
+      delay: "delay-200",
+      headingColor: "#f39aec"
     },
     {
       id: "4",
@@ -98,7 +101,8 @@ const WorkshopDetailPage = ({ params }: { params: { id: string } }) => {
       date: "August 5, 2023",
       time: "9:00 AM - 12:00 PM",
       imageSrc: "/images/workshop.jpg",
-      delay: "delay-300"
+      delay: "delay-300",
+      buttonColor: "#fdcb2a"
     }
   ];
 
@@ -111,7 +115,8 @@ const WorkshopDetailPage = ({ params }: { params: { id: string } }) => {
       date: "May 22, 2023",
       time: "2:00 PM - 5:00 PM",
       imageSrc: "/images/workshop.jpg",
-      delay: "delay-100"
+      delay: "delay-100",
+      bgColor: "#5dfdcf"
     }
   ];
 
@@ -123,6 +128,34 @@ const WorkshopDetailPage = ({ params }: { params: { id: string } }) => {
   const handleUnregister = () => {
     setIsRegistered(false);
     // In a real app, you would call an API to unregister the user
+  };
+
+  // Reference for the register button section
+  const registerSectionRef = React.useRef<HTMLButtonElement>(null);
+
+  // Function to scroll to registration section
+  const scrollToRegister = () => {
+    if (registerSectionRef.current) {
+      // Get the position of the element
+      const yOffset = -120; // Offset to account for fixed header
+      const element = registerSectionRef.current;
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      
+      window.scrollTo({
+        top: y,
+        behavior: 'smooth'
+      });
+      
+      // Add a flash effect to highlight the button
+      setTimeout(() => {
+        element.classList.add('ring-4', 'ring-indigo-300', 'ring-opacity-70');
+        
+        // Remove the highlight after 2 seconds
+        setTimeout(() => {
+          element.classList.remove('ring-4', 'ring-indigo-300', 'ring-opacity-70');
+        }, 2000);
+      }, 500);
+    }
   };
 
   return (
@@ -216,29 +249,31 @@ const WorkshopDetailPage = ({ params }: { params: { id: string } }) => {
                     {t('requiredLevel')}: {workshop.requiredLevel}
                   </span>
                 </div>
-                
-                <div className="flex items-center">
-                  <Icon icon="heroicons:trophy" className="w-5 h-5 mr-2 text-yellow-500" />
-                  <span className="text-gray-700">
-                    {workshop.earnableBadge}
-                  </span>
-                </div>
               </div>
 
               {isRegistered ? (
-                <button 
+                <HeroButton 
+                  text={t('unregister')}
                   onClick={handleUnregister}
-                  className="w-full md:w-auto px-6 py-3 bg-red-600 text-white rounded-full font-medium hover:bg-red-700 transition-colors"
-                >
-                  {t('unregister')}
-                </button>
+                  backgroundColor="#FF0000"
+                  textColor="white"
+                  hoverBackgroundColor="transparent"
+                  hoverTextColor="#FF0000"
+                  hoverBorderColor="#FF0000"
+                  padding="w-full md:w-auto px-6 py-3"
+                />
               ) : (
-                <button 
+                <HeroButton 
+                  text={t('register')}
                   onClick={handleRegister}
-                  className="w-full md:w-auto px-6 py-3 bg-black text-white rounded-full font-medium hover:bg-transparent hover:border hover:border-black hover:text-black transition-colors"
-                >
-                  {t('register')}
-                </button>
+                  backgroundColor="black"
+                  textColor="white"
+                  hoverBackgroundColor="transparent"
+                  hoverTextColor="black"
+                  hoverBorderColor="black"
+                  padding="w-full md:w-auto px-6 py-3"
+                  ref={registerSectionRef}
+                />
               )}
             </div>
           </div>
@@ -247,6 +282,45 @@ const WorkshopDetailPage = ({ params }: { params: { id: string } }) => {
           <div className="p-6 border-t border-gray-200">
             <h2 className="text-xl font-semibold mb-4 text-black">{t('description')}</h2>
             <p className="text-gray-700 whitespace-pre-line">{workshop.longDescription}</p>
+          </div>
+          
+          {/* Badge Section */}
+          <div className="p-6 border-t border-gray-200 bg-gradient-to-r from-purple-50 to-blue-50">
+            <ScrollReveal>
+              <h2 className="text-xl font-semibold mb-4 text-black">{t('earnableBadge')}</h2>
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                <div className="relative w-32 h-32 transform hover:scale-110 transition-transform duration-300 hover:rotate-3">
+                  <div className="absolute inset-0 rounded-full overflow-hidden border-4 border-indigo-100 shadow-xl bg-white">
+                    <div className="absolute inset-0 bg-indigo-100 animate-pulse opacity-30"></div>
+                    <Image 
+                      src="/images/badge.png" 
+                      alt="Workshop Badge" 
+                      fill
+                      className="object-cover p-1 relative z-10 rounded-full"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = "https://via.placeholder.com/200?text=Badge";
+                      }}
+                    />
+                  </div>
+                  <div className="absolute -bottom-2 -right-2 bg-yellow-400 text-xs font-bold text-white px-2 py-1 rounded-full shadow-md">
+                    NEW
+                  </div>
+                </div>
+                <div className="text-center md:text-left max-w-lg">
+                  <h3 className="text-lg font-bold text-indigo-700 mb-2">{workshop.earnableBadge}</h3>
+                  <p className="text-gray-700 mb-4">
+                    {t('badgeDescription')}
+                  </p>
+                  <button 
+                    onClick={scrollToRegister}
+                    className="py-2 px-4 bg-white rounded-full inline-flex items-center text-sm text-indigo-600 shadow-sm border border-indigo-100 hover:bg-gray-50 transition-colors"
+                  >
+                    <span>{t('unlockBadge')}</span>
+                  </button>
+                </div>
+              </div>
+            </ScrollReveal>
           </div>
           
           {/* Instructor */}
@@ -274,18 +348,6 @@ const WorkshopDetailPage = ({ params }: { params: { id: string } }) => {
           </div>
         </div>
         
-        {/* Reviews Section */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold mb-6 text-black">{t('reviews')}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {reviews.map((review, index) => (
-              <ScrollReveal key={index} className={review.delay}>
-                <TestimonialCard {...review} />
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-        
         {/* Similar Workshops */}
         <div className="mb-12">
           <h2 className="text-2xl font-bold mb-6 text-black">{t('similarWorkshops')}</h2>
@@ -300,7 +362,7 @@ const WorkshopDetailPage = ({ params }: { params: { id: string } }) => {
         
         {/* Past Workshops */}
         {pastWorkshops.length > 0 && (
-          <div>
+          <div className="mb-12">
             <h2 className="text-2xl font-bold mb-6 text-black">{t('pastWorkshops')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {pastWorkshops.map((workshop, index) => (
@@ -311,6 +373,11 @@ const WorkshopDetailPage = ({ params }: { params: { id: string } }) => {
             </div>
           </div>
         )}
+        
+        {/* Reviews Section - Using ReviewList component */}
+        <div className="mb-12">
+          <ReviewList reviews={reviews as Review[]} />
+        </div>
       </div>
     </div>
   );

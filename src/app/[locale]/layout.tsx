@@ -1,26 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Secular_One } from "next/font/google";
 import "../styles/globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { NextIntlClientProvider } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const secularOne = Secular_One({
+  weight: "400",
+  variable: "--font-secular-one",
   subsets: ["latin"],
-});
+})
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export async function generateMetadata(props: {
   params: { locale: string }
 }): Promise<Metadata> {
   // Ensure locale has a value, default to 'en'
-  const locale = props.params?.locale || 'en';
+  const { locale } = props.params || { locale: 'en' };
   const t = await getTranslations({ locale, namespace: 'Hero' });
   
   return {
@@ -47,9 +44,9 @@ export default async function RootLayout(props: Readonly<{
   }
 
   return (
-    <html lang={locale} className="scroll-smooth">
+    <html lang={locale} className={`${secularOne.variable} scroll-smooth`}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className="antialiased"
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <div className="flex flex-col min-h-screen bg-gray-50">

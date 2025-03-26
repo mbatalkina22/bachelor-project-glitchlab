@@ -24,7 +24,7 @@ const FAQ = () => {
     <div className="py-16">
       <div className="max-w-3xl mx-auto px-4 md:px-8">
         <ScrollReveal>
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-black">{t('title')}</h2>
+          <h2 className="text-3xl md:text-4xl font-secularone mb-12 text-center text-black">{t('title')}</h2>
         </ScrollReveal>
         
         <div className="space-y-4">

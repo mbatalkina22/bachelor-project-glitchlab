@@ -5,14 +5,23 @@ import { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
+import Image from "next/image";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const t = useTranslations('Navbar');
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
+
+  // Mock user data - in a real app this would come from authentication
+  const user = {
+    name: "John Doe",
+    email: "john.doe@example.com",
+    avatar: "/images/avatar.jpg"
+  };
 
   // Check if the current page is the main page
   const isMainPage = pathname === `/${locale}` || pathname === `/${locale}/`;
@@ -38,8 +47,27 @@ const Navbar = () => {
     }
   }, [isMainPage]);
 
+  // Close menus when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.user-menu') && !target.closest('.user-avatar')) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleUserMenu = () => {
+    setIsUserMenuOpen(!isUserMenuOpen);
   };
 
   const changeLanguage = (newLocale: string) => {
@@ -57,9 +85,12 @@ const Navbar = () => {
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md' : 'bg-transparent'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex items-center">
+          <div className="flex flex-row items-center justify-center">
             <Link href={`/${locale}`} className="flex-shrink-0 flex items-center">
-              <span className={`text-xl font-bold ${isScrolled ? 'text-gray-800' : 'text-white'}`}>Workshop Manager</span>
+              <div className="w-8 h-8 mr-4 rounded-full overflow-hidden">
+                <img src="/images/logo.png" alt="Glitch Lab Logo" className="w-full h-full object-cover" />
+              </div>
+              <span className={`text-xl font-secularone font-bold ${isScrolled ? 'text-gray-800' : 'text-white'}`}>Glitch Lab</span>
             </Link>
           </div>
           
@@ -74,6 +105,7 @@ const Navbar = () => {
             <Link href={`/${locale}/calendar`} className={`px-3 py-2 rounded-md text-sm font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
               {t('calendar')}
             </Link>
+            
             {/* Language switcher */}
             <div className="relative ml-3">
               <button 
@@ -84,10 +116,84 @@ const Navbar = () => {
                 <span>{locale === 'en' ? 'EN' : 'IT'}</span>
               </button>
             </div>
+            
+            {/* User Avatar */}
+            <div className="relative ml-3">
+              <button 
+                className="user-avatar flex text-sm rounded-full focus:outline-none"
+                onClick={toggleUserMenu}
+                aria-expanded={isUserMenuOpen ? 'true' : 'false'}
+              >
+                <span className="sr-only">Open user menu</span>
+                <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-gray-200">
+                  <Image
+                    src={user.avatar}
+                    alt="User avatar"
+                    width={32}
+                    height={32}
+                    className="h-full w-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = "https://via.placeholder.com/32?text=User";
+                    }}
+                  />
+                </div>
+              </button>
+              
+              {/* User dropdown menu */}
+              {isUserMenuOpen && (
+                <div className="user-menu origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                  <div className="py-1">
+                    <div className="px-4 py-2 border-b">
+                      <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                      <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                    </div>
+                    <Link 
+                      href={`/${locale}/profile`} 
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      {t('yourProfile')}
+                    </Link>
+                    <Link 
+                      href={`/${locale}/profile/settings`} 
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      {t('settings')}
+                    </Link>
+                    <button
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-t"
+                      onClick={() => console.log('Sign out clicked')}
+                    >
+                      {t('signOut')}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
           
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
+            {/* User avatar for mobile */}
+            <button
+              className="mr-2 flex text-sm rounded-full focus:outline-none"
+              onClick={() => router.push(`/${locale}/profile`)}
+            >
+              <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-gray-200">
+                <Image
+                  src={user.avatar}
+                  alt="User avatar"
+                  width={32}
+                  height={32}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "https://via.placeholder.com/32?text=User";
+                  }}
+                />
+              </div>
+            </button>
+            
             <button
               onClick={toggleMenu}
               className={`inline-flex items-center justify-center p-2 rounded-md ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'} focus:outline-none`}
@@ -127,6 +233,12 @@ const Navbar = () => {
           </Link>
           <Link href={`/${locale}/about-us`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
             {t('aboutUs')}
+          </Link>
+          <Link href={`/${locale}/profile`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
+            {t('profile')}
+          </Link>
+          <Link href={`/${locale}/profile/settings`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
+            {t('settings')}
           </Link>
           
           {/* Language switcher for mobile */}

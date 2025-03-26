@@ -5,14 +5,13 @@ import { Icon } from "@iconify/react";
 
 interface TestimonialCardProps {
   name: string;
-  role: string;
   quote: string;
   rating: number;
   avatarSrc: string;
   delay: string;
 }
 
-const TestimonialCard = ({ name, role, quote, rating, avatarSrc, delay }: TestimonialCardProps) => {
+const TestimonialCard = ({ name, quote, rating, avatarSrc, delay }: TestimonialCardProps) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <div className="flex items-center mb-4">
@@ -30,7 +29,6 @@ const TestimonialCard = ({ name, role, quote, rating, avatarSrc, delay }: Testim
         </div>
         <div>
           <h4 className="font-semibold text-black">{name}</h4>
-          <p className="text-sm text-gray-500">{role}</p>
         </div>
       </div>
       <p className="text-gray-600 italic">{quote}</p>

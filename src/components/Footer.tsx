@@ -12,7 +12,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="col-span-1 md:col-span-2">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <h3 className="text-lg font-secularone text-gray-900 mb-4">
               {t('companyName')}
             </h3>
             <p className="text-gray-600 mb-4">
@@ -22,7 +22,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 tracking-wider uppercase">
+            <h3 className="text-sm font-secularone text-gray-900 tracking-wider uppercase">
               {t('quickLinks')}
             </h3>
             <ul className="mt-4 space-y-4">
@@ -46,7 +46,7 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 tracking-wider uppercase">
+            <h3 className="text-sm font-secularone text-gray-900 tracking-wider uppercase">
               {t('contact')}
             </h3>
             <ul className="mt-4 space-y-4">

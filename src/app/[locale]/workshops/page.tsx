@@ -5,6 +5,7 @@ import WorkshopCard from '@/components/WorkshopCard';
 import ScrollReveal from '@/components/ScrollReveal';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
 
 const WorkshopsPage = () => {
     const t = useTranslations('WorkshopsPage');
@@ -21,7 +22,8 @@ const WorkshopsPage = () => {
             time: "2:00 PM - 5:00 PM",
             imageSrc: "/images/workshop.jpg",
             delay: "delay-100",
-            category: "design"
+            category: "design",
+            bgColor: "#c3c2fc"
         },
         {
             id: "2",
@@ -31,7 +33,8 @@ const WorkshopsPage = () => {
             time: "10:00 AM - 3:00 PM",
             imageSrc: "/images/workshop.jpg",
             delay: "delay-200",
-            category: "coding"
+            category: "coding",
+            bgColor: "#f8c5f4"
         },
         {
             id: "3",
@@ -41,7 +44,8 @@ const WorkshopsPage = () => {
             time: "1:00 PM - 4:30 PM",
             imageSrc: "/images/workshop.jpg",
             delay: "delay-300",
-            category: "coding"
+            category: "coding",
+            bgColor: "#fee487"
         },
         {
             id: "4",
@@ -51,7 +55,8 @@ const WorkshopsPage = () => {
             time: "9:00 AM - 12:00 PM",
             imageSrc: "/images/workshop.jpg",
             delay: "delay-100",
-            category: "coding"
+            category: "coding",
+            bgColor: "#aef9e1"
         },
         {
             id: "5",
@@ -61,7 +66,8 @@ const WorkshopsPage = () => {
             time: "1:00 PM - 5:00 PM",
             imageSrc: "/images/workshop.jpg",
             delay: "delay-200",
-            category: "data"
+            category: "data",
+            bgColor: "#c3c2fc"
         },
         {
             id: "6",
@@ -71,7 +77,8 @@ const WorkshopsPage = () => {
             time: "10:00 AM - 2:00 PM",
             imageSrc: "/images/workshop.jpg",
             delay: "delay-300",
-            category: "design"
+            category: "design",
+            bgColor: "#f8c5f4"
         },
         {
             id: "7",
@@ -81,7 +88,8 @@ const WorkshopsPage = () => {
             time: "1:00 PM - 4:00 PM",
             imageSrc: "/images/workshop.jpg",
             delay: "delay-100",
-            category: "design"
+            category: "design",
+            bgColor: "#fee487"
         },
         {
             id: "8",
@@ -91,7 +99,8 @@ const WorkshopsPage = () => {
             time: "9:00 AM - 12:00 PM",
             imageSrc: "/images/workshop.jpg",
             delay: "delay-200",
-            category: "design"
+            category: "design",
+            bgColor: "#aef9e1"
         },
         {
             id: "9",
@@ -101,7 +110,8 @@ const WorkshopsPage = () => {
             time: "10:00 AM - 3:00 PM",
             imageSrc: "/images/workshop.jpg",
             delay: "delay-300",
-            category: "testing"
+            category: "testing",
+            bgColor: "#c3c2fc"
         }
     ];
 

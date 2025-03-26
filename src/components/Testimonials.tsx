@@ -9,12 +9,12 @@ import { useTranslations } from 'next-intl';
 const Testimonials = () => {
   const t = useTranslations('Testimonials');
   const testimonials = [
-    { name: "Sarah Johnson", role: "UX Designer", quote: "The workshops offered here have significantly improved my design skills.", rating: 5, avatarSrc: "/images/avatar.jpg", delay: "delay-100" },
-    { name: "Michael Chen", role: "Frontend Developer", quote: "I've attended three JavaScript workshops so far, and each one has been excellent.", rating: 5, avatarSrc: "/images/avatar.jpg", delay: "delay-200" },
-    { name: "Emily Rodriguez", role: "Product Manager", quote: "The product management workshop exceeded my expectations.", rating: 4, avatarSrc: "/images/avatar.jpg", delay: "delay-300" },
-    { name: "David Kim", role: "Data Scientist", quote: "The data visualization workshop was exactly what I needed.", rating: 5, avatarSrc: "/images/avatar.jpg", delay: "delay-100" },
-    { name: "Jessica Martinez", role: "Marketing Specialist", quote: "I was hesitant about taking an online workshop, but it exceeded my expectations.", rating: 4, avatarSrc: "/images/avatar.jpg", delay: "delay-200" },
-    { name: "Robert Wilson", role: "Software Engineer", quote: "The advanced JavaScript workshop helped me level up my skills significantly.", rating: 5, avatarSrc: "/images/avatar.jpg", delay: "delay-300" }
+    { name: "Sarah Johnson", quote: "The workshops offered here have significantly improved my design skills.", rating: 5, avatarSrc: "/images/avatar.jpg", delay: "delay-100" },
+    { name: "Michael Chen", quote: "I've attended three JavaScript workshops so far, and each one has been excellent.", rating: 5, avatarSrc: "/images/avatar.jpg", delay: "delay-200" },
+    { name: "Emily Rodriguez", quote: "The product management workshop exceeded my expectations.", rating: 4, avatarSrc: "/images/avatar.jpg", delay: "delay-300" },
+    { name: "David Kim", quote: "The data visualization workshop was exactly what I needed.", rating: 5, avatarSrc: "/images/avatar.jpg", delay: "delay-100" },
+    { name: "Jessica Martinez", quote: "I was hesitant about taking an online workshop, but it exceeded my expectations.", rating: 4, avatarSrc: "/images/avatar.jpg", delay: "delay-200" },
+    { name: "Robert Wilson", quote: "The advanced JavaScript workshop helped me level up my skills significantly.", rating: 5, avatarSrc: "/images/avatar.jpg", delay: "delay-300" }
   ];
 
   const [currentPage, setCurrentPage] = useState(0);
@@ -42,7 +42,7 @@ const Testimonials = () => {
     <div className="py-20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <ScrollReveal>
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-black">{t('title')}</h2>
+          <h2 className="text-3xl md:text-4xl font-secularone mb-12 text-center text-black">{t('title')}</h2>
         </ScrollReveal>
         
         <div className="relative">

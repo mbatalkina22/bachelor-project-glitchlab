@@ -6,6 +6,7 @@ import WorkshopCard from "@/components/WorkshopCard";
 import { useRouter } from 'next/navigation';
 import { Icon } from "@iconify/react";
 import { useTranslations } from 'next-intl';
+import HeroButton from "@/components/HeroButton";
 
 const FeaturedWorkshops = () => {
   const router = useRouter();
@@ -17,7 +18,8 @@ const FeaturedWorkshops = () => {
       date: "June 15, 2023",
       time: "2:00 PM - 5:00 PM",
       imageSrc: "/images/workshop.jpg",
-      delay: "delay-100"
+      delay: "delay-100",
+      bgColor: "#c3c2fc"
     },
     {
       title: "Advanced JavaScript Patterns",
@@ -25,7 +27,8 @@ const FeaturedWorkshops = () => {
       date: "June 22, 2023",
       time: "10:00 AM - 3:00 PM",
       imageSrc: "/images/workshop.jpg",
-      delay: "delay-200"
+      delay: "delay-200",
+      bgColor: "#f8c5f4"
     },
     {
       title: "Data Visualization with D3.js",
@@ -33,7 +36,8 @@ const FeaturedWorkshops = () => {
       date: "July 5, 2023",
       time: "1:00 PM - 4:30 PM",
       imageSrc: "/images/workshop.jpg",
-      delay: "delay-300"
+      delay: "delay-300",
+      bgColor: "#fee487"
     },
     {
       title: "React Performance Optimization",
@@ -41,7 +45,8 @@ const FeaturedWorkshops = () => {
       date: "July 12, 2023",
       time: "9:00 AM - 12:00 PM",
       imageSrc: "/images/workshop.jpg",
-      delay: "delay-100"
+      delay: "delay-100",
+      bgColor: "#aef9e1"
     },
     {
       title: "Introduction to Machine Learning",
@@ -49,7 +54,8 @@ const FeaturedWorkshops = () => {
       date: "July 18, 2023",
       time: "1:00 PM - 5:00 PM",
       imageSrc: "/images/workshop.jpg",
-      delay: "delay-200"
+      delay: "delay-200",
+      bgColor: "#c3c2fc"
     },
     {
       title: "Responsive Web Design",
@@ -57,7 +63,8 @@ const FeaturedWorkshops = () => {
       date: "July 25, 2023",
       time: "10:00 AM - 2:00 PM",
       imageSrc: "/images/workshop.jpg",
-      delay: "delay-300"
+      delay: "delay-300",
+      bgColor: "#f8c5f4"
     }
   ];
 
@@ -86,7 +93,7 @@ const FeaturedWorkshops = () => {
     <div className="py-16">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <ScrollReveal>
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-black">{t('title')}</h2>
+          <h2 className="text-3xl md:text-4xl font-secularone mb-12 text-center text-black">{t('title')}</h2>
         </ScrollReveal>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -132,9 +139,16 @@ const FeaturedWorkshops = () => {
         </div>
         
         <div className="text-center mt-12">
-          <button onClick={() => router.push('/workshops')} className="bg-black hover:bg-transparent hover:text-black hover:border hover:border-black text-white py-3 px-6 rounded-full transition-colors text-lg font-medium">
-            {t('viewAllButton')}
-          </button>
+          <HeroButton 
+            text={t('viewAllButton')}
+            href="/workshops"
+            backgroundColor="#7471f9"
+            textColor="white"
+            hoverBackgroundColor="transparent"
+            hoverTextColor="#7471f9"
+            hoverBorderColor="#7471f9"
+            padding="py-3 px-6"
+          />
         </div>
       </div>
     </div>
