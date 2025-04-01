@@ -1,18 +1,27 @@
 "use client";
 
-import React, { useState, FormEvent } from 'react';
-import Image from 'next/image';
-import { Icon } from '@iconify/react';
-import ScrollReveal from '@/components/ScrollReveal';
-import { useTranslations } from 'next-intl';
+import React, { useState, FormEvent } from "react";
+import Image from "next/image";
+import { Icon } from "@iconify/react";
+import ScrollReveal from "@/components/ScrollReveal";
+import { useTranslations } from "next-intl";
 import HeroButton from "./HeroButton";
+
+// Add Google Fonts import
+import { Arvo, Bebas_Neue, Dancing_Script, Lobster } from "next/font/google";
+
+// Initialize the fonts
+const dancingScript = Dancing_Script({ subsets: ["latin"] });
+const lobster = Lobster({ weight: "400", subsets: ["latin"] });
+const arvo = Arvo({ weight: ["400", "700"], subsets: ["latin"] });
+const bebasNeue = Bebas_Neue({ weight: "400", subsets: ["latin"] });
 
 export interface Review {
   name: string;
-  quote: string;
-  rating: number;
-  avatarSrc: string;
-  delay: string;
+  comment?: string;
+  circleColor: string;
+  circleFont: string;
+  circleText: string;
   date?: string;
 }
 
@@ -21,108 +30,50 @@ interface ReviewListProps {
 }
 
 const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
-  const t = useTranslations('WorkshopDetail');
-  const [reviewRating, setReviewRating] = useState(0);
-  const [reviewText, setReviewText] = useState('');
+  const t = useTranslations("WorkshopDetail");
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [formErrors, setFormErrors] = useState<{[key: string]: string}>({});
-  
-  // Additional statistical questions
-  const [workshopDifficulty, setWorkshopDifficulty] = useState('');
-  const [recommendationLevel, setRecommendationLevel] = useState('');
-  const [attendanceReason, setAttendanceReason] = useState('');
+  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
 
-  // Handle star rating selection
-  const handleRatingChange = (rating: number) => {
-    setReviewRating(rating);
-    if (formErrors.rating) {
-      const newErrors = {...formErrors};
-      delete newErrors.rating;
-      setFormErrors(newErrors);
-    }
-  };
+  // Circle customization state
+  const [circleColor, setCircleColor] = useState("#383838");
+  const [circleFont, setCircleFont] = useState("Dancing Script");
+  const [circleText, setCircleText] = useState("");
+  const [comment, setComment] = useState("");
 
-  // Handle review text change
-  const handleReviewTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setReviewText(e.target.value);
-    if (formErrors.reviewText && e.target.value.trim() !== '') {
-      const newErrors = {...formErrors};
-      delete newErrors.reviewText;
-      setFormErrors(newErrors);
-    }
-  };
-
-  // Handle difficulty selection
-  const handleDifficultyChange = (difficulty: string) => {
-    setWorkshopDifficulty(difficulty);
-    if (formErrors.workshopDifficulty) {
-      const newErrors = {...formErrors};
-      delete newErrors.workshopDifficulty;
-      setFormErrors(newErrors);
-    }
-  };
-
-  // Handle recommendation level selection
-  const handleRecommendationChange = (level: string) => {
-    setRecommendationLevel(level);
-    if (formErrors.recommendationLevel) {
-      const newErrors = {...formErrors};
-      delete newErrors.recommendationLevel;
-      setFormErrors(newErrors);
-    }
-  };
-
-  // Handle attendance reason selection
-  const handleAttendanceReasonChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setAttendanceReason(e.target.value);
-    if (formErrors.attendanceReason && e.target.value !== '') {
-      const newErrors = {...formErrors};
-      delete newErrors.attendanceReason;
-      setFormErrors(newErrors);
-    }
-  };
+  // Sample words for different languages
+  const sampleWords = [
+    t("amazing"),
+    t("great"),
+    t("lovedIt"),
+    t("fantastic"),
+    t("perfect"),
+    t("excellent"),
+    t("wonderful"),
+    t("superb"),
+  ];
 
   // Open review modal
   const openReviewModal = () => {
     setIsReviewModalOpen(true);
-    // Prevent scrolling of body when modal is open
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
   };
 
   // Close review modal
   const closeReviewModal = () => {
     setIsReviewModalOpen(false);
-    // Re-enable scrolling of body
-    document.body.style.overflow = 'auto';
-    // Reset form errors
+    document.body.style.overflow = "auto";
     setFormErrors({});
   };
 
   // Validate form
   const validateForm = () => {
-    const errors: {[key: string]: string} = {};
-    
-    if (reviewRating === 0) {
-      errors.rating = t('pleaseSelectRating');
+    const errors: { [key: string]: string } = {};
+
+    if (!circleText) {
+      errors.circleText = t("pleaseSelectWord");
     }
-    
-    if (reviewText.trim() === '') {
-      errors.reviewText = t('pleaseEnterReview');
-    }
-    
-    if (!workshopDifficulty) {
-      errors.workshopDifficulty = t('pleaseSelectOption');
-    }
-    
-    if (!recommendationLevel) {
-      errors.recommendationLevel = t('pleaseSelectOption');
-    }
-    
-    if (!attendanceReason) {
-      errors.attendanceReason = t('pleaseSelectOption');
-    }
-    
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -130,7 +81,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
   // Handle review submission
   const handleSubmitReview = (e: FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -139,53 +90,130 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
 
     // In a real app, you would call an API to submit the review
     setTimeout(() => {
-      // Collect all review data (including statistical questions)
       const reviewData = {
-        text: reviewText,
-        rating: reviewRating,
-        statistics: {
-          difficulty: workshopDifficulty,
-          recommendationLevel: recommendationLevel,
-          attendanceReason: attendanceReason
-        }
+        circleColor,
+        circleFont,
+        circleText,
+        comment,
       };
-      
-      console.log('Submitting review with data:', reviewData);
-      
+
+      console.log("Submitting review with data:", reviewData);
+
       // Add the new review to the list (in a real app, this would come from the API)
       const newReview: Review = {
-        name: "You", // In a real app, this would be the user's name
-        quote: reviewText,
-        rating: reviewRating,
-        avatarSrc: "/images/avatar.jpg", // In a real app, this would be the user's avatar
-        delay: "delay-0",
-        date: "Just now"
+        name: "You",
+        circleColor,
+        circleFont,
+        circleText,
+        comment,
+        date: "Just now",
       };
 
       // Reset the form
-      setReviewRating(0);
-      setReviewText('');
-      setWorkshopDifficulty('');
-      setRecommendationLevel('');
-      setAttendanceReason('');
+      setCircleColor("#383838");
+      setCircleFont("Dancing Script");
+      setCircleText("");
+      setComment("");
       setIsSubmittingReview(false);
       setFormErrors({});
 
-      // Show success message within the UI and close modal
       closeReviewModal();
-      
-      // For now, we'll just log this to the console
-      console.log('Review submitted successfully');
+
+      console.log("Review submitted successfully");
     }, 1000);
   };
 
+  // Helper to get the font family based on the selection
+  const getFontFamily = (fontName: string) => {
+    switch (fontName) {
+      case "Dancing Script":
+        return dancingScript.style.fontFamily;
+      case "Lobster":
+        return lobster.style.fontFamily;
+      case "Arvo":
+        return arvo.style.fontFamily;
+      case "Bebas Neue":
+        return bebasNeue.style.fontFamily;
+      default:
+        return dancingScript.style.fontFamily;
+    }
+  };
+
+  // Circle component with cat ears
+  const CircleWithEars = ({
+    color,
+    font,
+    text,
+  }: {
+    color: string;
+    font: string;
+    text: string;
+  }) => (
+    <div className="relative w-32 h-32 mx-auto">
+      {/* Simple cat circle with triangular ears */}
+      <svg
+        viewBox="0 0 100 100"
+        className="w-full h-full"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {/* Base circle with shadow */}
+        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="2" stdDeviation="2" floodOpacity="0.3" />
+        </filter>
+
+        {/* Left ear - wider triangle */}
+        <polygon
+          points="25,5 15,25 35,25"
+          fill={color}
+          stroke="#222"
+          strokeWidth="1"
+          transform="rotate(-30, 25, 25)"
+        />
+
+        {/* Right ear - matched to left ear style */}
+        <polygon
+          points="75,5 65,25 85,25"
+          fill={color}
+          stroke="#222"
+          strokeWidth="1"
+          transform="rotate(30, 75, 25)"
+        />
+
+        {/* Main circle */}
+        <circle
+          cx="50"
+          cy="50"
+          r="38"
+          fill={color}
+          stroke="#222"
+          strokeWidth="1"
+          filter="url(#shadow)"
+        />
+
+        {/* Text inside circle */}
+        <text
+          x="50"
+          y="55"
+          fontFamily={getFontFamily(font)}
+          fontSize="14"
+          textAnchor="middle"
+          fill="white"
+          fontWeight="bold"
+          dominantBaseline="middle"
+        >
+          {text}
+        </text>
+      </svg>
+    </div>
+  );
+
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6 text-black">{t('reviews')}</h2>
-      
+      <h2 className="text-2xl font-bold mb-6 text-black">{t("reviews")}</h2>
+
       {/* Leave Review Button */}
       <HeroButton
-        text={t('leaveReview')}
+        text={t("leaveReview")}
         onClick={openReviewModal}
         backgroundColor="#4f46e5"
         textColor="white"
@@ -193,240 +221,180 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
         hoverTextColor="white"
         padding="mb-6 px-4 py-2"
       />
-      
+
       {/* Review Modal */}
       {isReviewModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Backdrop with blur effect */}
-          <div 
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm" 
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={closeReviewModal}
           ></div>
-          
-          {/* Modal Content */}
+
           <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto m-4 z-10">
-            {/* Modal Header with Close Button */}
             <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="text-xl font-semibold text-black">{t('leaveReview')}</h3>
-              <button 
+              <h3 className="text-xl font-semibold text-black">
+                {t("leaveReview")}
+              </h3>
+              <button
                 onClick={closeReviewModal}
                 className="p-1 rounded-full hover:bg-gray-100 transition-colors"
               >
-                <Icon icon="heroicons:x-mark" className="w-6 h-6 text-gray-500" />
+                <Icon
+                  icon="heroicons:x-mark"
+                  className="w-6 h-6 text-gray-500"
+                />
               </button>
             </div>
-            
-            {/* Review Form */}
-            <form onSubmit={handleSubmitReview} className="p-6 space-y-4">
-              {/* Star Rating */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('rating')} *</label>
-                <div className="flex items-center">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      className="focus:outline-none transition-colors w-8 h-8"
-                      onClick={() => handleRatingChange(star)}
-                    >
-                      {star <= reviewRating ? (
-                        <Icon 
-                          icon="heroicons-solid:star" 
-                          className="w-full h-full text-yellow-400" 
-                        />
-                      ) : (
-                        <Icon 
-                          icon="heroicons:star" 
-                          className="w-full h-full text-gray-300 hover:text-yellow-400" 
-                        />
-                      )}
-                    </button>
-                  ))}
-                </div>
-                {formErrors.rating && (
-                  <p className="text-red-500 text-sm mt-1">{formErrors.rating}</p>
-                )}
+
+            <form onSubmit={handleSubmitReview} className="p-6 space-y-6">
+              {/* Circle Preview */}
+              <div className="mb-6">
+                <CircleWithEars
+                  color={circleColor}
+                  font={circleFont}
+                  text={circleText || t("previewText")}
+                />
               </div>
-              
-              {/* Review Text */}
-              <div>
-                <label htmlFor="review" className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('yourReview')} *
-                </label>
-                <textarea
-                  id="review"
-                  rows={4}
-                  value={reviewText}
-                  onChange={handleReviewTextChange}
-                  className={`w-full px-3 py-2 border ${formErrors.reviewText ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black`}
-                  placeholder={t('shareYourExperience')}
-                ></textarea>
-                {formErrors.reviewText && (
-                  <p className="text-red-500 text-sm mt-1">{formErrors.reviewText}</p>
-                )}
-              </div>
-              
-              {/* Statistical Questions */}
-              <div className={`space-y-4 border ${Object.keys(formErrors).some(key => ['workshopDifficulty', 'recommendationLevel', 'attendanceReason'].includes(key)) ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'} rounded-md p-4`}>
-                <h4 className="font-medium text-gray-700">{t('additionalFeedback')} *</h4>
-                <p className="text-sm text-gray-500 mb-3">{t('statisticalOnly')}</p>
-                
-                {/* Workshop Difficulty */}
+
+              {/* Circle Customization */}
+              <div className="space-y-4">
+                {/* Color Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('workshopDifficulty')} *
+                  <label className="block text-sm font-medium text-black mb-1">
+                    {t("circleColor")}
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {[
-                      { key: 'tooEasy', label: t('tooEasy') },
-                      { key: 'justRight', label: t('justRight') },
-                      { key: 'challenging', label: t('challenging') },
-                      { key: 'tooDifficult', label: t('tooDifficult') }
-                    ].map((level) => (
+                      "#383838",
+                      "#7471f9",
+                      "#f39aec",
+                      "#fdcb2a",
+                      "#5dfdcf",
+                    ].map((color) => (
                       <button
-                        key={level.key}
+                        key={color}
                         type="button"
-                        className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                          workshopDifficulty === level.key
-                            ? 'bg-indigo-100 text-indigo-700 border border-indigo-300'
-                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                        className={`w-8 h-8 rounded-full border-2 transition-all ${
+                          circleColor === color
+                            ? "border-gray-900 scale-110"
+                            : "border-transparent hover:border-gray-300"
                         }`}
-                        onClick={() => handleDifficultyChange(level.key)}
-                      >
-                        {level.label}
-                      </button>
+                        style={{ backgroundColor: color }}
+                        onClick={() => setCircleColor(color)}
+                      />
                     ))}
                   </div>
-                  {formErrors.workshopDifficulty && (
-                    <p className="text-red-500 text-sm mt-1">{formErrors.workshopDifficulty}</p>
-                  )}
                 </div>
-                
-                {/* Recommendation Level */}
+
+                {/* Font Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('recommendationLevel')} *
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {[
-                      { key: 'definitely', label: t('definitely') },
-                      { key: 'probably', label: t('probably') },
-                      { key: 'notSure', label: t('notSure') },
-                      { key: 'probablyNot', label: t('probablyNot') },
-                      { key: 'definitelyNot', label: t('definitelyNot') }
-                    ].map((level) => (
-                      <button
-                        key={level.key}
-                        type="button"
-                        className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                          recommendationLevel === level.key
-                            ? 'bg-indigo-100 text-indigo-700 border border-indigo-300'
-                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                        }`}
-                        onClick={() => handleRecommendationChange(level.key)}
-                      >
-                        {level.label}
-                      </button>
-                    ))}
-                  </div>
-                  {formErrors.recommendationLevel && (
-                    <p className="text-red-500 text-sm mt-1">{formErrors.recommendationLevel}</p>
-                  )}
-                </div>
-                
-                {/* Attendance Reason */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('attendanceReason')} *
+                  <label className="block text-sm font-medium text-black mb-1">
+                    {t("circleFont")}
                   </label>
                   <select
-                    className={`w-full px-3 py-2 border ${formErrors.attendanceReason ? 'border-red-500' : 'border-gray-300'} rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500`}
-                    value={attendanceReason}
-                    onChange={handleAttendanceReasonChange}
+                    value={circleFont}
+                    onChange={(e) => setCircleFont(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
                   >
-                    <option value="">{t('selectOption')}</option>
-                    <option value="professionalDevelopment">{t('professionalDevelopment')}</option>
-                    <option value="personalInterest">{t('personalInterest')}</option>
-                    <option value="academicRequirement">{t('academicRequirement')}</option>
-                    <option value="careerChange">{t('careerChange')}</option>
-                    <option value="networking">{t('networking')}</option>
-                    <option value="other">{t('other')}</option>
+                    <option value="Dancing Script">Dancing Script</option>
+                    <option value="Lobster">Lobster</option>
+                    <option value="Arvo">Arvo</option>
+                    <option value="Bebas Neue">Bebas Neue</option>
                   </select>
-                  {formErrors.attendanceReason && (
-                    <p className="text-red-500 text-sm mt-1">{formErrors.attendanceReason}</p>
+                </div>
+
+                {/* Word Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-black mb-1">
+                    {t("chooseWord")} *
+                  </label>
+
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {sampleWords.map((word) => (
+                      <button
+                        key={word}
+                        type="button"
+                        className={`px-3 py-1 rounded-full text-sm transition-colors ${
+                          circleText === word
+                            ? "bg-indigo-100 text-indigo-700 border border-indigo-300"
+                            : "bg-white text-black border border-gray-300 hover:bg-gray-50"
+                        }`}
+                        onClick={() => setCircleText(word)}
+                      >
+                        {word}
+                      </button>
+                    ))}
+                  </div>
+                  {formErrors.circleText && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formErrors.circleText}
+                    </p>
                   )}
                 </div>
+
+                {/* Optional Comment */}
+                <div>
+                  <label className="block text-sm font-medium text-black mb-1">
+                    {t("comment")} ({t("optional")})
+                  </label>
+                  <textarea
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
+                    placeholder={t("enterComment")}
+                  />
+                </div>
               </div>
-              
+
               {/* Submit Button */}
               <button
                 type="submit"
                 disabled={isSubmittingReview}
-                className={`px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                  isSubmittingReview ? 'opacity-75 cursor-not-allowed' : ''
+                className={`w-full px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                  isSubmittingReview ? "opacity-75 cursor-not-allowed" : ""
                 }`}
               >
-                {isSubmittingReview 
-                  ? t('submittingReview')
-                  : t('submitReview')}
+                {isSubmittingReview ? t("submittingReview") : t("submitReview")}
               </button>
             </form>
           </div>
         </div>
       )}
-      
-      {/* Existing Reviews List */}
+
+      {/* Reviews List */}
       <div className="space-y-6">
         {reviews.map((review, index) => (
-          <div key={index} className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
+          <div
+            key={index}
+            className="bg-white rounded-lg shadow-sm p-4 border border-gray-100"
+          >
             <div className="flex items-start">
               <div className="flex-shrink-0 mr-4">
-                <div className="relative w-12 h-12 rounded-full overflow-hidden">
-                  <Image 
-                    src={review.avatarSrc} 
-                    alt={review.name} 
-                    fill
-                    className="object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = "https://via.placeholder.com/100?text=Avatar";
-                    }}
-                  />
-                </div>
+                <CircleWithEars
+                  color={review.circleColor}
+                  font={review.circleFont}
+                  text={review.circleText}
+                />
               </div>
               <div className="flex-1">
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center justify-between mb-2">
                   <h4 className="font-medium text-gray-900">{review.name}</h4>
-                  <span className="text-gray-500 text-sm">{review.date || '2 days ago'}</span>
+                  <span className="text-gray-500 text-sm">
+                    {review.date || "2 days ago"}
+                  </span>
                 </div>
-                <div className="flex items-center mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <Icon 
-                      key={i}
-                      icon={i < review.rating ? "heroicons-solid:star" : "heroicons:star"}
-                      className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`} 
-                    />
-                  ))}
-                </div>
-                <p className="text-gray-700">{review.quote}</p>
-                <div className="mt-3 flex items-center text-sm">
-                  <button className="text-gray-500 hover:text-gray-700 mr-4 flex items-center">
-                    <Icon icon="heroicons:hand-thumb-up" className="w-4 h-4 mr-1" />
-                    <span>Helpful (3)</span>
-                  </button>
-                  <button className="text-gray-500 hover:text-gray-700 flex items-center">
-                    <Icon icon="heroicons:flag" className="w-4 h-4 mr-1" />
-                    <span>Report</span>
-                  </button>
-                </div>
+                {review.comment && (
+                  <p className="text-gray-700">{review.comment}</p>
+                )}
               </div>
             </div>
           </div>
         ))}
-        
+
         <div className="text-center">
           <button className="text-indigo-600 hover:text-indigo-800 font-medium">
-            {t('loadMoreReviews')}
+            {t("loadMoreReviews")}
           </button>
         </div>
       </div>

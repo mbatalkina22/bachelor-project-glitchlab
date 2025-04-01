@@ -14,10 +14,11 @@ import HeroButton from '@/components/HeroButton';
 
 interface WorkshopReview {
   name: string;
-  quote: string;
-  rating: number;
-  avatarSrc: string;
-  delay: string;
+  comment?: string;
+  circleColor: string;
+  circleFont: string;
+  circleText: string;
+  date?: string;
 }
 
 const WorkshopDetailPage = () => {
@@ -51,24 +52,27 @@ const WorkshopDetailPage = () => {
   const reviews: WorkshopReview[] = [
     { 
       name: "Michael Chen", 
-      quote: "This workshop completely changed how I think about user interfaces. The hands-on approach was super helpful!", 
-      rating: 5, 
-      avatarSrc: "/images/avatar.jpg", 
-      delay: "delay-100" 
+      circleColor: "#383838",
+      circleFont: "Arial",
+      circleText: "Amazing!",
+      comment: "This workshop completely changed how I think about user interfaces. The hands-on approach was super helpful!",
+      date: "2 days ago"
     },
     { 
       name: "Emily Rodriguez", 
-      quote: "Sarah is an excellent instructor. The workshop was well-organized and packed with useful information.", 
-      rating: 4, 
-      avatarSrc: "/images/avatar.jpg", 
-      delay: "delay-200" 
+      circleColor: "#7471f9",
+      circleFont: "Georgia",
+      circleText: "Great!",
+      comment: "Sarah is an excellent instructor. The workshop was well-organized and packed with useful information.",
+      date: "1 week ago"
     },
     { 
       name: "David Kim", 
-      quote: "Great introduction to UX principles. I'd recommend this to anyone looking to understand the basics.", 
-      rating: 5, 
-      avatarSrc: "/images/avatar.jpg", 
-      delay: "delay-300" 
+      circleColor: "#fdcb2a",
+      circleFont: "Verdana",
+      circleText: "Perfect",
+      comment: "Great introduction to UX principles. I'd recommend this to anyone looking to understand the basics.",
+      date: "2 weeks ago"
     }
   ];
 
@@ -266,11 +270,11 @@ const WorkshopDetailPage = () => {
                 <HeroButton 
                   text={t('register')}
                   onClick={handleRegister}
-                  backgroundColor="black"
+                  backgroundColor="#4f46e5"
                   textColor="white"
                   hoverBackgroundColor="transparent"
-                  hoverTextColor="black"
-                  hoverBorderColor="black"
+                  hoverTextColor="#4f46e5"
+                  hoverBorderColor="#4f46e5"
                   padding="w-full md:w-auto px-6 py-3"
                   ref={registerSectionRef}
                 />

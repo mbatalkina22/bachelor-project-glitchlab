@@ -143,7 +143,26 @@
     "academicRequirement": "Requisito Accademico",
     "careerChange": "Cambio di Carriera",
     "networking": "Networking",
-    "other": "Altro"
+    "other": "Altro",
+    
+    "previewText": "Anteprima",
+    "circleColor": "Colore del Cerchio",
+    "circleFont": "Stile del Font",
+    "chooseWord": "Scegli una Parola",
+    "pleaseSelectWord": "Seleziona una parola",
+    "comment": "Commento",
+    "optional": "opzionale",
+    "enterComment": "Aggiungi il tuo commento qui...",
+    "language": "Lingua",
+    
+    "amazing": "Incredibile!",
+    "great": "Ottimo!",
+    "lovedIt": "Mi è piaciuto!",
+    "fantastic": "Fantastico",
+    "perfect": "Perfetto",
+    "excellent": "Eccellente",
+    "wonderful": "Meraviglioso",
+    "superb": "Superbo"
   },
   "Profile": {
     "editProfile": "Modifica Profilo",
