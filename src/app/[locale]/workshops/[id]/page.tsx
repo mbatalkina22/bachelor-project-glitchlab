@@ -139,27 +139,11 @@ const WorkshopDetailPage = () => {
 
   // Function to scroll to registration section
   const scrollToRegister = () => {
-    if (registerSectionRef.current) {
-      // Get the position of the element
-      const yOffset = -120; // Offset to account for fixed header
-      const element = registerSectionRef.current;
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      
-      window.scrollTo({
-        top: y,
-        behavior: 'smooth'
-      });
-      
-      // Add a flash effect to highlight the button
-      setTimeout(() => {
-        element.classList.add('ring-4', 'ring-indigo-300', 'ring-opacity-70');
-        
-        // Remove the highlight after 2 seconds
-        setTimeout(() => {
-          element.classList.remove('ring-4', 'ring-indigo-300', 'ring-opacity-70');
-        }, 2000);
-      }, 500);
-    }
+    // Scroll to the top of the page
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   return (
@@ -261,10 +245,7 @@ const WorkshopDetailPage = () => {
                   onClick={handleUnregister}
                   backgroundColor="#FF0000"
                   textColor="white"
-                  hoverBackgroundColor="transparent"
-                  hoverTextColor="#FF0000"
-                  hoverBorderColor="#FF0000"
-                  padding="w-full md:w-auto px-6 py-3"
+                  className="w-full md:w-auto"
                 />
               ) : (
                 <HeroButton 
@@ -272,10 +253,7 @@ const WorkshopDetailPage = () => {
                   onClick={handleRegister}
                   backgroundColor="#4f46e5"
                   textColor="white"
-                  hoverBackgroundColor="transparent"
-                  hoverTextColor="#4f46e5"
-                  hoverBorderColor="#4f46e5"
-                  padding="w-full md:w-auto px-6 py-3"
+                  className="w-full md:w-auto"
                   ref={registerSectionRef}
                 />
               )}
@@ -316,12 +294,13 @@ const WorkshopDetailPage = () => {
                   <p className="text-gray-700 mb-4">
                     {t('badgeDescription')}
                   </p>
-                  <button 
+                  <HeroButton 
+                    text={t('unlockBadge')}
                     onClick={scrollToRegister}
-                    className="py-2 px-4 bg-white rounded-full inline-flex items-center text-sm text-indigo-600 shadow-sm border border-indigo-100 hover:bg-gray-50 transition-colors"
-                  >
-                    <span>{t('unlockBadge')}</span>
-                  </button>
+                    backgroundColor="white"
+                    textColor="#4f46e5"
+                    className="text-sm shadow-sm border border-indigo-100 hover:bg-gray-50"
+                  />
                 </div>
               </div>
             </ScrollReveal>

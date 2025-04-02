@@ -30,7 +30,7 @@ export default function Home() {
       {/* Hero Section */}
       <div className="relative h-screen w-full">
         <Image
-          src="/images/main.webp"
+          src="/images/main_banner.png"
           alt="Placeholder image"
           width={1200}
           height={800}

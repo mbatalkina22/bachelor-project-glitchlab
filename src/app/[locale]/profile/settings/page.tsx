@@ -357,9 +357,6 @@ const ProfileSettingsPage = () => {
                       text={t('saveChanges')}
                       backgroundColor="#4f46e5"
                       textColor="white"
-                      hoverBackgroundColor="#4338ca"
-                      hoverTextColor="white"
-                      padding="px-4 py-2"
                     />
                   </div>
                 </form>
@@ -481,9 +478,6 @@ const ProfileSettingsPage = () => {
                       text={t('savePreferences')}
                       backgroundColor="#4f46e5"
                       textColor="white"
-                      hoverBackgroundColor="#4338ca"
-                      hoverTextColor="white"
-                      padding="px-4 py-2"
                     />
                   </div>
                 </div>
@@ -544,9 +538,6 @@ const ProfileSettingsPage = () => {
                         text={t('updatePassword')}
                         backgroundColor="#4f46e5"
                         textColor="white"
-                        hoverBackgroundColor="#4338ca"
-                        hoverTextColor="white"
-                        padding="px-4 py-2"
                       />
                     </div>
                   </form>

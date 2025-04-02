@@ -180,10 +180,6 @@ const ProfilePage = () => {
                   text={t('editProfile')}
                   backgroundColor="white"
                   textColor="black"
-                  hoverBackgroundColor="#f3f4f6"
-                  hoverTextColor="black"
-                  hoverBorderColor="#f3f4f6"
-                  padding="px-4 py-2"
                 />
               </Link>
             </div>
@@ -308,7 +304,7 @@ const ProfilePage = () => {
                           alt={badge.name}
                           width={48}
                           height={48}
-                          className="object-cover"
+                          className="object-contain"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.src = "https://via.placeholder.com/48?text=Badge";
@@ -377,9 +373,6 @@ const ProfilePage = () => {
                         text={t('exploreWorkshops')}
                         backgroundColor="#4f46e5"
                         textColor="white"
-                        hoverBackgroundColor="#4338ca"
-                        hoverTextColor="white"
-                        padding="px-5 py-2"
                       />
                     </Link>
                   </div>
@@ -438,9 +431,6 @@ const ProfilePage = () => {
                       text={t('exploreWorkshops')}
                       backgroundColor="#4f46e5"
                       textColor="white"
-                      hoverBackgroundColor="#4338ca"
-                      hoverTextColor="white"
-                      padding="px-5 py-2"
                     />
                   </Link>
                 </div>
@@ -496,9 +486,6 @@ const ProfilePage = () => {
                       text={t('exploreWorkshops')}
                       backgroundColor="#4f46e5"
                       textColor="white"
-                      hoverBackgroundColor="#4338ca"
-                      hoverTextColor="white"
-                      padding="px-5 py-2"
                     />
                   </Link>
                 </div>

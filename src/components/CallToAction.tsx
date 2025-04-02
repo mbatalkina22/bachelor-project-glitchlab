@@ -18,10 +18,6 @@ const CallToAction = () => {
             href="/workshops"
             backgroundColor="white"
             textColor="black"
-            hoverBackgroundColor="transparent"
-            hoverTextColor="white"
-            hoverBorderColor="white"
-            padding="py-3 px-8"
           />
         </ScrollReveal>
       </div>

@@ -43,14 +43,11 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
 
   // Sample words for different languages
   const sampleWords = [
-    t("amazing"),
-    t("great"),
-    t("lovedIt"),
-    t("fantastic"),
-    t("perfect"),
-    t("excellent"),
-    t("wonderful"),
-    t("superb"),
+    t("inspiring"),
+    t("boring"),
+    t("fun"),
+    t("creative"),
+    t("confusing")
   ];
 
   // Open review modal
@@ -139,8 +136,8 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
     }
   };
 
-  // Circle component with cat ears
-  const CircleWithEars = ({
+  // Completely revised Stamp component with direct color application
+  const Stamp = ({
     color,
     font,
     text,
@@ -148,64 +145,57 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
     color: string;
     font: string;
     text: string;
-  }) => (
-    <div className="relative w-32 h-32 mx-auto">
-      {/* Simple cat circle with triangular ears */}
-      <svg
-        viewBox="0 0 100 100"
-        className="w-full h-full"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {/* Base circle with shadow */}
-        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="2" stdDeviation="2" floodOpacity="0.3" />
-        </filter>
-
-        {/* Left ear - wider triangle */}
-        <polygon
-          points="25,5 15,25 35,25"
-          fill={color}
-          stroke="#222"
-          strokeWidth="1"
-          transform="rotate(-30, 25, 25)"
-        />
-
-        {/* Right ear - matched to left ear style */}
-        <polygon
-          points="75,5 65,25 85,25"
-          fill={color}
-          stroke="#222"
-          strokeWidth="1"
-          transform="rotate(30, 75, 25)"
-        />
-
-        {/* Main circle */}
-        <circle
-          cx="50"
-          cy="50"
-          r="38"
-          fill={color}
-          stroke="#222"
-          strokeWidth="1"
-          filter="url(#shadow)"
-        />
-
-        {/* Text inside circle */}
-        <text
-          x="50"
-          y="55"
-          fontFamily={getFontFamily(font)}
-          fontSize="14"
-          textAnchor="middle"
-          fill="white"
-          fontWeight="bold"
-          dominantBaseline="middle"
-        >
-          {text}
-        </text>
-      </svg>
-    </div>
-  );
+  }) => {
+    return (
+      <div className="relative w-32 h-32 mx-auto">
+        <div className="relative w-full h-full">
+          {/* Force re-render by using color as key */}
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 66.73 69.75"
+            className="absolute inset-0 w-full h-full"
+            style={{ filter: `drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.3))` }}
+            key={color} // Add key to force re-render when color changes
+          >
+            <g id="Layer_2" data-name="Layer 2">
+              <g id="Layer_3" data-name="Layer 3">
+                {/* Apply color directly to fill attribute for each path */}
+                <path fill={color} d="M38.54,5.1A30.11,30.11,0,0,1,61.75,24.72h4.87l.06-.44-1.94-2V19.44l-2.22-1.73-.44-2.77-2.45-1.38-.84-2.68-2.63-1L54.92,7.36l-2.75-.59L50.58,4.45l-2.8-.17L45.86,2.22l-2.8.25L40.85.73l-2.73.66L35.68,0,33.07,1.06,30.45,0,28,1.48,25.29.86,23.12,2.64l-2.81-.2L18.43,4.53l-2.8.22L14.07,7.1l-2.73.64-1.19,2.54-2.61,1L6.74,14,4.32,15.43l-.39,2.79L1.74,20l0,2.81L0,24.72H5A30.12,30.12,0,0,1,38.54,5.1Z"/>
+                <path fill={color} d="M61.68,45A30.11,30.11,0,0,1,5.05,45H.11l-.06.44L2,47.5l0,2.81L4.22,52l.44,2.77,2.45,1.38L8,58.87l2.63,1,1.23,2.53,2.75.59,1.59,2.32,2.8.17,1.92,2.06,2.8-.25L25.88,69l2.73-.66,2.44,1.39,2.6-1.06,2.63,1,2.41-1.43,2.75.62,2.17-1.78,2.81.2,1.88-2.09L51.1,65l1.55-2.35L55.39,62l1.19-2.55,2.61-1,.79-2.7,2.43-1.41.39-2.79L65,49.77,65,47,66.73,45Z"/>
+                <path fill={color} d="M22.23,6.8,25,4.12,7.38.68A4,4,0,0,0,2.73,5.1l1.1,19.69L5.65,23A30.11,30.11,0,0,1,22.23,6.8Z"/>
+                <path fill={color} d="M63.48,4.57A4,4,0,0,0,58.76.24L41.24,4,44,6.61a30.14,30.14,0,0,1,16.86,16l1.84,1.75Z"/>
+                <path fill={color} d="M37.63,10.3a24.87,24.87,0,0,0-27,14.42h2.21a22.83,22.83,0,0,1,41,0h2.22a25.68,25.68,0,0,0-2.4-4.23A24.69,24.69,0,0,0,37.63,10.3Z"/>
+                <path fill={color} d="M29.44,57.28A22.8,22.8,0,0,1,13,45H10.74A24.82,24.82,0,0,0,29.1,59.25a25.2,25.2,0,0,0,4.32.37A24.87,24.87,0,0,0,56,45H53.78A22.87,22.87,0,0,1,29.44,57.28Z"/>
+                <path fill={color} d="M45.35,51.83a20.84,20.84,0,0,1-29-5.07c-.39-.56-.76-1.14-1.09-1.73H13a22.84,22.84,0,0,0,40.82,0H51.49A20.77,20.77,0,0,1,45.35,51.83Z"/>
+                <path fill={color} d="M33.35,13.93a21,21,0,0,1,3.6.31,20.73,20.73,0,0,1,13.47,8.55,21.28,21.28,0,0,1,1.19,1.93h2.26a22.83,22.83,0,0,0-41,0h2.27A20.9,20.9,0,0,1,33.35,13.93Z"/>
+                <path fill={color} d="M42.4,45.07a.47.47,0,0,0-.54.13l-.81.91-1.22,0a.47.47,0,0,0-.46.31.47.47,0,0,0,.13.53l.91.82,0,1.22a.49.49,0,0,0,.31.46.5.5,0,0,0,.54-.13l.81-.91,1.22,0a.49.49,0,0,0,.33-.85l-.91-.81,0-1.22A.48.48,0,0,0,42.4,45.07Z"/>
+                <path fill={color} d="M34.22,48.07a.46.46,0,0,0-.54.13l-.82.91-1.22,0a.48.48,0,0,0-.33.84l.92.82,0,1.22a.49.49,0,0,0,.31.46.49.49,0,0,0,.54-.13l.81-.91,1.23,0a.49.49,0,0,0,.33-.85l-.92-.81,0-1.22A.47.47,0,0,0,34.22,48.07Z"/>
+                <path fill={color} d="M26,45.07a.47.47,0,0,0-.54.13l-.81.91-1.22,0a.47.47,0,0,0-.46.31.45.45,0,0,0,.13.53l.91.82L24,49a.47.47,0,0,0,.31.46.5.5,0,0,0,.54-.13l.81-.91,1.22,0a.49.49,0,0,0,.46-.31.5.5,0,0,0-.13-.54l-.91-.81,0-1.22A.48.48,0,0,0,26,45.07Z"/>
+                <path fill={color} d="M24.05,24.28a.49.49,0,0,0,.54-.13l.81-.92,1.23,0a.48.48,0,0,0,.33-.84L26,21.59l0-1.22a.49.49,0,0,0-.85-.33l-.81.92-1.23,0a.49.49,0,0,0-.33.85l.92.81,0,1.23A.47.47,0,0,0,24.05,24.28Z"/>
+                <path fill={color} d="M32.24,21.28a.5.5,0,0,0,.54-.13l.81-.92,1.22,0a.47.47,0,0,0,.46-.3.46.46,0,0,0-.13-.54l-.91-.82,0-1.22a.48.48,0,0,0-.31-.46.5.5,0,0,0-.54.13l-.81.92-1.22,0a.49.49,0,0,0-.46.31.49.49,0,0,0,.13.54l.91.81,0,1.23A.5.5,0,0,0,32.24,21.28Z"/>
+                <path fill={color} d="M40.43,24.28a.48.48,0,0,0,.53-.13l.82-.92,1.22,0a.48.48,0,0,0,.46-.3.49.49,0,0,0-.13-.54l-.91-.82,0-1.22a.49.49,0,0,0-.85-.33l-.81.92-1.22,0a.48.48,0,0,0-.46.31.47.47,0,0,0,.12.54l.92.81,0,1.23A.48.48,0,0,0,40.43,24.28Z"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+        
+        {/* Text positioned in center */}
+        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
+          <span 
+            style={{ 
+              fontFamily: getFontFamily(font),
+              color: color,
+              fontSize: '20px',
+              textAlign: 'center'
+            }}
+            className="font-bold px-2"
+          >
+            {text}
+          </span>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -217,9 +207,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
         onClick={openReviewModal}
         backgroundColor="#4f46e5"
         textColor="white"
-        hoverBackgroundColor="#4338ca"
-        hoverTextColor="white"
-        padding="mb-6 px-4 py-2"
+        className="mb-6"
       />
 
       {/* Review Modal */}
@@ -249,7 +237,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
             <form onSubmit={handleSubmitReview} className="p-6 space-y-6">
               {/* Circle Preview */}
               <div className="mb-6">
-                <CircleWithEars
+                <Stamp
                   color={circleColor}
                   font={circleFont}
                   text={circleText || t("previewText")}
@@ -346,17 +334,13 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
                   />
                 </div>
               </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isSubmittingReview}
-                className={`w-full px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                  isSubmittingReview ? "opacity-75 cursor-not-allowed" : ""
-                }`}
-              >
-                {isSubmittingReview ? t("submittingReview") : t("submitReview")}
-              </button>
+              <HeroButton
+                text={isSubmittingReview ? t("submittingReview") : t("submitReview")}
+                onClick={() => {}}
+                className={`w-full ${isSubmittingReview ? "opacity-75 cursor-not-allowed" : ""}`}
+                backgroundColor="#4f46e5"
+                textColor="white"
+              />
             </form>
           </div>
         </div>
@@ -371,7 +355,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
           >
             <div className="flex items-start">
               <div className="flex-shrink-0 mr-4">
-                <CircleWithEars
+                <Stamp
                   color={review.circleColor}
                   font={review.circleFont}
                   text={review.circleText}

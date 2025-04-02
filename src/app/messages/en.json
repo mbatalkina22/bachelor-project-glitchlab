@@ -126,14 +126,11 @@
     "enterComment": "Add your comment here...",
     "language": "Language",
     
-    "amazing": "Amazing!",
-    "great": "Great!",
-    "lovedIt": "Loved it!",
-    "fantastic": "Fantastic",
-    "perfect": "Perfect",
-    "excellent": "Excellent",
-    "wonderful": "Wonderful",
-    "superb": "Superb"
+    "inspiring": "Inspiring",
+    "boring": "Boring",
+    "fun": "Fun",
+    "creative": "Creative",
+    "confusing": "Confusing"
   },
   "Profile": {
     "editProfile": "Edit Profile",

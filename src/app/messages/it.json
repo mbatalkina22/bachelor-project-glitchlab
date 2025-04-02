@@ -155,14 +155,11 @@
     "enterComment": "Aggiungi il tuo commento qui...",
     "language": "Lingua",
     
-    "amazing": "Incredibile!",
-    "great": "Ottimo!",
-    "lovedIt": "Mi è piaciuto!",
-    "fantastic": "Fantastico",
-    "perfect": "Perfetto",
-    "excellent": "Eccellente",
-    "wonderful": "Meraviglioso",
-    "superb": "Superbo"
+    "inspiring": "Ispiratore",
+    "boring": "Noioso",
+    "fun": "Divertente",
+    "creative": "Creativo",
+    "confusing": "Confuso"
   },
   "Profile": {
     "editProfile": "Modifica Profilo",

@@ -7,7 +7,6 @@ module.exports = {
     extend: {
       fontFamily: {
         arial: ['Arial', 'sans-serif'],
-        secularone: ['var(--font-secular-one)'],
       },
     },
   },

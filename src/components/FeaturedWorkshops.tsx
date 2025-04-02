@@ -144,10 +144,6 @@ const FeaturedWorkshops = () => {
             href="/workshops"
             backgroundColor="#7471f9"
             textColor="white"
-            hoverBackgroundColor="transparent"
-            hoverTextColor="#7471f9"
-            hoverBorderColor="#7471f9"
-            padding="py-3 px-6"
           />
         </div>
       </div>
