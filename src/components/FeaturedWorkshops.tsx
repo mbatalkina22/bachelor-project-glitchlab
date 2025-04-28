@@ -1,75 +1,83 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ScrollReveal from "@/components/ScrollReveal";
 import WorkshopCard from "@/components/WorkshopCard";
 import { useRouter } from 'next/navigation';
 import { Icon } from "@iconify/react";
 import { useTranslations } from 'next-intl';
 import HeroButton from "@/components/HeroButton";
+import { useParams } from "next/navigation";
+
+interface Workshop {
+  _id: string;
+  name: string;
+  description: string;
+  date: string;
+  time: string;
+  imageSrc: string;
+  badgeImageSrc: string;
+  categories: string[];
+  level: string;
+  location: string;
+  instructor: string;
+  delay?: string;
+  bgColor?: string;
+}
 
 const FeaturedWorkshops = () => {
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string || "en";
   const t = useTranslations('FeaturedWorkshops');
-  const workshops = [
-    {
-      title: "UX Design Fundamentals",
-      description: "Learn the basics of user experience design in this hands-on workshop.",
-      date: "June 15, 2023",
-      time: "2:00 PM - 5:00 PM",
-      imageSrc: "/images/workshop.jpg",
-      delay: "delay-100",
-      bgColor: "#c3c2fc"
-    },
-    {
-      title: "Advanced JavaScript Patterns",
-      description: "Dive deep into advanced JavaScript patterns and techniques.",
-      date: "June 22, 2023",
-      time: "10:00 AM - 3:00 PM",
-      imageSrc: "/images/workshop.jpg",
-      delay: "delay-200",
-      bgColor: "#f8c5f4"
-    },
-    {
-      title: "Data Visualization with D3.js",
-      description: "Create stunning data visualizations using the D3.js library.",
-      date: "July 5, 2023",
-      time: "1:00 PM - 4:30 PM",
-      imageSrc: "/images/workshop.jpg",
-      delay: "delay-300",
-      bgColor: "#fee487"
-    },
-    {
-      title: "React Performance Optimization",
-      description: "Learn techniques to optimize your React applications for better performance.",
-      date: "July 12, 2023",
-      time: "9:00 AM - 12:00 PM",
-      imageSrc: "/images/workshop.jpg",
-      delay: "delay-100",
-      bgColor: "#aef9e1"
-    },
-    {
-      title: "Introduction to Machine Learning",
-      description: "Get started with machine learning concepts and practical applications.",
-      date: "July 18, 2023",
-      time: "1:00 PM - 5:00 PM",
-      imageSrc: "/images/workshop.jpg",
-      delay: "delay-200",
-      bgColor: "#c3c2fc"
-    },
-    {
-      title: "Responsive Web Design",
-      description: "Create websites that look great on any device using modern CSS techniques.",
-      date: "July 25, 2023",
-      time: "10:00 AM - 2:00 PM",
-      imageSrc: "/images/workshop.jpg",
-      delay: "delay-300",
-      bgColor: "#f8c5f4"
-    }
-  ];
-
+  
+  const [workshops, setWorkshops] = useState<Workshop[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 3;
+
+  const fetchWorkshops = async () => {
+    try {
+      setIsLoading(true);
+      // Add cache-busting query parameter
+      const response = await fetch(`/api/workshops?t=${new Date().getTime()}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch workshops');
+      }
+      
+      const data = await response.json();
+      console.log('Fetched featured workshops:', data.length);
+      
+      // Add UI specific properties and limit to 6 workshops for featured section
+      const featuredWorkshops = data.slice(0, 6).map((workshop: Workshop, index: number) => ({
+        ...workshop,
+        id: workshop._id,
+        title: workshop.name,
+        delay: `delay-${(index % 3 + 1) * 100}`,
+        bgColor: getBgColor(index)
+      }));
+      
+      setWorkshops(featuredWorkshops);
+    } catch (err) {
+      console.error('Error fetching workshops:', err);
+      setError('Failed to load workshops');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    fetchWorkshops();
+  }, []);
+  
+  // Function to rotate through background colors
+  const getBgColor = (index: number) => {
+    const colors = ["#c3c2fc", "#f8c5f4", "#fee487", "#aef9e1"];
+    return colors[index % colors.length];
+  };
+
   const pageCount = Math.ceil(workshops.length / itemsPerPage);
 
   const handlePageChange = (pageIndex: number) => {
@@ -89,17 +97,89 @@ const FeaturedWorkshops = () => {
     (currentPage + 1) * itemsPerPage
   );
 
+  if (isLoading) {
+    return (
+      <div className="py-16">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7471f9]"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="py-16">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
+          <Icon icon="heroicons:exclamation-circle" className="w-12 h-12 mx-auto text-red-500 mb-4" />
+          <h3 className="text-xl font-medium text-gray-900 mb-2">Error</h3>
+          <p className="text-gray-500">{error}</p>
+          <button 
+            onClick={fetchWorkshops}
+            className="mt-4 px-4 py-2 bg-[#7471f9] text-white rounded-md hover:bg-[#5f5dd6]"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (workshops.length === 0) {
+    return (
+      <div className="py-16">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-secularone mb-6 text-black">{t('title')}</h2>
+          <p className="text-gray-500 mb-8">No workshops available at the moment.</p>
+          <div className="flex justify-center space-x-4">
+            <HeroButton 
+              text={t('viewAllButton')}
+              href={`/${locale}/workshops`}
+              backgroundColor="#7471f9"
+              textColor="white"
+            />
+            <button 
+              onClick={fetchWorkshops}
+              className="px-6 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 flex items-center"
+            >
+              <Icon icon="heroicons:arrow-path" className="w-5 h-5 mr-2" />
+              Refresh
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="py-16">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <ScrollReveal>
-          <h2 className="text-3xl md:text-4xl font-secularone mb-12 text-center text-black">{t('title')}</h2>
-        </ScrollReveal>
+        <div className="flex justify-between items-center mb-12">
+          <ScrollReveal>
+            <h2 className="text-3xl md:text-4xl font-secularone text-black">{t('title')}</h2>
+          </ScrollReveal>
+          <button 
+            onClick={fetchWorkshops}
+            className="p-2 bg-gray-100 text-gray-800 rounded-full hover:bg-gray-200 flex items-center focus:outline-none"
+            title="Refresh workshops"
+          >
+            <Icon icon="heroicons:arrow-path" className="w-5 h-5" />
+          </button>
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {visibleWorkshops.map((workshop, index) => (
             <ScrollReveal key={`${currentPage}-${index}`} className={workshop.delay}>
-              <WorkshopCard {...workshop} />
+              <WorkshopCard 
+                id={workshop._id}
+                title={workshop.name}
+                description={workshop.description}
+                date={workshop.date}
+                time={workshop.time}
+                imageSrc={workshop.imageSrc}
+                delay={workshop.delay || ""}
+                bgColor={workshop.bgColor}
+              />
             </ScrollReveal>
           ))}
         </div>
@@ -141,7 +221,7 @@ const FeaturedWorkshops = () => {
         <div className="text-center mt-12">
           <HeroButton 
             text={t('viewAllButton')}
-            href="/workshops"
+            href={`/${locale}/workshops`}
             backgroundColor="#7471f9"
             textColor="white"
           />

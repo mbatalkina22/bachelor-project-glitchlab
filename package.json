@@ -12,6 +12,8 @@
     "@iconify-json/mdi": "^1.2.3",
     "@iconify/react": "^5.2.0",
     "iconify-icon": "^2.3.0",
+    "mongodb": "^6.15.0",
+    "mongoose": "^8.13.1",
     "next": "15.2.2",
     "next-intl": "^4.0.2",
     "react": "^19.0.0",

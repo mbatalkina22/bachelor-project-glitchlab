@@ -3,186 +3,228 @@
 import React, { useState, useEffect } from 'react';
 import WorkshopCard from '@/components/WorkshopCard';
 import ScrollReveal from '@/components/ScrollReveal';
+import WorkshopFilters from '@/components/WorkshopFilters';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
+
+interface Workshop {
+    _id: string;
+    name: string;
+    description: string;
+    date: string;
+    time: string;
+    imageSrc: string;
+    badgeImageSrc: string;
+    categories: string[];
+    level: string;
+    location: string;
+    instructor: string;
+    delay?: string;
+    bgColor?: string;
+}
 
 const WorkshopsPage = () => {
     const t = useTranslations('WorkshopsPage');
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('all');
+    const [workshops, setWorkshops] = useState<Workshop[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState('');
+    
+    // Filter states
+    const [ageFilter, setAgeFilter] = useState('all');
+    const [skillFilter, setSkillFilter] = useState('all');
+    const [locationFilter, setLocationFilter] = useState('all');
+    const [categoryFilter, setCategoryFilter] = useState('all');
+    const [timeFilter, setTimeFilter] = useState('all');
+    const [techFilter, setTechFilter] = useState('all');
 
-    // Sample workshop data
-    const workshops = [
-        {
-            id: "1",
-            title: "UX Design Fundamentals",
-            description: "Learn the basics of user experience design in this hands-on workshop. You'll discover essential UX principles and how to apply them to your projects.",
-            date: "June 15, 2023",
-            time: "2:00 PM - 5:00 PM",
-            imageSrc: "/images/workshop.jpg",
-            delay: "delay-100",
-            category: "design",
-            bgColor: "#c3c2fc"
-        },
-        {
-            id: "2",
-            title: "Advanced JavaScript Patterns",
-            description: "Dive deep into advanced JavaScript patterns and techniques. Perfect for developers looking to enhance their JS skills.",
-            date: "June 22, 2023",
-            time: "10:00 AM - 3:00 PM",
-            imageSrc: "/images/workshop.jpg",
-            delay: "delay-200",
-            category: "coding",
-            bgColor: "#f8c5f4"
-        },
-        {
-            id: "3",
-            title: "Data Visualization with D3.js",
-            description: "Create stunning data visualizations using the D3.js library. Learn how to transform your data into interactive and insightful visualizations.",
-            date: "July 5, 2023",
-            time: "1:00 PM - 4:30 PM",
-            imageSrc: "/images/workshop.jpg",
-            delay: "delay-300",
-            category: "coding",
-            bgColor: "#fee487"
-        },
-        {
-            id: "4",
-            title: "React Performance Optimization",
-            description: "Learn techniques to optimize your React applications for better performance. Discover common bottlenecks and how to resolve them.",
-            date: "July 12, 2023",
-            time: "9:00 AM - 12:00 PM",
-            imageSrc: "/images/workshop.jpg",
-            delay: "delay-100",
-            category: "coding",
-            bgColor: "#aef9e1"
-        },
-        {
-            id: "5",
-            title: "Introduction to Machine Learning",
-            description: "Get started with machine learning concepts and practical applications. This workshop covers the basics of ML algorithms and implementation.",
-            date: "July 18, 2023",
-            time: "1:00 PM - 5:00 PM",
-            imageSrc: "/images/workshop.jpg",
-            delay: "delay-200",
-            category: "data",
-            bgColor: "#c3c2fc"
-        },
-        {
-            id: "6",
-            title: "Responsive Web Design",
-            description: "Create websites that look great on any device using modern CSS techniques. Learn about flexbox, grid, and responsive design principles.",
-            date: "July 25, 2023",
-            time: "10:00 AM - 2:00 PM",
-            imageSrc: "/images/workshop.jpg",
-            delay: "delay-300",
-            category: "design",
-            bgColor: "#f8c5f4"
-        },
-        {
-            id: "7",
-            title: "User Research Methods",
-            description: "Master essential user research methods to inform your product decisions. Learn how to conduct interviews, surveys, and usability tests.",
-            date: "August 2, 2023",
-            time: "1:00 PM - 4:00 PM",
-            imageSrc: "/images/workshop.jpg",
-            delay: "delay-100",
-            category: "design",
-            bgColor: "#fee487"
-        },
-        {
-            id: "8",
-            title: "Advanced CSS Animations",
-            description: "Take your web animations to the next level with advanced CSS techniques. Create engaging interactions without JavaScript.",
-            date: "August 8, 2023",
-            time: "9:00 AM - 12:00 PM",
-            imageSrc: "/images/workshop.jpg",
-            delay: "delay-200",
-            category: "design",
-            bgColor: "#aef9e1"
-        },
-        {
-            id: "9",
-            title: "Testing for Frontend Developers",
-            description: "Learn how to write effective tests for your frontend applications. Cover unit, integration, and end-to-end testing strategies.",
-            date: "August 15, 2023",
-            time: "10:00 AM - 3:00 PM",
-            imageSrc: "/images/workshop.jpg",
-            delay: "delay-300",
-            category: "testing",
-            bgColor: "#c3c2fc"
+    const fetchWorkshops = async () => {
+        try {
+            setIsLoading(true);
+            // Add a cache-busting query parameter
+            const response = await fetch(`/api/workshops?t=${new Date().getTime()}`);
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch workshops');
+            }
+            
+            const data = await response.json();
+            
+            // Add UI specific properties
+            const workshopsWithUIProps = data.map((workshop: Workshop, index: number) => ({
+                ...workshop,
+                id: workshop._id,
+                title: workshop.name,
+                delay: `delay-${(index % 3 + 1) * 100}`,
+                bgColor: getBgColor(index)
+            }));
+            
+            setWorkshops(workshopsWithUIProps);
+            console.log('Fetched workshops:', workshopsWithUIProps.length);
+        } catch (err) {
+            console.error('Error fetching workshops:', err);
+            setError('Failed to load workshops. Please try again later.');
+        } finally {
+            setIsLoading(false);
         }
-    ];
+    };
+
+    useEffect(() => {
+        fetchWorkshops();
+    }, []);
+    
+    // Function to rotate through background colors
+    const getBgColor = (index: number) => {
+        const colors = ["#c3c2fc", "#f8c5f4", "#fee487", "#aef9e1"];
+        return colors[index % colors.length];
+    };
 
     // Filter workshops based on search term and category
     const filteredWorkshops = workshops.filter(workshop => {
-        const matchesSearch = workshop.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        const matchesSearch = workshop.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                              workshop.description.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = filter === 'all' || workshop.category === filter;
-        return matchesSearch && matchesCategory;
+        const matchesCategory = categoryFilter === 'all' || (workshop.categories && workshop.categories.includes(categoryFilter));
+        const matchesLocation = locationFilter === 'all' || workshop.location === locationFilter;
+        const matchesLevel = skillFilter === 'all' || workshop.level === skillFilter;
+        
+        return matchesSearch && matchesCategory && matchesLocation && matchesLevel;
     });
 
-    return (
-        <div className="pt-16 min-h-screen">
-            {/* Filter Section */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <div className="relative flex-grow max-w-3xl">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Icon icon="heroicons:magnifying-glass" className="h-5 w-5 text-gray-400" />
-                            </div>
-                            <input
-                                type="text"
-                                placeholder={t('searchPlaceholder')}
-                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                        </div>
-                        <div className="flex items-center space-x-4">
-                            <span className="text-gray-700 whitespace-nowrap">{t('filterBy')}</span>
-                            <select
-                                value={filter}
-                                onChange={(e) => setFilter(e.target.value)}
-                                className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black focus:border-black rounded-md"
-                            >
-                                <option value="all">{t('allCategories')}</option>
-                                <option value="design">{t('design')}</option>
-                                <option value="coding">{t('coding')}</option>
-                                <option value="data">{t('data')}</option>
-                                <option value="testing">{t('testing')}</option>
-                            </select>
-                        </div>
-                    </div>
-                </div> */}
+    // Empty filter handlers
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(e.target.value);
+    };
 
-                {/* Results Count */}
-                <div className="mb-6">
-                    <p className="text-gray-600">
-                        {t('showing')} {filteredWorkshops.length} {t('of')} {workshops.length} {t('workshops')}
-                    </p>
-                </div>
+    const handleFilterChange = (filterType: string, value: string) => {
+        switch(filterType) {
+            case 'age':
+                setAgeFilter(value);
+                break;
+            case 'skill':
+                setSkillFilter(value);
+                break;
+            case 'location':
+                setLocationFilter(value);
+                break;
+            case 'category':
+                setCategoryFilter(value);
+                break;
+            case 'time':
+                setTimeFilter(value);
+                break;
+            case 'tech':
+                setTechFilter(value);
+                break;
+            default:
+                break;
+        }
+    };
 
-                {/* Workshop Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                    {filteredWorkshops.length > 0 ? (
-                        filteredWorkshops.map((workshop, index) => (
-                            <ScrollReveal key={index} className={workshop.delay}>
-                                <WorkshopCard {...workshop} />
-                            </ScrollReveal>
-                        ))
-                    ) : (
-                        <div className="col-span-3 py-12 text-center">
-                            <Icon icon="heroicons:face-frown" className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                            <h3 className="text-xl font-medium text-gray-900 mb-2">{t('noWorkshopsFound')}</h3>
-                            <p className="text-gray-500">{t('tryAdjusting')}</p>
-                        </div>
-                    )}
+    if (isLoading) {
+        return (
+            <div className="pt-16 min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7471f9]"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="pt-16 min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <Icon icon="heroicons:exclamation-circle" className="w-12 h-12 mx-auto text-red-500 mb-4" />
+                    <h3 className="text-xl font-medium text-gray-900 mb-2">Error</h3>
+                    <p className="text-gray-500">{error}</p>
+                    <button 
+                        onClick={fetchWorkshops}
+                        className="mt-4 px-4 py-2 bg-[#7471f9] text-white rounded-md hover:bg-[#5f5dd6]"
+                    >
+                        Try Again
+                    </button>
                 </div>
             </div>
-         </div>
+        );
+    }
+
+    return (
+        <div className="pt-16 min-h-screen bg-gray-50">
+            {/* Main Content Container */}
+            <div className="mx-auto px-2 sm:px-4 lg:px-8 py-8">
+                <div className="flex flex-col lg:flex-row gap-1 min-h-screen">
+                    {/* Filters component */}
+                    <WorkshopFilters 
+                        ageFilter={ageFilter}
+                        skillFilter={skillFilter}
+                        locationFilter={locationFilter}
+                        categoryFilter={categoryFilter}
+                        timeFilter={timeFilter}
+                        techFilter={techFilter}
+                        handleFilterChange={handleFilterChange}
+                    />
+
+                    {/* Content area - right side */}
+                    <div className="lg:w-[88%] pl-0 lg:pl-3 lg:border-l border-gray-200">
+                        {/* Search bar and refresh button at the top */}
+                        <div className="flex justify-center mb-6">
+                            <div className="relative w-full max-w-4xl flex items-center">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <Icon icon="heroicons:magnifying-glass" className="h-5 w-5 text-gray-600" />
+                                </div>
+                                <input
+                                    type="text"
+                                    placeholder={t('searchPlaceholder') || "Search workshops..."}
+                                    className="block w-full pl-10 pr-5 py-2 border border-gray-300 rounded-full leading-5 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#7471f9] focus:border-[#7471f9]"
+                                    value={searchTerm}
+                                    onChange={handleSearch}
+                                />
+                                <button 
+                                    onClick={fetchWorkshops} 
+                                    className="ml-3 p-2 bg-[#7471f9] text-white rounded-full hover:bg-[#5f5dd6] focus:outline-none"
+                                    title="Refresh workshops"
+                                >
+                                    <Icon icon="heroicons:arrow-path" className="h-5 w-5" />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Results Count */}
+                        <div className="mb-6 text-center">
+                            <p className="text-gray-600">
+                                {t('showing')} {filteredWorkshops.length} {t('of')} {workshops.length} {t('workshops')}
+                            </p>
+                        </div>
+
+                        {/* Workshop Cards Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 mx-2 mb-10">
+                            {filteredWorkshops.length > 0 ? (
+                                filteredWorkshops.map((workshop, index) => (
+                                    <ScrollReveal key={workshop._id} className={workshop.delay}>
+                                        <WorkshopCard 
+                                            id={workshop._id}
+                                            title={workshop.name}
+                                            description={workshop.description}
+                                            date={workshop.date}
+                                            time={workshop.time}
+                                            imageSrc={workshop.imageSrc}
+                                            delay={workshop.delay || ""}
+                                            bgColor={workshop.bgColor}
+                                        />
+                                    </ScrollReveal>
+                                ))
+                            ) : (
+                                <div className="col-span-full py-12 text-center">
+                                    <Icon icon="heroicons:face-frown" className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+                                    <h3 className="text-xl font-medium text-gray-900 mb-2">{t('noWorkshopsFound')}</h3>
+                                    <p className="text-gray-500">{t('tryAdjusting')}</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 };
 

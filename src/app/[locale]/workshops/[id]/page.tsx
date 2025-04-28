@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
@@ -9,8 +9,22 @@ import WorkshopCard from '@/components/WorkshopCard';
 import TestimonialCard from '@/components/TestimonialCard';
 import ReviewList, { Review } from '@/components/ReviewList';
 import { useTranslations } from 'next-intl';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import HeroButton from '@/components/HeroButton';
+
+interface Workshop {
+  _id: string;
+  name: string;
+  description: string;
+  date: string;
+  time: string;
+  imageSrc: string;
+  badgeImageSrc: string;
+  categories: string[];
+  level: string;
+  location: string;
+  instructor: string;
+}
 
 interface WorkshopReview {
   name: string;
@@ -23,32 +37,67 @@ interface WorkshopReview {
 
 const WorkshopDetailPage = () => {
   const params = useParams();
+  const router = useRouter();
   const id = params.id as string;
+  const locale = params.locale as string;
   const t = useTranslations('WorkshopDetail');
+  
   const [isRegistered, setIsRegistered] = useState(false);
+  const [workshop, setWorkshop] = useState<Workshop | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [similarWorkshops, setSimilarWorkshops] = useState<Workshop[]>([]);
 
-  // This would come from an API in a real application
-  const workshop = {
-    id: id,
-    title: "UX Design Fundamentals",
-    description: "Learn the basics of user experience design in this hands-on workshop. You'll discover essential UX principles and how to apply them to your projects. This workshop is designed for beginners who want to understand the fundamentals of UX design and start implementing these principles in their work. We'll cover user research, information architecture, wireframing, prototyping, and usability testing.",
-    longDescription: "This comprehensive UX Design workshop is perfect for beginners and those looking to refresh their skills. Over the course of the session, we'll dive deep into the principles that make for exceptional user experiences.\n\nYou'll learn how to conduct effective user research, create user personas, develop information architecture, design intuitive navigation systems, create wireframes and prototypes, and conduct usability testing. All of these skills are essential for creating digital products that users love.\n\nThis workshop balances theory with hands-on practice. You'll work on real-world examples and leave with practical skills you can immediately apply to your projects. Whether you're a designer looking to expand your skillset, a developer wanting to better understand UX, or a product manager aiming to create more user-centered products, this workshop will provide valuable insights and techniques.",
-    date: "June 15, 2023",
-    time: "2:00 PM - 5:00 PM",
-    location: "Main Campus, Building A, Room 101",
-    imageSrc: "/images/workshop.jpg",
-    categories: ["design", "beginner", "hands-on"],
-    registeredCount: 24,
-    capacity: 30,
-    requiredLevel: "Beginner",
-    earnableBadge: "UX Fundamentals Badge",
-    instructorName: "Sarah Johnson",
-    instructorRole: "Senior UX Designer",
-    instructorBio: "Sarah has over 10 years of experience in UX design and has worked with major tech companies. She specializes in user research and information architecture.",
-    instructorAvatar: "/images/avatar.jpg"
-  };
+  useEffect(() => {
+    const fetchWorkshop = async () => {
+      try {
+        setIsLoading(true);
+        // Add a cache-busting parameter
+        const response = await fetch(`/api/workshops/${id}?t=${new Date().getTime()}`);
+        
+        if (!response.ok) {
+          if (response.status === 404) {
+            setError('Workshop not found');
+          } else {
+            throw new Error('Failed to fetch workshop');
+          }
+          return;
+        }
+        
+        const data = await response.json();
+        setWorkshop(data);
+        
+        // Fetch similar workshops (workshops with at least one matching category)
+        if (data.categories && data.categories.length > 0) {
+          const allWorkshopsResponse = await fetch(`/api/workshops?t=${new Date().getTime()}`);
+          if (allWorkshopsResponse.ok) {
+            const allWorkshops = await allWorkshopsResponse.json();
+            
+            // Filter for similar workshops (same category, different ID)
+            const similar = allWorkshops
+              .filter((w: Workshop) => 
+                w._id !== data._id && 
+                w.categories.some((cat: string) => data.categories.includes(cat))
+              )
+              .slice(0, 3);  // Limit to 3 similar workshops
+            
+            setSimilarWorkshops(similar);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching workshop:', err);
+        setError('Failed to load workshop details. Please try again later.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    if (id) {
+      fetchWorkshop();
+    }
+  }, [id]);
 
-  // Sample reviews
+  // Sample reviews - these would come from an API in a real application
   const reviews: WorkshopReview[] = [
     { 
       name: "Michael Chen", 
@@ -76,54 +125,6 @@ const WorkshopDetailPage = () => {
     }
   ];
 
-  // Similar workshops
-  const similarWorkshops = [
-    {
-      id: "2",
-      title: "Advanced UX Research Methods",
-      description: "Take your UX research skills to the next level with advanced methods and techniques for gathering user insights.",
-      date: "July 10, 2023",
-      time: "1:00 PM - 4:00 PM",
-      imageSrc: "/images/workshop.jpg",
-      delay: "delay-100",
-      bgColor: "#7471f9"
-    },
-    {
-      id: "3",
-      title: "UI Design for UX Designers",
-      description: "Learn how to complement your UX skills with UI design principles for creating visually appealing interfaces.",
-      date: "July 18, 2023",
-      time: "10:00 AM - 2:00 PM",
-      imageSrc: "/images/workshop.jpg",
-      delay: "delay-200",
-      headingColor: "#f39aec"
-    },
-    {
-      id: "4",
-      title: "Prototyping with Figma",
-      description: "Master the art of creating interactive prototypes using Figma to communicate your design ideas effectively.",
-      date: "August 5, 2023",
-      time: "9:00 AM - 12:00 PM",
-      imageSrc: "/images/workshop.jpg",
-      delay: "delay-300",
-      buttonColor: "#fdcb2a"
-    }
-  ];
-
-  // Past workshops (would be filtered by date in a real app)
-  const pastWorkshops = [
-    {
-      id: "5",
-      title: "Introduction to Design Thinking",
-      description: "Learn the design thinking process and how to apply it to solve complex problems creatively.",
-      date: "May 22, 2023",
-      time: "2:00 PM - 5:00 PM",
-      imageSrc: "/images/workshop.jpg",
-      delay: "delay-100",
-      bgColor: "#5dfdcf"
-    }
-  ];
-
   const handleRegister = () => {
     setIsRegistered(true);
     // In a real app, you would call an API to register the user
@@ -146,6 +147,35 @@ const WorkshopDetailPage = () => {
     });
   };
 
+  if (isLoading) {
+    return (
+      <div className="pt-16 min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7471f9]"></div>
+      </div>
+    );
+  }
+
+  if (error || !workshop) {
+    return (
+      <div className="pt-16 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Icon icon="heroicons:exclamation-circle" className="w-12 h-12 mx-auto text-red-500 mb-4" />
+          <h3 className="text-xl font-medium text-gray-900 mb-2">Error</h3>
+          <p className="text-gray-500">{error || 'Workshop not found'}</p>
+          <button 
+            onClick={() => router.push(`/${locale}/workshops`)}
+            className="mt-4 px-4 py-2 bg-[#7471f9] text-white rounded-md hover:bg-[#5f5dd6]"
+          >
+            Back to Workshops
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Generate a longer description for the workshop based on the short description
+  const longDescription = `${workshop.description}\n\nThis comprehensive workshop is perfect for beginners and those looking to refresh their skills. Over the course of the session, we'll dive deep into the principles and techniques covered.\n\nThis workshop balances theory with hands-on practice. You'll work on real-world examples and leave with practical skills you can immediately apply to your projects. Whether you're looking to expand your skillset, better understand the subject, or simply learn something new, this workshop will provide valuable insights and techniques.`;
+
   return (
     <div className="pt-16 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -154,7 +184,7 @@ const WorkshopDetailPage = () => {
           <nav className="flex" aria-label="Breadcrumb">
             <ol className="inline-flex items-center space-x-1 md:space-x-3">
               <li className="inline-flex items-center">
-                <Link href="/" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900">
+                <Link href={`/${locale}`} className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900">
                   <Icon icon="heroicons:home" className="w-4 h-4 mr-2" />
                   {t('home')}
                 </Link>
@@ -162,7 +192,7 @@ const WorkshopDetailPage = () => {
               <li>
                 <div className="flex items-center">
                   <Icon icon="heroicons:chevron-right" className="w-4 h-4 text-gray-400" />
-                  <Link href="/workshops" className="ml-1 text-sm font-medium text-gray-500 hover:text-gray-900 md:ml-2">
+                  <Link href={`/${locale}/workshops`} className="ml-1 text-sm font-medium text-gray-500 hover:text-gray-900 md:ml-2">
                     {t('workshops')}
                   </Link>
                 </div>
@@ -171,7 +201,7 @@ const WorkshopDetailPage = () => {
                 <div className="flex items-center">
                   <Icon icon="heroicons:chevron-right" className="w-4 h-4 text-gray-400" />
                   <span className="ml-1 text-sm font-medium text-gray-500 md:ml-2 line-clamp-1">
-                    {workshop.title}
+                    {workshop.name}
                   </span>
                 </div>
               </li>
@@ -186,7 +216,7 @@ const WorkshopDetailPage = () => {
             <div className="md:w-1/3 relative h-64 md:h-auto">
               <Image 
                 src={workshop.imageSrc} 
-                alt={workshop.title} 
+                alt={workshop.name} 
                 fill
                 className="object-cover"
                 onError={(e) => {
@@ -206,7 +236,7 @@ const WorkshopDetailPage = () => {
                 ))}
               </div>
               
-              <h1 className="text-2xl md:text-3xl font-bold mb-4 text-black">{workshop.title}</h1>
+              <h1 className="text-2xl md:text-3xl font-bold mb-4 text-black">{workshop.name}</h1>
               
               <div className="flex items-center mb-6">
                 <div className="flex items-center mr-6">
@@ -227,14 +257,15 @@ const WorkshopDetailPage = () => {
                 <div className="flex items-center">
                   <Icon icon="heroicons:users" className="w-5 h-5 mr-2 text-gray-500" />
                   <span className="text-gray-700">
-                    {workshop.registeredCount}/{workshop.capacity} {t('registered')}
+                    {/* This would come from registration data in a real app */}
+                    24/30 {t('registered')}
                   </span>
                 </div>
                 
                 <div className="flex items-center">
                   <Icon icon="heroicons:academic-cap" className="w-5 h-5 mr-2 text-gray-500" />
                   <span className="text-gray-700">
-                    {t('requiredLevel')}: {workshop.requiredLevel}
+                    {t('requiredLevel')}: {workshop.level}
                   </span>
                 </div>
               </div>
@@ -263,7 +294,7 @@ const WorkshopDetailPage = () => {
           {/* Description */}
           <div className="p-6 border-t border-gray-200">
             <h2 className="text-xl font-semibold mb-4 text-black">{t('description')}</h2>
-            <p className="text-gray-700 whitespace-pre-line">{workshop.longDescription}</p>
+            <p className="text-gray-700 whitespace-pre-line">{longDescription}</p>
           </div>
           
           {/* Badge Section */}
@@ -275,7 +306,7 @@ const WorkshopDetailPage = () => {
                   <div className="absolute inset-0 rounded-full overflow-hidden border-4 border-indigo-100 shadow-xl bg-white">
                     <div className="absolute inset-0 bg-indigo-100 animate-pulse opacity-30"></div>
                     <Image 
-                      src="/images/badge.png" 
+                      src={workshop.badgeImageSrc || "/images/badge.png"} 
                       alt="Workshop Badge" 
                       fill
                       className="object-cover p-1 relative z-10 rounded-full"
@@ -290,7 +321,7 @@ const WorkshopDetailPage = () => {
                   </div>
                 </div>
                 <div className="text-center md:text-left max-w-lg">
-                  <h3 className="text-lg font-bold text-indigo-700 mb-2">{workshop.earnableBadge}</h3>
+                  <h3 className="text-lg font-bold text-indigo-700 mb-2">{workshop.name} Badge</h3>
                   <p className="text-gray-700 mb-4">
                     {t('badgeDescription')}
                   </p>
@@ -312,8 +343,8 @@ const WorkshopDetailPage = () => {
             <div className="flex items-center">
               <div className="relative w-16 h-16 rounded-full overflow-hidden mr-4">
                 <Image 
-                  src={workshop.instructorAvatar} 
-                  alt={workshop.instructorName} 
+                  src="/images/avatar.jpg" 
+                  alt={workshop.instructor} 
                   fill
                   className="object-cover"
                   onError={(e) => {
@@ -323,34 +354,31 @@ const WorkshopDetailPage = () => {
                 />
               </div>
               <div>
-                <h3 className="font-semibold text-black">{workshop.instructorName}</h3>
-                <p className="text-gray-500">{workshop.instructorRole}</p>
-                <p className="text-gray-700 mt-2">{workshop.instructorBio}</p>
+                <h3 className="font-semibold text-black">{workshop.instructor}</h3>
+                <p className="text-gray-500">Senior Instructor</p>
+                <p className="text-gray-700 mt-2">Expert with years of experience in teaching and practice. Known for clear explanations and engaging teaching style.</p>
               </div>
             </div>
           </div>
         </div>
         
         {/* Similar Workshops */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold mb-6 text-black">{t('similarWorkshops')}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {similarWorkshops.map((workshop, index) => (
-              <ScrollReveal key={index} className={workshop.delay}>
-                <WorkshopCard {...workshop} />
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-        
-        {/* Past Workshops */}
-        {pastWorkshops.length > 0 && (
+        {similarWorkshops.length > 0 && (
           <div className="mb-12">
-            <h2 className="text-2xl font-bold mb-6 text-black">{t('pastWorkshops')}</h2>
+            <h2 className="text-2xl font-bold mb-6 text-black">{t('similarWorkshops')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {pastWorkshops.map((workshop, index) => (
-                <ScrollReveal key={index} className={workshop.delay}>
-                  <WorkshopCard {...workshop} />
+              {similarWorkshops.map((workshop, index) => (
+                <ScrollReveal key={workshop._id} className={`delay-${(index % 3 + 1) * 100}`}>
+                  <WorkshopCard 
+                    id={workshop._id}
+                    title={workshop.name}
+                    description={workshop.description}
+                    date={workshop.date}
+                    time={workshop.time}
+                    imageSrc={workshop.imageSrc}
+                    delay={`delay-${(index % 3 + 1) * 100}`}
+                    bgColor={["#c3c2fc", "#f8c5f4", "#fee487"][index % 3]}
+                  />
                 </ScrollReveal>
               ))}
             </div>

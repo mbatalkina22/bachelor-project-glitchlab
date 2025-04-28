@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Web3 Development Fundamentals",
+    "description": "Explore the fundamentals of Web3 development, blockchain technologies, and decentralized applications. Learn how to build dApps using Ethereum and Solidity.",
+    "date": "September 12, 2023",
+    "time": "1:00 PM - 4:30 PM",
+    "imageSrc": "/images/workshop.jpg",
+    "badgeImageSrc": "/images/badges/web3-badge.png",
+    "categories": ["blockchain", "coding", "web3"],
+    "level": "Intermediate",
+    "location": "Austin",
+    "instructor": "Alex Rivera"
+  },
+  {
+    "name": "iOS App Development with Swift",
+    "description": "Learn how to create beautiful iOS applications using Swift and SwiftUI. This workshop covers everything from basic UI components to advanced app architecture.",
+    "date": "October 5, 2023",
+    "time": "9:00 AM - 3:00 PM",
+    "imageSrc": "/images/workshop.jpg",
+    "badgeImageSrc": "/images/badges/swift-badge.png",
+    "categories": ["mobile", "coding", "apple"],
+    "level": "Beginner",
+    "location": "Online",
+    "instructor": "Emma Wilson"
+  },
+  {
+    "name": "AI for Creative Professionals",
+    "description": "Discover how artificial intelligence can enhance your creative workflow. Learn to leverage AI tools for design, content creation, and ideation.",
+    "date": "September 25, 2023",
+    "time": "10:00 AM - 2:00 PM",
+    "imageSrc": "/images/workshop.jpg",
+    "badgeImageSrc": "/images/badges/ai-badge.png",
+    "categories": ["ai", "design", "creative"],
+    "level": "Intermediate",
+    "location": "London",
+    "instructor": "Sophia Lee"
+  },
+  {
+    "name": "Cybersecurity Essentials",
+    "description": "Understand the fundamentals of cybersecurity and how to protect digital assets from common threats. Perfect for IT professionals and security enthusiasts.",
+    "date": "November 10, 2023",
+    "time": "9:00 AM - 5:00 PM",
+    "imageSrc": "/images/workshop.jpg",
+    "badgeImageSrc": "/images/badges/security-badge.png",
+    "categories": ["security", "networking", "it"],
+    "level": "Advanced",
+    "location": "Berlin",
+    "instructor": "Marcus Schmidt"
+  },
+  {
+    "name": "Digital Marketing Strategy",
+    "description": "Create effective digital marketing strategies that drive growth. Learn about SEO, content marketing, social media, and analytics.",
+    "date": "October 18, 2023",
+    "time": "11:00 AM - 3:30 PM",
+    "imageSrc": "/images/workshop.jpg",
+    "badgeImageSrc": "/images/badges/marketing-badge.png",
+    "categories": ["marketing", "business", "digital"],
+    "level": "Beginner",
+    "location": "Online",
+    "instructor": "Jessica Chen"
+  }
+]
