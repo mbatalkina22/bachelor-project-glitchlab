@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
@@ -10,10 +10,50 @@ import WorkshopCard from '@/components/WorkshopCard';
 import ScrollReveal from '@/components/ScrollReveal';
 import { useAuth } from '@/context/AuthContext';
 
+interface Workshop {
+  _id: string;
+  name: string;
+  description: string;
+  date: string;
+  time: string;
+  imageSrc: string;
+  badgeImageSrc: string;
+  categories: string[];
+  level: string;
+  location: string;
+  instructor: string;
+}
+
 const ProfilePage = () => {
   const t = useTranslations('Profile');
   const [activeTab, setActiveTab] = useState('overview');
   const { user } = useAuth();
+  const [registeredWorkshops, setRegisteredWorkshops] = useState<Workshop[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRegisteredWorkshops = async () => {
+      if (!user?.registeredWorkshops?.length) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/workshops/batch?ids=${user.registeredWorkshops.join(',')}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch registered workshops');
+        }
+        const data = await response.json();
+        setRegisteredWorkshops(data.workshops);
+      } catch (error) {
+        console.error('Error fetching registered workshops:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRegisteredWorkshops();
+  }, [user]);
 
   if (!user) {
     return (
@@ -57,40 +97,6 @@ const ProfilePage = () => {
     }
   ];
 
-  // Mock attended workshops
-  const attendedWorkshops = [
-    {
-      id: "1",
-      title: "UX Design Fundamentals",
-      description: "Learn the basics of user experience design in this hands-on workshop.",
-      date: "June 15, 2023",
-      time: "2:00 PM - 5:00 PM",
-      imageSrc: "/images/workshop.jpg",
-      delay: "delay-100",
-      bgColor: "#c3c2fc"
-    },
-    {
-      id: "2",
-      title: "Advanced JavaScript Patterns",
-      description: "Dive deep into advanced JavaScript patterns and techniques.",
-      date: "June 22, 2023",
-      time: "10:00 AM - 3:00 PM",
-      imageSrc: "/images/workshop.jpg",
-      delay: "delay-200",
-      bgColor: "#f8c5f4"
-    },
-    {
-      id: "3",
-      title: "Data Visualization with D3.js",
-      description: "Create stunning data visualizations using the D3.js library.",
-      date: "July 5, 2023",
-      time: "1:00 PM - 4:30 PM",
-      imageSrc: "/images/workshop.jpg",
-      delay: "delay-300",
-      bgColor: "#fee487"
-    }
-  ];
-
   // Mock reviews left by the user
   const userReviews = [
     {
@@ -118,35 +124,6 @@ const ProfilePage = () => {
       date: "July 8, 2023"
     }
   ];
-
-  // Upcoming workshops
-  const upcomingWorkshops = [
-    {
-      id: "4",
-      title: "React Performance Optimization",
-      description: "Learn techniques to optimize your React applications for better performance.",
-      date: "August 15, 2023",
-      time: "9:00 AM - 12:00 PM",
-      imageSrc: "/images/workshop.jpg",
-      delay: "delay-100",
-      bgColor: "#aef9e1"
-    }
-  ];
-
-  // Render star rating component
-  const renderStarRating = (rating: number) => {
-    return (
-      <div className="flex items-center">
-        {[...Array(5)].map((_, i) => (
-          <Icon 
-            key={i}
-            icon={i < rating ? "heroicons:star-solid" : "heroicons:star"} 
-            className={`w-4 h-4 ${i < rating ? 'text-yellow-400' : 'text-gray-300'}`}
-          />
-        ))}
-      </div>
-    );
-  };
 
   return (
     <div className="pt-16 min-h-screen bg-gray-50">
@@ -186,44 +163,44 @@ const ProfilePage = () => {
           </div>
           
           {/* Profile Navigation Tabs */}
-          <div className="px-6 border-t border-gray-200">
-            <nav className="flex flex-wrap -mb-px">
+          <div className="border-t border-gray-200">
+            <nav className="flex -mb-px">
               <button
                 onClick={() => setActiveTab('overview')}
-                className={`mr-8 py-4 font-medium text-sm border-b-2 ${
+                className={`py-4 px-6 text-sm font-medium ${
                   activeTab === 'overview'
-                    ? 'border-indigo-500 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:border-gray-300'
+                    ? 'border-b-2 border-indigo-500 text-indigo-600'
+                    : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
                 {t('overview')}
               </button>
               <button
                 onClick={() => setActiveTab('workshops')}
-                className={`mr-8 py-4 font-medium text-sm border-b-2 ${
+                className={`py-4 px-6 text-sm font-medium ${
                   activeTab === 'workshops'
-                    ? 'border-indigo-500 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:border-gray-300'
+                    ? 'border-b-2 border-indigo-500 text-indigo-600'
+                    : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
                 {t('workshops')}
               </button>
               <button
                 onClick={() => setActiveTab('badges')}
-                className={`mr-8 py-4 font-medium text-sm border-b-2 ${
+                className={`py-4 px-6 text-sm font-medium ${
                   activeTab === 'badges'
-                    ? 'border-indigo-500 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:border-gray-300'
+                    ? 'border-b-2 border-indigo-500 text-indigo-600'
+                    : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
                 {t('badges')}
               </button>
               <button
                 onClick={() => setActiveTab('reviews')}
-                className={`mr-8 py-4 font-medium text-sm border-b-2 ${
+                className={`py-4 px-6 text-sm font-medium ${
                   activeTab === 'reviews'
-                    ? 'border-indigo-500 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:border-gray-300'
+                    ? 'border-b-2 border-indigo-500 text-indigo-600'
+                    : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
                 {t('reviews')}
@@ -231,8 +208,7 @@ const ProfilePage = () => {
             </nav>
           </div>
         </div>
-        
-        {/*Tab Content */}
+
         <div className="mt-6">
           {/* Overview Tab */}
           {activeTab === 'overview' && (
@@ -240,6 +216,50 @@ const ProfilePage = () => {
               {/* Content will be added here */}
             </div>
           )}
+
+          {/* Workshops Tab */}
+          {activeTab === 'workshops' && (
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-semibold mb-4 text-[#2f2f2f]">{t('registeredWorkshops')}</h2>
+              {isLoading ? (
+                <div className="flex justify-center items-center h-32">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7471f9]"></div>
+                </div>
+              ) : registeredWorkshops.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {registeredWorkshops.map((workshop, index) => (
+                    <ScrollReveal key={workshop._id} className={`delay-${(index % 3 + 1) * 100}`}>
+                      <WorkshopCard 
+                        id={workshop._id}
+                        title={workshop.name}
+                        description={workshop.description}
+                        date={workshop.date}
+                        time={workshop.time}
+                        imageSrc={workshop.imageSrc}
+                        delay={`delay-${(index % 3 + 1) * 100}`}
+                        bgColor={["#c3c2fc", "#f8c5f4", "#fee487"][index % 3]}
+                      />
+                    </ScrollReveal>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Icon icon="heroicons:face-frown" className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+                  <h3 className="text-xl font-medium text-gray-900 mb-2">{t('noWorkshopsYet')}</h3>
+                  <p className="text-gray-500 mb-4">{t('noWorkshopsMessage')}</p>
+                  <Link href="/workshops">
+                    <HeroButton
+                      text={t('exploreWorkshops')}
+                      backgroundColor="#7471f9"
+                      textColor="white"
+                    />
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Rest of the tabs... */}
         </div>
       </div>
     </div>

@@ -6,9 +6,12 @@ interface WorkshopFiltersProps {
   skillFilter: string;
   locationFilter: string;
   categoryFilter: string;
-  timeFilter: string;
   techFilter: string;
+  statusFilter: string;
+  typeFilter: string;
+  selectedDate: Date | null;
   handleFilterChange: (filterType: string, value: string) => void;
+  handleDateChange: (date: Date | null) => void;
 }
 
 const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
@@ -16,16 +19,39 @@ const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
   skillFilter,
   locationFilter,
   categoryFilter,
-  timeFilter,
   techFilter,
-  handleFilterChange
+  statusFilter,
+  typeFilter,
+  selectedDate,
+  handleFilterChange,
+  handleDateChange
 }) => {
   const t = useTranslations('WorkshopsPage');
 
   return (
     <div className="lg:w-1/6 pl-2 lg:pl-0 pr-2 h-full lg:sticky lg:top-20 self-start">
       <h2 className="text-lg font-semibold text-gray-800 mb-4">Filters</h2>
+
+      {/* Status Filter */}
+      <div className="filter-group mb-4">
+        <h3 className="text-sm font-medium text-gray-700 mb-2">Status</h3>
+        <div className="flex flex-wrap gap-1.5 max-w-[200px]">
+          {['all', 'future', 'ongoing', 'past'].map((status) => (
+            <button
+              key={status}
+              className={`px-2.5 py-1 text-xs rounded-full border ${
+                statusFilter === status ? 'bg-[#7471f9] text-white border-[#7471f9]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#7471f9]'
+              }`}
+              onClick={() => handleFilterChange('status', status)}
+            >
+              {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
+            </button>
+          ))}
+        </div>
+      </div>
+
       
+
       {/* Age Filter */}
       <div className="filter-group mb-4">
         <h3 className="text-sm font-medium text-gray-700 mb-2">Age</h3>
@@ -94,26 +120,6 @@ const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
               onClick={() => handleFilterChange('category', category)}
             >
               {category === 'all' ? 'All' : category.charAt(0).toUpperCase() + category.slice(1)}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Time Filter */}
-      <div className="filter-group mb-4">
-        <h3 className="text-sm font-medium text-gray-700 mb-2">Time</h3>
-        <div className="flex flex-wrap gap-1.5 max-w-[180px]">
-          {['all', 'past', 'upcoming', 'ongoing'].map((time) => (
-            <button
-              key={time}
-              className={`px-2.5 py-1 text-xs rounded-full border ${
-                timeFilter === time ? 'bg-[#7471f9] text-white border-[#7471f9]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#7471f9]'
-              }`}
-              onClick={() => handleFilterChange('time', time)}
-            >
-              {time === 'all' ? 'All' : 
-               time === 'upcoming' ? 'Upcoming' :
-               time.charAt(0).toUpperCase() + time.slice(1)}
             </button>
           ))}
         </div>

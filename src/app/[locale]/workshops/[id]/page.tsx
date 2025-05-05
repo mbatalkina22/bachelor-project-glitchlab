@@ -11,6 +11,7 @@ import ReviewList, { Review } from '@/components/ReviewList';
 import { useTranslations } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
 import HeroButton from '@/components/HeroButton';
+import { useAuth } from '@/context/AuthContext';
 
 interface Workshop {
   _id: string;
@@ -41,12 +42,19 @@ const WorkshopDetailPage = () => {
   const id = params.id as string;
   const locale = params.locale as string;
   const t = useTranslations('WorkshopDetail');
-  
-  const [isRegistered, setIsRegistered] = useState(false);
+  const { user, setUser } = useAuth();
   const [workshop, setWorkshop] = useState<Workshop | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [isRegistered, setIsRegistered] = useState(false);
   const [similarWorkshops, setSimilarWorkshops] = useState<Workshop[]>([]);
+
+  // Check if user is registered for this workshop
+  useEffect(() => {
+    if (user && workshop) {
+      setIsRegistered(user.registeredWorkshops.includes(workshop._id));
+    }
+  }, [user, workshop]);
 
   useEffect(() => {
     const fetchWorkshop = async () => {
@@ -125,14 +133,74 @@ const WorkshopDetailPage = () => {
     }
   ];
 
-  const handleRegister = () => {
-    setIsRegistered(true);
-    // In a real app, you would call an API to register the user
+  const handleRegister = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      if (!workshop?._id) {
+        throw new Error('Workshop ID is missing');
+      }
+
+      const response = await fetch('/api/workshops/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ workshopId: workshop._id })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to register for workshop');
+      }
+
+      // Update the user state with the new registered workshops
+      if (setUser) {
+        setUser(data.user);
+      }
+      setIsRegistered(true);
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      alert(error.message || 'Failed to register for workshop');
+    }
   };
 
-  const handleUnregister = () => {
-    setIsRegistered(false);
-    // In a real app, you would call an API to unregister the user
+  const handleUnregister = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      const response = await fetch('/api/workshops/unregister', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ workshopId: workshop?._id })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to unregister from workshop');
+      }
+
+      // Update the user state with the updated registered workshops
+      if (setUser) {
+        setUser(data.user);
+      }
+      setIsRegistered(false);
+    } catch (error: any) {
+      console.error('Unregistration error:', error);
+      alert(error.message || 'Failed to unregister from workshop');
+    }
   };
 
   // Reference for the register button section
@@ -174,7 +242,7 @@ const WorkshopDetailPage = () => {
   }
 
   // Generate a longer description for the workshop based on the short description
-  const longDescription = `${workshop.description}\n\nThis comprehensive workshop is perfect for beginners and those looking to refresh their skills. Over the course of the session, we'll dive deep into the principles and techniques covered.\n\nThis workshop balances theory with hands-on practice. You'll work on real-world examples and leave with practical skills you can immediately apply to your projects. Whether you're looking to expand your skillset, better understand the subject, or simply learn something new, this workshop will provide valuable insights and techniques.`;
+  const longDescription = workshop ? `${workshop.description}\n\nThis comprehensive workshop is perfect for beginners and those looking to refresh their skills. Over the course of the session, we'll dive deep into the principles and techniques covered.\n\nThis workshop balances theory with hands-on practice. You'll work on real-world examples and leave with practical skills you can immediately apply to your projects. Whether you're looking to expand your skillset, better understand the subject, or simply learn something new, this workshop will provide valuable insights and techniques.` : "";
 
   return (
     <div className="pt-16 min-h-screen">

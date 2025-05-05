@@ -39,6 +39,7 @@ const WorkshopsPage = () => {
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [timeFilter, setTimeFilter] = useState('all');
     const [techFilter, setTechFilter] = useState('all');
+    const [statusFilter, setStatusFilter] = useState('all');
 
     const fetchWorkshops = async () => {
         try {
@@ -117,6 +118,9 @@ const WorkshopsPage = () => {
             case 'tech':
                 setTechFilter(value);
                 break;
+            case 'status':
+                setStatusFilter(value);
+                break;
             default:
                 break;
         }
@@ -161,6 +165,7 @@ const WorkshopsPage = () => {
                         categoryFilter={categoryFilter}
                         timeFilter={timeFilter}
                         techFilter={techFilter}
+                        statusFilter={statusFilter}
                         handleFilterChange={handleFilterChange}
                     />
 

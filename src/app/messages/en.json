@@ -108,7 +108,6 @@
     "requiredLevel": "Required Level",
     "reviews": "Reviews",
     "similarWorkshops": "Similar Workshops",
-    "pastWorkshops": "Past Workshops",
     "earnableBadge": "Achievement Badge",
     "badgeDescription": "Complete this workshop to earn this exclusive badge. Add it to your profile to showcase your skills and achievements to potential employers and colleagues.",
     "unlockBadge": "Unlock by attending this workshop",
@@ -158,7 +157,8 @@
     "noReviewsYet": "No reviews yet",
     "noReviewsMessage": "You haven't left any reviews yet. Share your feedback about attended workshops.",
     "editReview": "Edit Review",
-    "deleteReview": "Delete Review"
+    "deleteReview": "Delete Review",
+    "registeredWorkshops": "Registered Workshops"
   },
   "Settings": {
     "settings": "Settings",
