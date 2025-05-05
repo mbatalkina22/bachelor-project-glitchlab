@@ -55,7 +55,7 @@ const HeroButton = forwardRef<HTMLButtonElement, HeroButtonProps>(({
   text,
   href,
   onClick,
-  backgroundColor = '#4f46e5', // Default indigo color
+  backgroundColor = '#7471f9', // Default indigo color
   textColor = 'white',
   className = '', // Default empty string for className
 }, ref) => {

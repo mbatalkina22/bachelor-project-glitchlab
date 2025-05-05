@@ -11,7 +11,9 @@
   "dependencies": {
     "@iconify-json/mdi": "^1.2.3",
     "@iconify/react": "^5.2.0",
+    "bcryptjs": "^3.0.2",
     "iconify-icon": "^2.3.0",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.15.0",
     "mongoose": "^8.13.1",
     "next": "15.2.2",

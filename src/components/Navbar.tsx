@@ -6,6 +6,8 @@ import { Icon } from "@iconify/react";
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from "next/image";
+import { useAuth } from '@/context/AuthContext';
+import HeroButton from "./HeroButton";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,13 +17,7 @@ const Navbar = () => {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
-
-  // Mock user data - in a real app this would come from authentication
-  const user = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    avatar: "/images/avatar.jpg"
-  };
+  const { user, loading, logout } = useAuth();
 
   // Check if the current page is the main page
   const isMainPage = pathname === `/${locale}` || pathname === `/${locale}/`;
@@ -81,6 +77,11 @@ const Navbar = () => {
     window.location.href = `/${newLocale}${currentPath || '/'}`;
   };
 
+  const handleLogout = () => {
+    logout();
+    setIsUserMenuOpen(false);
+  };
+
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md' : 'bg-transparent'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -117,82 +118,126 @@ const Navbar = () => {
               </button>
             </div>
             
-            {/* User Avatar */}
-            <div className="relative ml-3">
-              <button 
-                className="user-avatar flex text-sm rounded-full focus:outline-none"
-                onClick={toggleUserMenu}
-                aria-expanded={isUserMenuOpen ? 'true' : 'false'}
-              >
-                <span className="sr-only">Open user menu</span>
-                <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-gray-200">
-                  <Image
-                    src={user.avatar}
-                    alt="User avatar"
-                    width={32}
-                    height={32}
-                    className="h-full w-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = "https://via.placeholder.com/32?text=User";
-                    }}
-                  />
-                </div>
-              </button>
-              
-              {/* User dropdown menu */}
-              {isUserMenuOpen && (
-                <div className="user-menu origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                  <div className="py-1">
-                    <div className="px-4 py-2 border-b">
-                      <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                      <p className="text-xs text-gray-500 truncate">{user.email}</p>
-                    </div>
-                    <Link 
-                      href={`/${locale}/profile`} 
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            {/* Authentication buttons or User Avatar */}
+            {!loading && (
+              <div className="relative ml-3">
+                {user ? (
+                  <>
+                    <button 
+                      className="user-avatar flex text-sm rounded-full focus:outline-none"
+                      onClick={toggleUserMenu}
+                      aria-expanded={isUserMenuOpen ? 'true' : 'false'}
                     >
-                      {t('yourProfile')}
-                    </Link>
-                    <Link 
-                      href={`/${locale}/profile/settings`} 
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      {t('settings')}
-                    </Link>
-                    <button
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-t"
-                      onClick={() => console.log('Sign out clicked')}
-                    >
-                      {t('signOut')}
+                      <span className="sr-only">Open user menu</span>
+                      <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-gray-200">
+                        <Image
+                          src={user.avatar}
+                          alt="User avatar"
+                          width={32}
+                          height={32}
+                          className="h-full w-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = "https://via.placeholder.com/32?text=User";
+                          }}
+                        />
+                      </div>
                     </button>
+                    
+                    {/* User dropdown menu */}
+                    {isUserMenuOpen && (
+                      <div className="user-menu origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                        <div className="py-1">
+                          <div className="px-4 py-2 border-b">
+                            <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                            <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                          </div>
+                          <Link 
+                            href={`/${locale}/profile`} 
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            {t('yourProfile')}
+                          </Link>
+                          <Link 
+                            href={`/${locale}/profile/settings`} 
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            {t('settings')}
+                          </Link>
+                          <button
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-t"
+                            onClick={handleLogout}
+                          >
+                            {t('signOut')}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex space-x-2">
+                   <HeroButton
+                    href={`/${locale}/login`}
+                    text={t('login')}
+                    backgroundColor={isScrolled ? "transparent" : "white"}
+                    textColor="#7471f9"
+                    className={`${isScrolled ? "border border-[#7471f9]" : "border-none"} text-sm`}
+                  />
+                  <HeroButton
+                    href={`/${locale}/register`}
+                    text={t('register')}
+                    backgroundColor="#7471f9"
+                    textColor="white"
+                    className={`${isScrolled ? "border border-[#7471f9]" : "border-none"} text-sm`}
+                  />
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </div>
           
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
-            {/* User avatar for mobile */}
-            <button
-              className="mr-2 flex text-sm rounded-full focus:outline-none"
-              onClick={() => router.push(`/${locale}/profile`)}
-            >
-              <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-gray-200">
-                <Image
-                  src={user.avatar}
-                  alt="User avatar"
-                  width={32}
-                  height={32}
-                  className="h-full w-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = "https://via.placeholder.com/32?text=User";
-                  }}
-                />
-              </div>
-            </button>
+            {/* User avatar or auth buttons for mobile */}
+            {!loading && (
+              user ? (
+                <button
+                  className="mr-2 flex text-sm rounded-full focus:outline-none"
+                  onClick={() => router.push(`/${locale}/profile`)}
+                >
+                  <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-gray-200">
+                    <Image
+                      src={user.avatar}
+                      alt="User avatar"
+                      width={32}
+                      height={32}
+                      className="h-full w-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = "https://via.placeholder.com/32?text=User";
+                      }}
+                    />
+                  </div>
+                </button>
+              ) : (
+                <div className="flex space-x-2 mr-2">
+                  <HeroButton
+                    href={`/${locale}/login`}
+                    text={t('login')}
+                    backgroundColor={isScrolled ? "transparent" : "white"}
+                    textColor="#7471f9"
+                    className={`${isScrolled ? "border border-[#7471f9]" : "border-none"} text-xs`}
+                  />
+                  <HeroButton
+                    href={`/${locale}/register`}
+                    text={t('register')}
+                    backgroundColor="#7471f9"
+                    textColor="white"
+                    className={`${isScrolled ? "border border-[#7471f9]" : "border-none"} text-xs`}
+                  />
+                </div>
+              )
+            )}
             
             <button
               onClick={toggleMenu}
@@ -220,7 +265,7 @@ const Navbar = () => {
       </div>
 
       {/* Mobile menu, show/hide based on menu state */}
-      <div className={`${isMenuOpen ? 'block' : 'hidden'} md:hidden ${isScrolled ? 'bg-white' : 'bg-black bg-opacity-70'}`}>
+      <div className={`${isMenuOpen ? 'block' : 'hidden'} md:hidden ${isScrolled ? 'bg-white' : 'bg-black/40'}`}>
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <Link href={`/${locale}`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
             {t('home')}
@@ -231,15 +276,22 @@ const Navbar = () => {
           <Link href={`/${locale}/calendar`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
             {t('calendar')}
           </Link>
-          <Link href={`/${locale}/about-us`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
-            {t('aboutUs')}
-          </Link>
-          <Link href={`/${locale}/profile`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
-            {t('profile')}
-          </Link>
-          <Link href={`/${locale}/profile/settings`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
-            {t('settings')}
-          </Link>
+          {user && (
+            <>
+              <Link href={`/${locale}/profile`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
+                {t('profile')}
+              </Link>
+              <Link href={`/${locale}/profile/settings`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
+                {t('settings')}
+              </Link>
+              <button
+                className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}
+                onClick={handleLogout}
+              >
+                {t('signOut')}
+              </button>
+            </>
+          )}
           
           {/* Language switcher for mobile */}
           <button 

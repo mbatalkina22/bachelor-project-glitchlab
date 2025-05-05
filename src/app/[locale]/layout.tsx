@@ -7,15 +7,15 @@ import { getMessages } from "next-intl/server";
 import { Secular_One } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { AuthProvider } from "@/context/AuthContext";
 import "../../styles/globals.css";
 
 const secularOne = Secular_One({
   weight: "400",
   variable: "--font-secular-one",
-   display: 'swap',
+  display: 'swap',
   subsets: ["latin"],
 });
-
 
 export async function generateMetadata({
   params,
@@ -34,29 +34,26 @@ export async function generateMetadata({
   };
 }
 
-
-export default async function LocaleLayout({
+export default async function RootLayout({
   children,
-  params,
+  params: { locale }
 }: {
   children: ReactNode;
   params: { locale: string };
 }) {
-  // Await the params object before accessing it
-  const resolvedParams = await Promise.resolve(params);
-  const locale = resolvedParams.locale;
-  
-  const messages = await getMessages({ locale });
+  const messages = await getMessages(locale);
 
   return (
-    <html lang={locale} className={`${secularOne.variable} scroll-smooth`}>
-      <body className="antialiased">
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <div className="flex flex-col min-h-screen bg-gray-50">
+    <html lang={locale}>
+      <body className={`${secularOne.variable} font-sans`}>
+        <NextIntlClientProvider messages={messages}>
+          <AuthProvider>
             <Navbar />
-            <main className="flex-grow">{children}</main>
+            <main className="min-h-screen bg-[#f5f5f5]">
+              {children}
+            </main>
             <Footer />
-          </div>
+          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>

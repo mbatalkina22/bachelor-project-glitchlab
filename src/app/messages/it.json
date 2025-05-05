@@ -7,7 +7,9 @@
     "yourProfile": "Il tuo Profilo",
     "profile": "Profilo",
     "settings": "Impostazioni",
-    "signOut": "Esci"
+    "signOut": "Esci",
+    "login": "Accedi",
+    "register": "Registrati"
   },
   "Hero": {
     "title": "Workshop Manager",
@@ -234,5 +236,20 @@
     "currentSession": "Sessione Attuale",
     "active": "Attiva",
     "revoke": "Revoca"
+  },
+  "Auth": {
+    "signInToAccount": "Accedi al tuo account",
+    "createAccount": "Crea il tuo account",
+    "emailAddress": "Indirizzo email",
+    "password": "Password",
+    "fullName": "Nome completo",
+    "signIn": "Accedi",
+    "signingIn": "Accesso in corso...",
+    "createAccount": "Crea account",
+    "creatingAccount": "Creazione account in corso...",
+    "dontHaveAccount": "Non hai un account? Registrati",
+    "alreadyHaveAccount": "Hai già un account? Accedi",
+    "selectAvatar": "Seleziona un avatar",
+    "signOut": "Esci"
   }
 }
