@@ -20,7 +20,7 @@ export async function GET() {
         date: "June 15, 2023",
         time: "2:00 PM - 5:00 PM",
         imageSrc: "/images/workshop.jpg",
-        badgeImageSrc: "/images/badges/ux-badge.png",
+        badgeImageSrc: "/images/badge.png",
         categories: ["design", "beginner"],
         level: "Beginner",
         location: "Online",
@@ -28,11 +28,11 @@ export async function GET() {
       },
       {
         name: "Advanced JavaScript Patterns",
-        description: "Dive deep into advanced JavaScript patterns and techniques. Perfect for developers looking to enhance their JS skills.",
+        description: "Dive deep into advanced JavaScript patterns and best practices. Learn about design patterns, closures, and modern JavaScript features.",
         date: "June 22, 2023",
         time: "10:00 AM - 3:00 PM",
         imageSrc: "/images/workshop.jpg",
-        badgeImageSrc: "/images/badges/js-badge.png",
+        badgeImageSrc: "/images/badge.png",
         categories: ["coding", "advanced"],
         level: "Advanced",
         location: "San Francisco",
@@ -44,7 +44,7 @@ export async function GET() {
         date: "July 5, 2023",
         time: "1:00 PM - 4:30 PM",
         imageSrc: "/images/workshop.jpg",
-        badgeImageSrc: "/images/badges/d3-badge.png",
+        badgeImageSrc: "/images/badge.png",
         categories: ["coding", "data"],
         level: "Intermediate",
         location: "New York",
@@ -56,7 +56,7 @@ export async function GET() {
         date: "July 12, 2023",
         time: "9:00 AM - 12:00 PM",
         imageSrc: "/images/workshop.jpg",
-        badgeImageSrc: "/images/badges/react-badge.png",
+        badgeImageSrc: "/images/badge.png",
         categories: ["coding", "optimization"],
         level: "Intermediate",
         location: "Online",
@@ -68,7 +68,7 @@ export async function GET() {
         date: "July 18, 2023",
         time: "1:00 PM - 5:00 PM",
         imageSrc: "/images/workshop.jpg",
-        badgeImageSrc: "/images/badges/ml-badge.png",
+        badgeImageSrc: "/images/badge.png",
         categories: ["data", "ai"],
         level: "Beginner",
         location: "Boston",
@@ -80,7 +80,7 @@ export async function GET() {
         date: "July 25, 2023",
         time: "10:00 AM - 2:00 PM",
         imageSrc: "/images/workshop.jpg",
-        badgeImageSrc: "/images/badges/css-badge.png",
+        badgeImageSrc: "/images/badge.png",
         categories: ["design", "web"],
         level: "Beginner",
         location: "Online",
@@ -92,7 +92,7 @@ export async function GET() {
         date: "August 2, 2023",
         time: "1:00 PM - 4:00 PM",
         imageSrc: "/images/workshop.jpg",
-        badgeImageSrc: "/images/badges/research-badge.png",
+        badgeImageSrc: "/images/badge.png",
         categories: ["design", "research"],
         level: "Intermediate",
         location: "Seattle",
@@ -104,7 +104,7 @@ export async function GET() {
         date: "August 8, 2023",
         time: "9:00 AM - 12:00 PM",
         imageSrc: "/images/workshop.jpg",
-        badgeImageSrc: "/images/badges/animation-badge.png",
+        badgeImageSrc: "/images/badge.png",
         categories: ["design", "animation"],
         level: "Advanced",
         location: "Online",
@@ -116,7 +116,7 @@ export async function GET() {
         date: "August 15, 2023",
         time: "10:00 AM - 3:00 PM",
         imageSrc: "/images/workshop.jpg",
-        badgeImageSrc: "/images/badges/testing-badge.png",
+        badgeImageSrc: "/images/badge.png",
         categories: ["testing", "coding"],
         level: "Intermediate",
         location: "Chicago",
@@ -127,8 +127,11 @@ export async function GET() {
     await Workshop.insertMany(sampleWorkshops);
 
     return NextResponse.json({ message: 'Database seeded successfully' }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error seeding database:', error);
-    return NextResponse.json({ error: 'Failed to seed database' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Failed to seed database',
+      details: error.message 
+    }, { status: 500 });
   }
 } 

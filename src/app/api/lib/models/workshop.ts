@@ -43,7 +43,6 @@ const WorkshopSchema = new Schema({
     required: [true, 'Please provide the name of the instructor'],
   },
 }, {
-  timestamps: true,
   collection: 'workshops'
 });
 
