@@ -121,6 +121,18 @@ export async function GET() {
         level: "Intermediate",
         location: "Chicago",
         instructor: "Lisa Parker"
+      },
+      {
+        name: "Advanced React State Management",
+        description: "Learn how to write effective tests for your frontend applications. Cover unit, integration, and end-to-end testing strategies.",
+        startDate: new Date("2025-05-06T12:00:00"),
+        endDate: new Date("2025-05-06T15:00:00"),
+        imageSrc: "/images/workshop.jpg",
+        badgeImageSrc: "/images/badge.png",
+        categories: ["react", "state"],
+        level: "Intermediate",
+        location: "Chicago",
+        instructor: "Lisa Parker"
       }
     ];
 

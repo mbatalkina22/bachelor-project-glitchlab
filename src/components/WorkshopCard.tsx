@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Icon } from "@iconify/react";
 import { useParams } from "next/navigation";
 import HeroButton from "./HeroButton";
+import { getWorkshopStatus, getStatusColor } from '@/utils/workshopStatus';
 
 interface WorkshopCardProps {
   id?: string;
@@ -47,6 +48,9 @@ const WorkshopCard = ({
     });
   };
 
+  const status = getWorkshopStatus(startDate, endDate);
+  const statusColor = getStatusColor(status);
+
   return (
     <div className={`rounded-lg overflow-hidden shadow-md h-full flex flex-col`} style={{ backgroundColor: bgColor }}>
       <div className="relative h-48 w-full bg-gray-200">
@@ -60,6 +64,11 @@ const WorkshopCard = ({
             target.src = "https://via.placeholder.com/400x200?text=Workshop+Image";
           }}
         />
+        <div className="absolute top-2 left-4">
+          <span className={`${statusColor} text-white px-3 py-1 rounded-full text-sm font-medium capitalize shadow-md`}>
+            {status}
+          </span>
+        </div>
       </div>
       <div className="p-6 flex flex-col flex-grow">
         <h3 className="text-xl font-secularone mb-2 line-clamp-1 text-black">{title}</h3>

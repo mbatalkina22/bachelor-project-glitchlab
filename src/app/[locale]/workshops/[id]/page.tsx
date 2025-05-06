@@ -12,6 +12,7 @@ import { useTranslations } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
 import HeroButton from '@/components/HeroButton';
 import { useAuth } from '@/context/AuthContext';
+import { getWorkshopStatus, getStatusColor } from '@/utils/workshopStatus';
 
 interface Workshop {
   _id: string;
@@ -300,6 +301,11 @@ const WorkshopDetailPage = () => {
                   target.src = "https://via.placeholder.com/400x200?text=Workshop+Image";
                 }}
               />
+              <div className="absolute top-4 left-6">
+                <span className={`${getStatusColor(getWorkshopStatus(workshop.startDate, workshop.endDate))} text-white px-4 py-2 rounded-full text-sm font-medium capitalize shadow-md`}>
+                  {getWorkshopStatus(workshop.startDate, workshop.endDate)}
+                </span>
+              </div>
             </div>
             
             {/* Workshop Info */}
