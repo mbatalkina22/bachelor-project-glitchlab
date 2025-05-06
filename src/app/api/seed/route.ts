@@ -17,8 +17,8 @@ export async function GET() {
       {
         name: "UX Design Fundamentals",
         description: "Learn the basics of user experience design in this hands-on workshop. You'll discover essential UX principles and how to apply them to your projects.",
-        date: "June 15, 2023",
-        time: "2:00 PM - 5:00 PM",
+        startDate: new Date("2025-03-15T14:00:00"),
+        endDate: new Date("2025-03-15T17:00:00"),
         imageSrc: "/images/workshop.jpg",
         badgeImageSrc: "/images/badge.png",
         categories: ["design", "beginner"],
@@ -29,8 +29,8 @@ export async function GET() {
       {
         name: "Advanced JavaScript Patterns",
         description: "Dive deep into advanced JavaScript patterns and best practices. Learn about design patterns, closures, and modern JavaScript features.",
-        date: "June 22, 2023",
-        time: "10:00 AM - 3:00 PM",
+        startDate: new Date("2025-03-22T10:00:00"),
+        endDate: new Date("2025-03-22T15:00:00"),
         imageSrc: "/images/workshop.jpg",
         badgeImageSrc: "/images/badge.png",
         categories: ["coding", "advanced"],
@@ -41,8 +41,8 @@ export async function GET() {
       {
         name: "Data Visualization with D3.js",
         description: "Create stunning data visualizations using the D3.js library. Learn how to transform your data into interactive and insightful visualizations.",
-        date: "July 5, 2023",
-        time: "1:00 PM - 4:30 PM",
+        startDate: new Date("2025-04-05T13:00:00"),
+        endDate: new Date("2025-04-05T16:30:00"),
         imageSrc: "/images/workshop.jpg",
         badgeImageSrc: "/images/badge.png",
         categories: ["coding", "data"],
@@ -53,8 +53,8 @@ export async function GET() {
       {
         name: "React Performance Optimization",
         description: "Learn techniques to optimize your React applications for better performance. Discover common bottlenecks and how to resolve them.",
-        date: "July 12, 2023",
-        time: "9:00 AM - 12:00 PM",
+        startDate: new Date("2025-04-12T09:00:00"),
+        endDate: new Date("2025-04-12T12:00:00"),
         imageSrc: "/images/workshop.jpg",
         badgeImageSrc: "/images/badge.png",
         categories: ["coding", "optimization"],
@@ -65,8 +65,8 @@ export async function GET() {
       {
         name: "Introduction to Machine Learning",
         description: "Get started with machine learning concepts and practical applications. This workshop covers the basics of ML algorithms and implementation.",
-        date: "July 18, 2023",
-        time: "1:00 PM - 5:00 PM",
+        startDate: new Date("2025-04-18T13:00:00"),
+        endDate: new Date("2025-04-18T17:00:00"),
         imageSrc: "/images/workshop.jpg",
         badgeImageSrc: "/images/badge.png",
         categories: ["data", "ai"],
@@ -77,8 +77,8 @@ export async function GET() {
       {
         name: "Responsive Web Design",
         description: "Create websites that look great on any device using modern CSS techniques. Learn about flexbox, grid, and responsive design principles.",
-        date: "July 25, 2023",
-        time: "10:00 AM - 2:00 PM",
+        startDate: new Date("2025-04-25T10:00:00"),
+        endDate: new Date("2025-04-25T14:00:00"),
         imageSrc: "/images/workshop.jpg",
         badgeImageSrc: "/images/badge.png",
         categories: ["design", "web"],
@@ -89,8 +89,8 @@ export async function GET() {
       {
         name: "User Research Methods",
         description: "Master essential user research methods to inform your product decisions. Learn how to conduct interviews, surveys, and usability tests.",
-        date: "August 2, 2023",
-        time: "1:00 PM - 4:00 PM",
+        startDate: new Date("2025-05-02T13:00:00"),
+        endDate: new Date("2025-05-02T16:00:00"),
         imageSrc: "/images/workshop.jpg",
         badgeImageSrc: "/images/badge.png",
         categories: ["design", "research"],
@@ -101,8 +101,8 @@ export async function GET() {
       {
         name: "Advanced CSS Animations",
         description: "Take your web animations to the next level with advanced CSS techniques. Create engaging interactions without JavaScript.",
-        date: "August 8, 2023",
-        time: "9:00 AM - 12:00 PM",
+        startDate: new Date("2025-05-08T09:00:00"),
+        endDate: new Date("2025-05-08T12:00:00"),
         imageSrc: "/images/workshop.jpg",
         badgeImageSrc: "/images/badge.png",
         categories: ["design", "animation"],
@@ -113,8 +113,8 @@ export async function GET() {
       {
         name: "Testing for Frontend Developers",
         description: "Learn how to write effective tests for your frontend applications. Cover unit, integration, and end-to-end testing strategies.",
-        date: "August 15, 2023",
-        time: "10:00 AM - 3:00 PM",
+        startDate: new Date("2025-05-15T10:00:00"),
+        endDate: new Date("2025-05-15T15:00:00"),
         imageSrc: "/images/workshop.jpg",
         badgeImageSrc: "/images/badge.png",
         categories: ["testing", "coding"],
@@ -124,6 +124,7 @@ export async function GET() {
       }
     ];
 
+    // Create workshops with the new schema
     await Workshop.insertMany(sampleWorkshops);
 
     return NextResponse.json({ message: 'Database seeded successfully' }, { status: 201 });

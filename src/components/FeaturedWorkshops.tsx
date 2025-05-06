@@ -13,8 +13,8 @@ interface Workshop {
   _id: string;
   name: string;
   description: string;
-  date: string;
-  time: string;
+  startDate: Date;
+  endDate: Date;
   imageSrc: string;
   badgeImageSrc: string;
   categories: string[];
@@ -170,12 +170,13 @@ const FeaturedWorkshops = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {visibleWorkshops.map((workshop, index) => (
             <ScrollReveal key={`${currentPage}-${index}`} className={workshop.delay}>
-              <WorkshopCard 
+              <WorkshopCard
+                key={workshop._id}
                 id={workshop._id}
                 title={workshop.name}
                 description={workshop.description}
-                date={workshop.date}
-                time={workshop.time}
+                startDate={new Date(workshop.startDate)}
+                endDate={new Date(workshop.endDate)}
                 imageSrc={workshop.imageSrc}
                 delay={workshop.delay || ""}
                 bgColor={workshop.bgColor}

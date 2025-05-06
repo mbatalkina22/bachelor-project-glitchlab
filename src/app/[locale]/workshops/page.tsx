@@ -12,8 +12,8 @@ interface Workshop {
     _id: string;
     name: string;
     description: string;
-    date: string;
-    time: string;
+    startDate: Date;
+    endDate: Date;
     imageSrc: string;
     badgeImageSrc: string;
     categories: string[];
@@ -210,8 +210,8 @@ const WorkshopsPage = () => {
                                             id={workshop._id}
                                             title={workshop.name}
                                             description={workshop.description}
-                                            date={workshop.date}
-                                            time={workshop.time}
+                                            startDate={new Date(workshop.startDate)}
+                                            endDate={new Date(workshop.endDate)}
                                             imageSrc={workshop.imageSrc}
                                             delay={workshop.delay || ""}
                                             bgColor={workshop.bgColor}

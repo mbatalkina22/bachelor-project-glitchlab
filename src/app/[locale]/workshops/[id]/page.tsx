@@ -17,8 +17,8 @@ interface Workshop {
   _id: string;
   name: string;
   description: string;
-  date: string;
-  time: string;
+  startDate: Date;
+  endDate: Date;
   imageSrc: string;
   badgeImageSrc: string;
   categories: string[];
@@ -42,7 +42,7 @@ const WorkshopDetailPage = () => {
   const id = params.id as string;
   const locale = params.locale as string;
   const t = useTranslations('WorkshopDetail');
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const [workshop, setWorkshop] = useState<Workshop | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -159,10 +159,6 @@ const WorkshopDetailPage = () => {
         throw new Error(data.error || 'Failed to register for workshop');
       }
 
-      // Update the user state with the new registered workshops
-      if (setUser) {
-        setUser(data.user);
-      }
       setIsRegistered(true);
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -192,10 +188,6 @@ const WorkshopDetailPage = () => {
         throw new Error(data.error || 'Failed to unregister from workshop');
       }
 
-      // Update the user state with the updated registered workshops
-      if (setUser) {
-        setUser(data.user);
-      }
       setIsRegistered(false);
     } catch (error: any) {
       console.error('Unregistration error:', error);
@@ -212,6 +204,22 @@ const WorkshopDetailPage = () => {
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
+    });
+  };
+
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
+  const formatTime = (date: Date) => {
+    return new Date(date).toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
     });
   };
 
@@ -309,11 +317,11 @@ const WorkshopDetailPage = () => {
               <div className="flex items-center mb-6">
                 <div className="flex items-center mr-6">
                   <Icon icon="heroicons:calendar" className="w-5 h-5 mr-2 text-gray-500" />
-                  <span className="text-gray-700">{workshop.date}</span>
+                  <span className="text-gray-700">{formatDate(workshop.startDate)}</span>
                 </div>
                 <div className="flex items-center mr-6">
                   <Icon icon="heroicons:clock" className="w-5 h-5 mr-2 text-gray-500" />
-                  <span className="text-gray-700">{workshop.time}</span>
+                  <span className="text-gray-700">{formatTime(workshop.startDate)} - {formatTime(workshop.endDate)}</span>
                 </div>
                 <div className="flex items-center">
                   <Icon icon="heroicons:map-pin" className="w-5 h-5 mr-2 text-gray-500" />
@@ -436,18 +444,17 @@ const WorkshopDetailPage = () => {
             <h2 className="text-2xl font-bold mb-6 text-black">{t('similarWorkshops')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {similarWorkshops.map((workshop, index) => (
-                <ScrollReveal key={workshop._id} className={`delay-${(index % 3 + 1) * 100}`}>
-                  <WorkshopCard 
-                    id={workshop._id}
-                    title={workshop.name}
-                    description={workshop.description}
-                    date={workshop.date}
-                    time={workshop.time}
-                    imageSrc={workshop.imageSrc}
-                    delay={`delay-${(index % 3 + 1) * 100}`}
-                    bgColor={["#c3c2fc", "#f8c5f4", "#fee487"][index % 3]}
-                  />
-                </ScrollReveal>
+                <WorkshopCard
+                  key={workshop._id}
+                  id={workshop._id}
+                  title={workshop.name}
+                  description={workshop.description}
+                  startDate={new Date(workshop.startDate)}
+                  endDate={new Date(workshop.endDate)}
+                  imageSrc={workshop.imageSrc}
+                  delay={`delay-${(index % 3 + 1) * 100}`}
+                  bgColor="#ffffff"
+                />
               ))}
             </div>
           </div>

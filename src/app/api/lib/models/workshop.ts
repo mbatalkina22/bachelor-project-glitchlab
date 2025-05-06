@@ -10,13 +10,13 @@ const WorkshopSchema = new Schema({
     type: String,
     required: [true, 'Please provide a description for the workshop'],
   },
-  date: {
-    type: String,
-    required: [true, 'Please provide a date for the workshop'],
+  startDate: {
+    type: Date,
+    required: [true, 'Please provide a start date for the workshop'],
   },
-  time: {
-    type: String,
-    required: [true, 'Please provide a time for the workshop'],
+  endDate: {
+    type: Date,
+    required: [true, 'Please provide an end date for the workshop'],
   },
   imageSrc: {
     type: String,

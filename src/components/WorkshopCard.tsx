@@ -9,8 +9,8 @@ interface WorkshopCardProps {
   id?: string;
   title: string;
   description: string;
-  date: string;
-  time: string;
+  startDate: Date;
+  endDate: Date;
   imageSrc: string;
   delay: string;
   bgColor?: string;
@@ -22,14 +22,30 @@ const WorkshopCard = ({
   id = "1", 
   title, 
   description, 
-  date, 
-  time, 
+  startDate, 
+  endDate, 
   imageSrc, 
   delay, 
   bgColor = "#ffffff",
 }: WorkshopCardProps) => {
   const params = useParams();
   const locale = params.locale as string;
+
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
+  const formatTime = (date: Date) => {
+    return new Date(date).toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    });
+  };
 
   return (
     <div className={`rounded-lg overflow-hidden shadow-md h-full flex flex-col`} style={{ backgroundColor: bgColor }}>
@@ -50,9 +66,9 @@ const WorkshopCard = ({
         <p className="text-gray-600 mb-4 h-24 overflow-hidden line-clamp-4">{description}</p>
         <div className="flex items-center text-sm text-gray-500 mb-4">
           <Icon icon="heroicons:calendar" className="w-4 h-4 mr-1" />
-          <span>{date}</span>
+          <span>{formatDate(startDate)}</span>
           <Icon icon="heroicons:clock" className="w-4 h-4 ml-4 mr-1" />
-          <span>{time}</span>
+          <span>{formatTime(startDate)} - {formatTime(endDate)}</span>
         </div>
         <div className="mt-auto">
           <HeroButton 
