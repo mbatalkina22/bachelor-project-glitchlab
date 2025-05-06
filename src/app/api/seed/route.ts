@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '../lib/mongodb';
 import Workshop from '../lib/models/workshop';
+import mongoose from 'mongoose';
 
 export async function GET() {
   try {
@@ -11,7 +12,6 @@ export async function GET() {
     if (count > 0) {
       return NextResponse.json({ message: 'Database already seeded' }, { status: 200 });
     }
-
     // Sample workshop data
     const sampleWorkshops = [
       {
@@ -24,7 +24,8 @@ export async function GET() {
         categories: ["design", "beginner"],
         level: "Beginner",
         location: "Online",
-        instructor: "Sarah Johnson"
+        instructor: "Sarah Johnson",
+   
       },
       {
         name: "Advanced JavaScript Patterns",
@@ -36,7 +37,8 @@ export async function GET() {
         categories: ["coding", "advanced"],
         level: "Advanced",
         location: "San Francisco",
-        instructor: "Michael Chen"
+        instructor: "Michael Chen",
+     
       },
       {
         name: "Data Visualization with D3.js",
@@ -48,7 +50,8 @@ export async function GET() {
         categories: ["coding", "data"],
         level: "Intermediate",
         location: "New York",
-        instructor: "Emily Rodriguez"
+        instructor: "Emily Rodriguez",
+        
       },
       {
         name: "React Performance Optimization",
@@ -60,7 +63,8 @@ export async function GET() {
         categories: ["coding", "optimization"],
         level: "Intermediate",
         location: "Online",
-        instructor: "David Kim"
+        instructor: "David Kim",
+        
       },
       {
         name: "Introduction to Machine Learning",
@@ -72,7 +76,8 @@ export async function GET() {
         categories: ["data", "ai"],
         level: "Beginner",
         location: "Boston",
-        instructor: "Jessica Martinez"
+        instructor: "Jessica Martinez",
+        
       },
       {
         name: "Responsive Web Design",
@@ -84,7 +89,8 @@ export async function GET() {
         categories: ["design", "web"],
         level: "Beginner",
         location: "Online",
-        instructor: "Robert Wilson"
+        instructor: "Robert Wilson",
+       
       },
       {
         name: "User Research Methods",
@@ -96,7 +102,8 @@ export async function GET() {
         categories: ["design", "research"],
         level: "Intermediate",
         location: "Seattle",
-        instructor: "Amanda Thompson"
+        instructor: "Amanda Thompson",
+      
       },
       {
         name: "Advanced CSS Animations",
@@ -108,7 +115,8 @@ export async function GET() {
         categories: ["design", "animation"],
         level: "Advanced",
         location: "Online",
-        instructor: "Chris Lee"
+        instructor: "Chris Lee",
+      
       },
       {
         name: "Testing for Frontend Developers",
@@ -120,7 +128,8 @@ export async function GET() {
         categories: ["testing", "coding"],
         level: "Intermediate",
         location: "Chicago",
-        instructor: "Lisa Parker"
+        instructor: "Lisa Parker",
+     
       },
       {
         name: "Advanced React State Management",
@@ -132,7 +141,8 @@ export async function GET() {
         categories: ["react", "state"],
         level: "Intermediate",
         location: "Chicago",
-        instructor: "Lisa Parker"
+        instructor: "Lisa Parker",
+       
       }
     ];
 

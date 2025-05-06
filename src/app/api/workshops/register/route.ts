@@ -42,7 +42,7 @@ export async function POST(request: Request) {
           { status: 404 }
         );
       }
-
+      
       // Update user's registered workshops
       const user = await User.findById(decoded.userId);
       if (!user) {

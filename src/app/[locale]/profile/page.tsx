@@ -14,8 +14,8 @@ interface Workshop {
   _id: string;
   name: string;
   description: string;
-  date: string;
-  time: string;
+  startDate: Date;
+  endDate: Date;
   imageSrc: string;
   badgeImageSrc: string;
   categories: string[];
@@ -44,7 +44,13 @@ const ProfilePage = () => {
           throw new Error('Failed to fetch registered workshops');
         }
         const data = await response.json();
-        setRegisteredWorkshops(data.workshops);
+        // Convert string dates to Date objects
+        const workshopsWithDates = data.workshops.map((workshop: any) => ({
+          ...workshop,
+          startDate: new Date(workshop.startDate),
+          endDate: new Date(workshop.endDate)
+        }));
+        setRegisteredWorkshops(workshopsWithDates);
       } catch (error) {
         console.error('Error fetching registered workshops:', error);
       } finally {
@@ -233,8 +239,8 @@ const ProfilePage = () => {
                         id={workshop._id}
                         title={workshop.name}
                         description={workshop.description}
-                        date={workshop.date}
-                        time={workshop.time}
+                        startDate={new Date(workshop.startDate)}
+                        endDate={new Date(workshop.endDate)}
                         imageSrc={workshop.imageSrc}
                         delay={`delay-${(index % 3 + 1) * 100}`}
                         bgColor={["#c3c2fc", "#f8c5f4", "#fee487"][index % 3]}

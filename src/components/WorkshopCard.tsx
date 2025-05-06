@@ -73,12 +73,14 @@ const WorkshopCard = ({
       <div className="p-6 flex flex-col flex-grow">
         <h3 className="text-xl font-secularone mb-2 line-clamp-1 text-black">{title}</h3>
         <p className="text-gray-600 mb-4 h-24 overflow-hidden line-clamp-4">{description}</p>
-        <div className="flex items-center text-sm text-gray-500 mb-4">
-          <Icon icon="heroicons:calendar" className="w-4 h-4 mr-1" />
-          <span>{formatDate(startDate)}</span>
-          <Icon icon="heroicons:clock" className="w-4 h-4 ml-4 mr-1" />
-          <span>{formatTime(startDate)} - {formatTime(endDate)}</span>
-        </div>
+        {status !== 'past' && (
+          <div className="flex items-center text-sm text-gray-500 mb-4">
+            <Icon icon="heroicons:calendar" className="w-4 h-4 mr-1" />
+            <span>{formatDate(startDate)}</span>
+            <Icon icon="heroicons:clock" className="w-4 h-4 ml-4 mr-1" />
+            <span>{formatTime(startDate)} - {formatTime(endDate)}</span>
+          </div>
+        )}
         <div className="mt-auto">
           <HeroButton 
             text="Learn More"
