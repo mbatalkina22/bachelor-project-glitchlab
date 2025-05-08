@@ -66,20 +66,20 @@ const Navbar = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
   };
 
-  const changeLanguage = (newLocale: string) => {
-    // Get the current path without the locale prefix
-    const currentPath = pathname.replace(/^\/[^\/]+/, '');
-    
-    // Navigate to the same page but with a different locale
-    router.push(`/${newLocale}${currentPath || '/'}`);
-    
-    // Force a page refresh to ensure translations are applied
-    window.location.href = `/${newLocale}${currentPath || '/'}`;
+  // Create a function to get the URL for changing the language
+  const getLanguageSwitchHref = (newLocale: string) => {
+    // Get the path without the locale
+    const path = pathname.substring(3) || '/';
+    return `/${newLocale}${path}`;
   };
 
   const handleLogout = () => {
     logout();
     setIsUserMenuOpen(false);
+  };
+
+  const handleLanguageChange = (newLocale: string) => {
+    router.push(getLanguageSwitchHref(newLocale));
   };
 
   return (
@@ -110,8 +110,8 @@ const Navbar = () => {
             {/* Language switcher */}
             <div className="relative ml-3">
               <button 
+                onClick={() => handleLanguageChange(locale === 'en' ? 'it' : 'en')}
                 className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}
-                onClick={() => changeLanguage(locale === 'en' ? 'it' : 'en')}
               >
                 <Icon icon={locale === 'en' ? 'emojione:flag-for-united-kingdom' : 'emojione:flag-for-italy'} className="w-5 h-5 mr-1" />
                 <span>{locale === 'en' ? 'EN' : 'IT'}</span>
@@ -295,8 +295,8 @@ const Navbar = () => {
           
           {/* Language switcher for mobile */}
           <button 
+            onClick={() => handleLanguageChange(locale === 'en' ? 'it' : 'en')}
             className={`flex items-center w-full text-left px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}
-            onClick={() => changeLanguage(locale === 'en' ? 'it' : 'en')}
           >
             <Icon icon={locale === 'en' ? 'emojione:flag-for-united-kingdom' : 'emojione:flag-for-italy'} className="w-5 h-5 mr-2" />
             <span>{locale === 'en' ? 'English' : 'Italiano'}</span>

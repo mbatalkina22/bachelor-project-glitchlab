@@ -12,7 +12,7 @@
     "register": "Registrati"
   },
   "Hero": {
-    "title": "Workshop Manager",
+    "title": "Glitch Lab",
     "subtitle": "Organizza e gestisci i tuoi workshop con facilità",
     "exploreButton": "Esplora"
   },
@@ -32,7 +32,7 @@
     }
   },
   "Footer": {
-    "companyName": "Workshop Manager",
+    "companyName": "Glitch Lab",
     "description": "Potenziare l'apprendimento attraverso workshop interattivi ed esperienze pratiche.",
     "quickLinks": "Link Rapidi",
     "home": "Home",
@@ -186,7 +186,9 @@
     "noReviewsYet": "Nessuna recensione",
     "noReviewsMessage": "Non hai ancora lasciato recensioni. Condividi il tuo feedback sui workshops frequentati.",
     "editReview": "Modifica Recensione",
-    "deleteReview": "Elimina Recensione"
+    "deleteReview": "Elimina Recensione",
+    "notLoggedIn": "Non sei connesso",
+    "login": "Accedi per visualizzare il profilo"
   },
   "Settings": {
     "settings": "Impostazioni",

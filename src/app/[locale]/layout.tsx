@@ -24,29 +24,60 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   // Await the params object before accessing it
   const resolvedParams = await Promise.resolve(params);
-  const locale = resolvedParams.locale;
+  const locale = resolvedParams.locale || 'en';
   
-  const t = await getTranslations({ locale, namespace: 'Hero' });
-
-  return {
-    title: t('title'),
-    description: t('subtitle'),
-  };
+  try {
+    const t = await getTranslations({ locale, namespace: 'Hero' });
+    return {
+      title: t('title'),
+      description: t('subtitle'),
+    };
+  } catch (error) {
+    // Fallback to hardcoded values
+    return {
+      title: locale === 'en' ? 'Glitch Lab' : 'Workshop Manager',
+      description: locale === 'en' 
+        ? 'Empowering learning through interactive workshops and hands-on experiences.'
+        : 'Organizza e gestisci i tuoi workshop con facilità',
+    };
+  }
 }
 
 export default async function RootLayout({
   children,
-  params: { locale }
+  params,
 }: {
   children: ReactNode;
   params: { locale: string };
 }) {
-  const messages = await getMessages(locale);
+  // Await the params object before destructuring it
+  const resolvedParams = await Promise.resolve(params);
+  const locale = resolvedParams.locale || 'en';
+  
+  // Attempt to load messages with better error handling
+  let messages;
+  try {
+    messages = await getMessages({ locale });
+  } catch (error) {
+    // Try to load fallback messages
+    try {
+      messages = await getMessages({ locale: 'en' });
+    } catch (fallbackError) {
+      // Provide minimal empty messages to prevent crashes
+      messages = {};
+    }
+  }
 
   return (
     <html lang={locale}>
       <body className={`${secularOne.variable} font-sans`}>
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider 
+          locale={locale} 
+          messages={messages} 
+          timeZone="Europe/Rome"
+          now={new Date()}
+          key={`intl-provider-${locale}`}
+        >
           <AuthProvider>
             <Navbar />
             <main className="min-h-screen bg-[#f5f5f5]">

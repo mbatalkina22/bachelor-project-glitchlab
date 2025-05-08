@@ -158,7 +158,9 @@
     "noReviewsMessage": "You haven't left any reviews yet. Share your feedback about attended workshops.",
     "editReview": "Edit Review",
     "deleteReview": "Delete Review",
-    "registeredWorkshops": "Registered Workshops"
+    "registeredWorkshops": "Registered Workshops",
+    "notLoggedIn": "Not Logged In",
+    "login": "Log In to View Profile"
   },
   "Settings": {
     "settings": "Settings",
