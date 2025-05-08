@@ -155,9 +155,11 @@ const FeaturedWorkshops = () => {
     <div className="py-16">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="flex justify-between items-center mb-12">
-          <ScrollReveal>
-            <h2 className="text-3xl md:text-4xl font-secularone text-black">{t('title')}</h2>
-          </ScrollReveal>
+          <div className="flex-1 flex justify-center">
+            <ScrollReveal>
+              <h2 className="text-3xl md:text-4xl font-secularone text-black">{t('title')}</h2>
+            </ScrollReveal>
+          </div>
           <button 
             onClick={fetchWorkshops}
             className="p-2 bg-gray-100 text-gray-800 rounded-full hover:bg-gray-200 flex items-center focus:outline-none"
