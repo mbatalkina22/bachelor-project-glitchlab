@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import { useParams } from "next/navigation";
 import HeroButton from "./HeroButton";
 import { getWorkshopStatus, getStatusColor } from '@/utils/workshopStatus';
+import { useTranslations } from 'next-intl';
 
 interface WorkshopCardProps {
   id?: string;
@@ -17,6 +18,7 @@ interface WorkshopCardProps {
   bgColor?: string;
   headingColor?: string;
   buttonColor?: string;
+  isRegistered?: boolean;
 }
 
 const WorkshopCard = ({ 
@@ -28,9 +30,11 @@ const WorkshopCard = ({
   imageSrc, 
   delay, 
   bgColor = "#ffffff",
+  isRegistered = false
 }: WorkshopCardProps) => {
   const params = useParams();
   const locale = params.locale as string;
+  const t = useTranslations('WorkshopDetail');
 
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString('en-US', {
@@ -52,7 +56,15 @@ const WorkshopCard = ({
   const statusColor = getStatusColor(status);
 
   return (
-    <div className={`rounded-lg overflow-hidden shadow-md h-full flex flex-col`} style={{ backgroundColor: bgColor }}>
+    <div className={`rounded-lg overflow-hidden shadow-md h-full flex flex-col relative`} style={{ backgroundColor: bgColor }}>
+      {isRegistered && (
+        <div className="absolute top-2 right-4 z-10">
+          <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-md flex items-center">
+            <Icon icon="heroicons:check-circle" className="w-4 h-4 mr-1" />
+            {t('registered')}
+          </span>
+        </div>
+      )}
       <div className="relative h-48 w-full bg-gray-200">
         <Image 
           src={imageSrc} 

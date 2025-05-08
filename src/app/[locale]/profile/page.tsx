@@ -31,35 +31,36 @@ const ProfilePage = () => {
   const [registeredWorkshops, setRegisteredWorkshops] = useState<Workshop[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const fetchRegisteredWorkshops = async () => {
+    if (!user?.registeredWorkshops?.length) {
+      setIsLoading(false);
+      setRegisteredWorkshops([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/workshops/batch?ids=${user.registeredWorkshops.join(',')}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch registered workshops');
+      }
+      const data = await response.json();
+      // Convert string dates to Date objects
+      const workshopsWithDates = data.workshops.map((workshop: any) => ({
+        ...workshop,
+        startDate: new Date(workshop.startDate),
+        endDate: new Date(workshop.endDate)
+      }));
+      setRegisteredWorkshops(workshopsWithDates);
+    } catch (error) {
+      console.error('Error fetching registered workshops:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchRegisteredWorkshops = async () => {
-      if (!user?.registeredWorkshops?.length) {
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const response = await fetch(`/api/workshops/batch?ids=${user.registeredWorkshops.join(',')}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch registered workshops');
-        }
-        const data = await response.json();
-        // Convert string dates to Date objects
-        const workshopsWithDates = data.workshops.map((workshop: any) => ({
-          ...workshop,
-          startDate: new Date(workshop.startDate),
-          endDate: new Date(workshop.endDate)
-        }));
-        setRegisteredWorkshops(workshopsWithDates);
-      } catch (error) {
-        console.error('Error fetching registered workshops:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchRegisteredWorkshops();
-  }, [user]);
+  }, [user]);  // This will refetch workshops whenever the user object changes
 
   if (!user) {
     return (
@@ -244,6 +245,7 @@ const ProfilePage = () => {
                         imageSrc={workshop.imageSrc}
                         delay={`delay-${(index % 3 + 1) * 100}`}
                         bgColor={["#c3c2fc", "#f8c5f4", "#fee487"][index % 3]}
+                        isRegistered={true}
                       />
                     </ScrollReveal>
                   ))}

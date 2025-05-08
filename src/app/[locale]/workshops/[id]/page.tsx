@@ -7,9 +7,9 @@ import { Icon } from '@iconify/react';
 import ScrollReveal from '@/components/ScrollReveal';
 import WorkshopCard from '@/components/WorkshopCard';
 import TestimonialCard from '@/components/TestimonialCard';
-import ReviewList, { Review } from '@/components/ReviewList';
+import ReviewList from '@/components/ReviewList';
 import { useTranslations } from 'next-intl';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, usePathname } from 'next/navigation';
 import HeroButton from '@/components/HeroButton';
 import { useAuth } from '@/context/AuthContext';
 import { getWorkshopStatus, getStatusColor } from '@/utils/workshopStatus';
@@ -28,111 +28,98 @@ interface Workshop {
   instructor: string;
 }
 
-interface WorkshopReview {
-  name: string;
-  comment?: string;
-  circleColor: string;
-  circleFont: string;
-  circleText: string;
-  date?: string;
-}
-
 const WorkshopDetailPage = () => {
   const params = useParams();
   const router = useRouter();
+  const pathname = usePathname();
   const id = params.id as string;
   const locale = params.locale as string;
   const t = useTranslations('WorkshopDetail');
-  const { user } = useAuth();
+  const { user, isAuthenticated, refreshUser } = useAuth();
   const [workshop, setWorkshop] = useState<Workshop | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isRegistered, setIsRegistered] = useState(false);
   const [similarWorkshops, setSimilarWorkshops] = useState<Workshop[]>([]);
 
-  // Check if user is registered for this workshop
+  // Update isRegistered whenever user data changes
   useEffect(() => {
-    if (user && workshop) {
-      setIsRegistered(user.registeredWorkshops.includes(workshop._id));
+    if (user && id) {
+      const userWorkshops = user.registeredWorkshops || [];
+      const registered = userWorkshops.includes(id);
+      console.log('User registration status from context:', { id, isRegistered: registered, workshops: userWorkshops });
+      setIsRegistered(registered);
     }
-  }, [user, workshop]);
+  }, [user, id]);
+
+  const checkUserRegistration = async () => {
+    if (!id || !isAuthenticated) return;
+    
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      
+      // Force a fresh request by adding a timestamp
+      const userResponse = await fetch(`/api/user?t=${new Date().getTime()}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        }
+      });
+      
+      if (userResponse.ok) {
+        const userData = await userResponse.json();
+        const userWorkshops = userData.registeredWorkshops || [];
+        const isUserRegistered = userWorkshops.includes(id);
+        console.log('User registration check:', { id, isRegistered: isUserRegistered, workshops: userWorkshops });
+        setIsRegistered(isUserRegistered);
+      }
+    } catch (error) {
+      console.error('Error checking user registration:', error);
+    }
+  };
 
   useEffect(() => {
-    const fetchWorkshop = async () => {
+    const fetchWorkshopData = async () => {
       try {
         setIsLoading(true);
-        // Add a cache-busting parameter
-        const response = await fetch(`/api/workshops/${id}?t=${new Date().getTime()}`);
-        
+        // Fetch workshop details
+        const response = await fetch(`/api/workshops/${id}`);
         if (!response.ok) {
-          if (response.status === 404) {
-            setError('Workshop not found');
-          } else {
-            throw new Error('Failed to fetch workshop');
-          }
-          return;
+          throw new Error('Failed to fetch workshop details');
         }
-        
         const data = await response.json();
+        
         setWorkshop(data);
         
-        // Fetch similar workshops (workshops with at least one matching category)
+        // Fetch similar workshops
         if (data.categories && data.categories.length > 0) {
-          const allWorkshopsResponse = await fetch(`/api/workshops?t=${new Date().getTime()}`);
-          if (allWorkshopsResponse.ok) {
-            const allWorkshops = await allWorkshopsResponse.json();
-            
-            // Filter for similar workshops (same category, different ID)
-            const similar = allWorkshops
-              .filter((w: Workshop) => 
-                w._id !== data._id && 
-                w.categories.some((cat: string) => data.categories.includes(cat))
-              )
-              .slice(0, 3);  // Limit to 3 similar workshops
-            
-            setSimilarWorkshops(similar);
+          const category = data.categories[0]; // Use the first category to find similar workshops
+          const similarResponse = await fetch(`/api/workshops/similar?category=${category}&id=${id}`);
+          
+          if (similarResponse.ok) {
+            const similarData = await similarResponse.json();
+            setSimilarWorkshops(similarData.slice(0, 3)); // Limit to 3 similar workshops
           }
         }
-      } catch (err) {
-        console.error('Error fetching workshop:', err);
+        
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching workshop:', error);
         setError('Failed to load workshop details. Please try again later.');
-      } finally {
         setIsLoading(false);
       }
     };
     
     if (id) {
-      fetchWorkshop();
+      fetchWorkshopData();
     }
   }, [id]);
-
-  // Sample reviews - these would come from an API in a real application
-  const reviews: WorkshopReview[] = [
-    { 
-      name: "Michael Chen", 
-      circleColor: "#383838",
-      circleFont: "Arial",
-      circleText: "Amazing!",
-      comment: "This workshop completely changed how I think about user interfaces. The hands-on approach was super helpful!",
-      date: "2 days ago"
-    },
-    { 
-      name: "Emily Rodriguez", 
-      circleColor: "#7471f9",
-      circleFont: "Georgia",
-      circleText: "Great!",
-      comment: "Sarah is an excellent instructor. The workshop was well-organized and packed with useful information.",
-      date: "1 week ago"
-    },
-    { 
-      name: "David Kim", 
-      circleColor: "#fdcb2a",
-      circleFont: "Verdana",
-      circleText: "Perfect",
-      comment: "Great introduction to UX principles. I'd recommend this to anyone looking to understand the basics.",
-      date: "2 weeks ago"
-    }
-  ];
+  
+  // Force refresh on navigation - no longer needed as we have the user effect
+  // useEffect(() => {
+  //   checkUserRegistration();
+  // }, [pathname]);
 
   const handleRegister = async () => {
     try {
@@ -160,7 +147,11 @@ const WorkshopDetailPage = () => {
         throw new Error(data.error || 'Failed to register for workshop');
       }
 
+      // Update local state first
       setIsRegistered(true);
+      
+      // Then refresh the user data in the context
+      await refreshUser();
     } catch (error: any) {
       console.error('Registration error:', error);
       alert(error.message || 'Failed to register for workshop');
@@ -174,13 +165,17 @@ const WorkshopDetailPage = () => {
         throw new Error('No authentication token found');
       }
 
+      if (!workshop?._id) {
+        throw new Error('Workshop ID is missing');
+      }
+
       const response = await fetch('/api/workshops/unregister', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ workshopId: workshop?._id })
+        body: JSON.stringify({ workshopId: workshop._id })
       });
 
       const data = await response.json();
@@ -189,39 +184,15 @@ const WorkshopDetailPage = () => {
         throw new Error(data.error || 'Failed to unregister from workshop');
       }
 
+      // Update local state first
       setIsRegistered(false);
+      
+      // Then refresh the user data in the context
+      await refreshUser();
     } catch (error: any) {
       console.error('Unregistration error:', error);
       alert(error.message || 'Failed to unregister from workshop');
     }
-  };
-
-  // Reference for the register button section
-  const registerSectionRef = React.useRef<HTMLButtonElement>(null);
-
-  // Function to scroll to registration section
-  const scrollToRegister = () => {
-    // Scroll to the top of the page
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
-
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
-
-  const formatTime = (date: Date) => {
-    return new Date(date).toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true
-    });
   };
 
   if (isLoading) {
@@ -250,8 +221,21 @@ const WorkshopDetailPage = () => {
     );
   }
 
-  // Generate a longer description for the workshop based on the short description
-  const longDescription = workshop ? `${workshop.description}\n\nThis comprehensive workshop is perfect for beginners and those looking to refresh their skills. Over the course of the session, we'll dive deep into the principles and techniques covered.\n\nThis workshop balances theory with hands-on practice. You'll work on real-world examples and leave with practical skills you can immediately apply to your projects. Whether you're looking to expand your skillset, better understand the subject, or simply learn something new, this workshop will provide valuable insights and techniques.` : "";
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
+  const formatTime = (date: Date) => {
+    return new Date(date).toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    });
+  };
 
   return (
     <div className="pt-16 min-h-screen">
@@ -382,7 +366,6 @@ const WorkshopDetailPage = () => {
                     backgroundColor="#4f46e5"
                     textColor="white"
                     className="w-full md:w-auto"
-                    ref={registerSectionRef}
                   />
                 )
               )}
@@ -392,7 +375,7 @@ const WorkshopDetailPage = () => {
           {/* Description */}
           <div className="p-6 border-t border-gray-200">
             <h2 className="text-xl font-semibold mb-4 text-black">{t('description')}</h2>
-            <p className="text-gray-700 whitespace-pre-line">{longDescription}</p>
+            <p className="text-gray-700 whitespace-pre-line">{workshop.description}</p>
           </div>
           
           {/* Badge Section */}
@@ -414,22 +397,26 @@ const WorkshopDetailPage = () => {
                       }}
                     />
                   </div>
-                  <div className="absolute -bottom-2 -right-2 bg-yellow-400 text-xs font-bold text-white px-2 py-1 rounded-full shadow-md">
-                    NEW
-                  </div>
+                  {getWorkshopStatus(workshop.startDate, workshop.endDate) !== 'past' && (
+                    <div className="absolute -bottom-2 -right-2 bg-yellow-400 text-xs font-bold text-white px-2 py-1 rounded-full shadow-md">
+                      NEW
+                    </div>
+                  )}
                 </div>
                 <div className="text-center md:text-left max-w-lg">
                   <h3 className="text-lg font-bold text-indigo-700 mb-2">{workshop.name} Badge</h3>
                   <p className="text-gray-700 mb-4">
                     {t('badgeDescription')}
                   </p>
-                  <HeroButton 
-                    text={t('unlockBadge')}
-                    onClick={scrollToRegister}
-                    backgroundColor="white"
-                    textColor="#4f46e5"
-                    className="text-sm shadow-sm border border-indigo-100 hover:bg-gray-50"
-                  />
+                  {getWorkshopStatus(workshop.startDate, workshop.endDate) !== 'past' && (
+                    <HeroButton 
+                      text={t('unlockBadge')}
+                      onClick={handleRegister}
+                      backgroundColor="white"
+                      textColor="#4f46e5"
+                      className="text-sm shadow-sm border border-indigo-100 hover:bg-gray-50"
+                    />
+                  )}
                 </div>
               </div>
             </ScrollReveal>
@@ -476,15 +463,16 @@ const WorkshopDetailPage = () => {
                   imageSrc={workshop.imageSrc}
                   delay={`delay-${(index % 3 + 1) * 100}`}
                   bgColor="#ffffff"
+                  isRegistered={user?.registeredWorkshops?.includes(workshop._id) || false}
                 />
               ))}
             </div>
           </div>
         )}
         
-        {/* Reviews Section - Using ReviewList component */}
+        {/* Reviews Section - Using ReviewList component with workshopId */}
         <div className="mb-12">
-          <ReviewList reviews={reviews as Review[]} />
+          <ReviewList workshopId={id} />
         </div>
       </div>
     </div>

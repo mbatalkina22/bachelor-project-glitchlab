@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useEffect } from "react";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 import ScrollReveal from "@/components/ScrollReveal";
 import { useTranslations } from "next-intl";
 import HeroButton from "./HeroButton";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 // Add Google Fonts import
 import { Arvo, Bebas_Neue, Dancing_Script, Lobster } from "next/font/google";
@@ -17,23 +19,46 @@ const arvo = Arvo({ weight: ["400", "700"], subsets: ["latin"] });
 const bebasNeue = Bebas_Neue({ weight: "400", subsets: ["latin"] });
 
 export interface Review {
-  name: string;
-  comment?: string;
+  _id?: string;
+  user?: string;
+  workshop?: string;
+  userName: string;
   circleColor: string;
   circleFont: string;
   circleText: string;
-  date?: string;
+  comment?: string;
+  createdAt?: string;
+  date?: string; // For backward compatibility
 }
 
 interface ReviewListProps {
-  reviews: Review[];
+  workshopId: string;
+  initialReviews?: Review[];
 }
 
-const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
+const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = [] }) => {
   const t = useTranslations("WorkshopDetail");
+  const { user, isAuthenticated } = useAuth();
+  const router = useRouter();
+  
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
+  const [reviews, setReviews] = useState<Review[]>(initialReviews);
+  const [hasReviewed, setHasReviewed] = useState(false);
+  const [userReview, setUserReview] = useState<Review | null>(null);
+  const [message, setMessage] = useState<{text: string, type: 'success' | 'error'} | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  
+  // Pagination state
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const LIMIT = 3; // Number of reviews to fetch per request
 
   // Circle customization state
   const [circleColor, setCircleColor] = useState("#383838");
@@ -50,8 +75,153 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
     t("confusing")
   ];
 
-  // Open review modal
+  // Check if user has already reviewed the workshop
+  useEffect(() => {
+    const checkUserReview = async () => {
+      if (!isAuthenticated || !workshopId) return;
+      
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        
+        const response = await fetch(`/api/reviews/check?workshopId=${workshopId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          setHasReviewed(data.hasReviewed);
+          if (data.hasReviewed && data.review) {
+            setUserReview(data.review);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking review status:", error);
+      }
+    };
+    
+    checkUserReview();
+  }, [isAuthenticated, workshopId]);
+
+  // Fetch reviews for the workshop
+  useEffect(() => {
+    const fetchReviews = async () => {
+      if (!workshopId) return;
+      
+      try {
+        const response = await fetch(`/api/reviews?workshopId=${workshopId}&limit=${LIMIT}&offset=0`);
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Fetched reviews:", data); // Debug log
+          
+          // Make sure we're working with the reviews array from the response
+          if (!Array.isArray(data.reviews)) {
+            console.error("Expected reviews array in response, got:", data);
+            return;
+          }
+          
+          // Sort reviews so that the user's review appears at the top
+          const sortedReviews = data.reviews.sort((a: Review, b: Review) => {
+            if (a.user === user?._id) return -1;
+            if (b.user === user?._id) return 1;
+            return new Date(b.createdAt || Date.now()).getTime() - new Date(a.createdAt || Date.now()).getTime();
+          });
+          
+          setReviews(sortedReviews);
+          setOffset(data.reviews.length); // Set offset for next page
+          setHasMore(data.pagination.hasMore);
+        }
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    };
+    
+    setOffset(0); // Reset offset when workshopId changes
+    fetchReviews();
+  }, [workshopId, user?._id]);
+
+  // Load more reviews
+  const handleLoadMore = async () => {
+    if (!workshopId || isLoadingMore) return;
+    
+    setIsLoadingMore(true);
+    console.log(`Loading more reviews - current offset: ${offset}, limit: ${LIMIT}`);
+    
+    try {
+      const response = await fetch(`/api/reviews?workshopId=${workshopId}&limit=${LIMIT}&offset=${offset}`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Loaded more reviews:", data); // Debug log
+        
+        if (!Array.isArray(data.reviews)) {
+          console.error("Expected reviews array in response, got:", data);
+          setIsLoadingMore(false);
+          return;
+        }
+        
+        if (data.reviews.length === 0) {
+          setHasMore(false);
+          setIsLoadingMore(false);
+          return;
+        }
+        
+        // Update reviews state by appending new reviews
+        setReviews(prevReviews => [
+          ...prevReviews, 
+          ...data.reviews.filter((newReview: Review) => 
+            !prevReviews.some(existingReview => existingReview._id === newReview._id)
+          )
+        ]);
+        
+        // Update pagination state
+        setOffset(prev => prev + data.reviews.length);
+        console.log(`New offset after loading more: ${offset + data.reviews.length}, has more: ${data.pagination.hasMore}`);
+        setHasMore(data.pagination.hasMore);
+      }
+    } catch (error) {
+      console.error("Error loading more reviews:", error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
+
+  // Open review modal in create mode
   const openReviewModal = () => {
+    if (!isAuthenticated) {
+      router.push('/login');
+      return;
+    }
+    
+    setIsEditMode(false);
+    setEditingReviewId(null);
+    
+    // Reset form
+    setCircleColor("#383838");
+    setCircleFont("Dancing Script");
+    setCircleText("");
+    setComment("");
+    
+    setIsReviewModalOpen(true);
+    document.body.style.overflow = "hidden";
+  };
+  
+  // Open review modal in edit mode
+  const openEditReviewModal = (review: Review) => {
+    if (!review._id) return;
+    
+    setIsEditMode(true);
+    setEditingReviewId(review._id);
+    
+    // Pre-fill form with review data
+    setCircleColor(review.circleColor);
+    setCircleFont(review.circleFont);
+    setCircleText(review.circleText);
+    setComment(review.comment || "");
+    
     setIsReviewModalOpen(true);
     document.body.style.overflow = "hidden";
   };
@@ -61,6 +231,20 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
     setIsReviewModalOpen(false);
     document.body.style.overflow = "auto";
     setFormErrors({});
+    setMessage(null);
+  };
+  
+  // Open delete confirmation modal
+  const openDeleteModal = (reviewId: string) => {
+    setDeletingReviewId(reviewId);
+    setIsDeleteModalOpen(true);
+  };
+  
+  // Close delete confirmation modal
+  const closeDeleteModal = () => {
+    setDeletingReviewId(null);
+    setIsDeleteModalOpen(false);
+    setIsDeleting(false);
   };
 
   // Validate form
@@ -75,49 +259,157 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
     return Object.keys(errors).length === 0;
   };
 
-  // Handle review submission
-  const handleSubmitReview = (e: FormEvent) => {
+  // Handle review submission (create or update)
+  const handleSubmitReview = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm()) {
+    if (!validateForm() || !isAuthenticated) {
       return;
     }
 
     setIsSubmittingReview(true);
+    setMessage(null);
 
-    // In a real app, you would call an API to submit the review
-    setTimeout(() => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
       const reviewData = {
+        workshopId,
         circleColor,
         circleFont,
         circleText,
         comment,
       };
 
-      console.log("Submitting review with data:", reviewData);
+      let response;
+      let responseData: any;
+      
+      if (isEditMode && editingReviewId) {
+        // Update existing review
+        response = await fetch(`/api/reviews/${editingReviewId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(reviewData)
+        });
+        
+        responseData = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(responseData.error || 'Failed to update review');
+        }
+        
+        console.log("Updated review:", responseData); // Debug log
+        
+        // Update the review in the list
+        const updatedReviews = reviews.map(review => 
+          review._id === editingReviewId ? responseData : review
+        );
+        
+        setReviews(updatedReviews);
+        setUserReview(responseData);
+        
+        setMessage({
+          text: t('reviewUpdated'),
+          type: 'success'
+        });
+      } else {
+        // Create new review
+        response = await fetch('/api/reviews', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(reviewData)
+        });
 
-      // Add the new review to the list (in a real app, this would come from the API)
-      const newReview: Review = {
-        name: "You",
-        circleColor,
-        circleFont,
-        circleText,
-        comment,
-        date: "Just now",
-      };
+        responseData = await response.json();
 
+        if (!response.ok) {
+          throw new Error(responseData.error || 'Failed to submit review');
+        }
+        
+        console.log("Created review:", responseData); // Debug log
+
+        // Add the new review to the list
+        setReviews([responseData, ...reviews]);
+        setHasReviewed(true);
+        setUserReview(responseData);
+        
+        setMessage({
+          text: t('reviewSubmitted'),
+          type: 'success'
+        });
+      }
+      
       // Reset the form
       setCircleColor("#383838");
       setCircleFont("Dancing Script");
       setCircleText("");
       setComment("");
+      
+      setTimeout(() => {
+        closeReviewModal();
+      }, 2000);
+    } catch (error: any) {
+      console.error("Review submission error:", error);
+      setMessage({
+        text: error.message || 'Failed to submit review',
+        type: 'error'
+      });
+    } finally {
       setIsSubmittingReview(false);
-      setFormErrors({});
-
-      closeReviewModal();
-
-      console.log("Review submitted successfully");
-    }, 1000);
+    }
+  };
+  
+  // Handle review deletion
+  const handleDeleteReview = async () => {
+    if (!deletingReviewId || !isAuthenticated) return;
+    
+    setIsDeleting(true);
+    
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+      
+      const response = await fetch(`/api/reviews/${deletingReviewId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to delete review');
+      }
+      
+      // Remove the review from the list
+      setReviews(prevReviews => 
+        prevReviews.filter(review => review._id !== deletingReviewId)
+      );
+      
+      // If this was the user's review, update state
+      if (userReview?._id === deletingReviewId) {
+        setHasReviewed(false);
+        setUserReview(null);
+      }
+      
+      closeDeleteModal();
+    } catch (error: any) {
+      console.error("Review deletion error:", error);
+      alert(error.message || 'Failed to delete review');
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   // Helper to get the font family based on the selection
@@ -202,13 +494,25 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
       <h2 className="text-2xl font-bold mb-6 text-black">{t("reviews")}</h2>
 
       {/* Leave Review Button */}
-      <HeroButton
-        text={t("leaveReview")}
-        onClick={openReviewModal}
-        backgroundColor="#4f46e5"
-        textColor="white"
-        className="mb-6"
-      />
+      {hasReviewed ? (
+        <div className="mb-6 bg-green-50 p-4 rounded-lg border border-green-200">
+          <div className="flex items-center">
+            <Icon
+              icon="heroicons:check-circle"
+              className="w-5 h-5 text-green-500 mr-2"
+            />
+            <p className="text-green-700">{t("youHaveReviewed")}</p>
+          </div>
+        </div>
+      ) : (
+        <HeroButton
+          text={t("leaveReview")}
+          onClick={openReviewModal}
+          backgroundColor="#4f46e5"
+          textColor="white"
+          className="mb-6"
+        />
+      )}
 
       {/* Review Modal */}
       {isReviewModalOpen && (
@@ -221,7 +525,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
           <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto m-4 z-10">
             <div className="flex items-center justify-between p-4 border-b">
               <h3 className="text-xl font-semibold text-black">
-                {t("leaveReview")}
+                {isEditMode ? t("editReview") : t("leaveReview")}
               </h3>
               <button
                 onClick={closeReviewModal}
@@ -233,6 +537,12 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
                 />
               </button>
             </div>
+
+            {message && (
+              <div className={`p-4 ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                <p>{message.text}</p>
+              </div>
+            )}
 
             <form onSubmit={handleSubmitReview} className="p-6 space-y-6">
               {/* Circle Preview */}
@@ -334,53 +644,136 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
                   />
                 </div>
               </div>
-              <HeroButton
-                text={isSubmittingReview ? t("submittingReview") : t("submitReview")}
-                onClick={() => {}}
-                className={`w-full ${isSubmittingReview ? "opacity-75 cursor-not-allowed" : ""}`}
-                backgroundColor="#4f46e5"
-                textColor="white"
-              />
+              <button
+                type="submit"
+                disabled={isSubmittingReview}
+                className={`w-full py-2 px-4 rounded-md bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors ${isSubmittingReview ? "opacity-75 cursor-not-allowed" : ""}`}
+              >
+                {isSubmittingReview 
+                  ? t("submittingReview") 
+                  : isEditMode ? t("updateReview") : t("submitReview")}
+              </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={closeDeleteModal}
+          ></div>
+
+          <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full m-4 z-10">
+            <div className="p-6">
+              <div className="flex items-center justify-center mb-4">
+                <div className="rounded-full bg-red-100 p-3">
+                  <Icon
+                    icon="heroicons:exclamation-triangle"
+                    className="w-6 h-6 text-red-600"
+                  />
+                </div>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 text-center mb-2">
+                {t("confirmDeleteReview")}
+              </h3>
+              <p className="text-sm text-gray-500 text-center mb-6">
+                {t("deleteReviewConfirmation")}
+              </p>
+              <div className="flex justify-center space-x-4">
+                <button
+                  onClick={closeDeleteModal}
+                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                >
+                  {t("cancel")}
+                </button>
+                <button
+                  onClick={handleDeleteReview}
+                  disabled={isDeleting}
+                  className={`px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors ${
+                    isDeleting ? "opacity-75 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {isDeleting ? t("deleting") : t("delete")}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
 
       {/* Reviews List */}
       <div className="space-y-6">
-        {reviews.map((review, index) => (
-          <div
-            key={index}
-            className="bg-white rounded-lg shadow-sm p-4 border border-gray-100"
-          >
-            <div className="flex items-start">
-              <div className="flex-shrink-0 mr-4">
-                <Stamp
-                  color={review.circleColor}
-                  font={review.circleFont}
-                  text={review.circleText}
-                />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium text-gray-900">{review.name}</h4>
-                  <span className="text-gray-500 text-sm">
-                    {review.date || "2 days ago"}
-                  </span>
-                </div>
-                {review.comment && (
-                  <p className="text-gray-700">{review.comment}</p>
-                )}
-              </div>
-            </div>
+        {reviews.length === 0 ? (
+          <div className="bg-gray-50 p-6 rounded-lg text-center">
+            <p className="text-gray-500">{t("noReviewsYet")}</p>
           </div>
-        ))}
+        ) : (
+          reviews.map((review, index) => (
+            <div
+              key={review._id || index}
+              className={`bg-white rounded-lg shadow-sm p-4 border ${review.user === user?._id ? 'border-indigo-100 bg-indigo-50' : 'border-gray-100'}`}
+            >
+              {/* Review content */}
+              <div className="flex items-start">
+                <div className="flex-shrink-0 mr-4">
+                  <Stamp
+                    color={review.circleColor}
+                    font={review.circleFont}
+                    text={review.circleText}
+                  />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium text-gray-900">
+                      {review.user === user?._id ? `${t("you")} (${review.userName})` : review.userName}
+                    </h4>
+                    <span className="text-gray-500 text-sm">
+                      {review.date || (review.createdAt ? new Date(review.createdAt).toLocaleDateString() : "2 days ago")}
+                    </span>
+                  </div>
+                  {review.comment && (
+                    <p className="text-gray-700">{review.comment}</p>
+                  )}
+                </div>
+              </div>
+              
+              {/* Edit/Delete buttons inside the review card */}
+              {review.user === user?._id && review._id && (
+                <div className="flex space-x-2 mt-3 border-t pt-3 justify-end">
+                  <button
+                    onClick={() => openEditReviewModal(review)}
+                    className="flex items-center text-sm text-indigo-600 hover:text-indigo-800 px-2 py-1 rounded-md hover:bg-indigo-50 transition-colors"
+                  >
+                    <Icon icon="heroicons:pencil-square" className="w-4 h-4 mr-1" />
+                    {t("editReview")}
+                  </button>
+                  <button
+                    onClick={() => openDeleteModal(review._id as string)}
+                    className="flex items-center text-sm text-red-600 hover:text-red-800 px-2 py-1 rounded-md hover:bg-red-50 transition-colors"
+                  >
+                    <Icon icon="heroicons:trash" className="w-4 h-4 mr-1" />
+                    {t("deleteReview")}
+                  </button>
+                </div>
+              )}
+            </div>
+          ))
+        )}
 
-        <div className="text-center">
-          <button className="text-indigo-600 hover:text-indigo-800 font-medium">
-            {t("loadMoreReviews")}
-          </button>
-        </div>
+        {reviews.length > 0 && hasMore && (
+          <div className="text-center mt-4">
+            <button 
+              className={`text-indigo-600 hover:text-indigo-800 font-medium ${isLoadingMore ? 'opacity-70 cursor-wait' : ''}`}
+              onClick={handleLoadMore}
+              disabled={isLoadingMore}
+            >
+              {isLoadingMore ? t("loadingMoreReviews") : t("loadMoreReviews")}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -14,9 +14,11 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string, avatar?: string) => Promise<void>;
   logout: () => void;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,25 +28,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  const fetchUserData = async (token: string) => {
+    try {
+      const res = await fetch('/api/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        }
+      });
+      const data = await res.json();
+      if (data.user) {
+        setUser(data.user);
+      }
+      return data.user;
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      localStorage.removeItem('token');
+      return null;
+    }
+  };
+
   useEffect(() => {
     // Check for token in localStorage
     const token = localStorage.getItem('token');
     if (token) {
       // Verify token and get user data
-      fetch('/api/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.user) {
-            setUser(data.user);
-          }
-        })
-        .catch(() => {
-          localStorage.removeItem('token');
-        })
+      fetchUserData(token)
         .finally(() => {
           setLoading(false);
         });
@@ -52,6 +61,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     }
   }, []);
+
+  const refreshUser = async () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      await fetchUserData(token);
+    }
+  };
 
   const login = async (email: string, password: string) => {
     const response = await fetch('/api/auth/login', {
@@ -97,8 +113,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push('/');
   };
 
+  // Compute isAuthenticated based on whether user is set
+  const isAuthenticated = !!user;
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, isAuthenticated, login, register, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

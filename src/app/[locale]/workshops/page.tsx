@@ -7,6 +7,7 @@ import WorkshopFilters from '@/components/WorkshopFilters';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 interface Workshop {
     _id: string;
@@ -26,6 +27,7 @@ interface Workshop {
 
 const WorkshopsPage = () => {
     const t = useTranslations('WorkshopsPage');
+    const { user } = useAuth();
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('all');
     const [workshops, setWorkshops] = useState<Workshop[]>([]);
@@ -215,6 +217,7 @@ const WorkshopsPage = () => {
                                             imageSrc={workshop.imageSrc}
                                             delay={workshop.delay || ""}
                                             bgColor={workshop.bgColor}
+                                            isRegistered={user?.registeredWorkshops?.includes(workshop._id) || false}
                                         />
                                     </ScrollReveal>
                                 ))
