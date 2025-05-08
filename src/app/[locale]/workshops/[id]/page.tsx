@@ -320,29 +320,43 @@ const WorkshopDetailPage = () => {
               
               <h1 className="text-2xl md:text-3xl font-bold mb-4 text-black">{workshop.name}</h1>
               
-              <div className="flex items-center mb-6">
-                <div className="flex items-center mr-6">
-                  <Icon icon="heroicons:calendar" className="w-5 h-5 mr-2 text-gray-500" />
-                  <span className="text-gray-700">{formatDate(workshop.startDate)}</span>
+              {getWorkshopStatus(workshop.startDate, workshop.endDate) !== 'past' && (
+                <div className="flex items-center mb-6">
+                  <div className="flex items-center mr-6">
+                    <Icon icon="heroicons:calendar" className="w-5 h-5 mr-2 text-gray-500" />
+                    <span className="text-gray-700">{formatDate(workshop.startDate)}</span>
+                  </div>
+                  <div className="flex items-center mr-6">
+                    <Icon icon="heroicons:clock" className="w-5 h-5 mr-2 text-gray-500" />
+                    <span className="text-gray-700">{formatTime(workshop.startDate)} - {formatTime(workshop.endDate)}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Icon icon="heroicons:map-pin" className="w-5 h-5 mr-2 text-gray-500" />
+                    <span className="text-gray-700">{workshop.location}</span>
+                  </div>
                 </div>
-                <div className="flex items-center mr-6">
-                  <Icon icon="heroicons:clock" className="w-5 h-5 mr-2 text-gray-500" />
-                  <span className="text-gray-700">{formatTime(workshop.startDate)} - {formatTime(workshop.endDate)}</span>
+              )}
+              
+              {/* Always show location if not shown above */}
+              {getWorkshopStatus(workshop.startDate, workshop.endDate) === 'past' && (
+                <div className="flex items-center mb-6">
+                  <div className="flex items-center">
+                    <Icon icon="heroicons:map-pin" className="w-5 h-5 mr-2 text-gray-500" />
+                    <span className="text-gray-700">{workshop.location}</span>
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <Icon icon="heroicons:map-pin" className="w-5 h-5 mr-2 text-gray-500" />
-                  <span className="text-gray-700">{workshop.location}</span>
-                </div>
-              </div>
+              )}
               
               <div className="flex items-center space-x-6 mb-6">
-                <div className="flex items-center">
-                  <Icon icon="heroicons:users" className="w-5 h-5 mr-2 text-gray-500" />
-                  <span className="text-gray-700">
-                    {/* This would come from registration data in a real app */}
-                    24/30 {t('registered')}
-                  </span>
-                </div>
+                {getWorkshopStatus(workshop.startDate, workshop.endDate) !== 'past' && (
+                  <div className="flex items-center">
+                    <Icon icon="heroicons:users" className="w-5 h-5 mr-2 text-gray-500" />
+                    <span className="text-gray-700">
+                      {/* This would come from registration data in a real app */}
+                      24/30 {t('registered')}
+                    </span>
+                  </div>
+                )}
                 
                 <div className="flex items-center">
                   <Icon icon="heroicons:academic-cap" className="w-5 h-5 mr-2 text-gray-500" />
@@ -352,23 +366,25 @@ const WorkshopDetailPage = () => {
                 </div>
               </div>
 
-              {isRegistered ? (
-                <HeroButton 
-                  text={t('unregister')}
-                  onClick={handleUnregister}
-                  backgroundColor="#FF0000"
-                  textColor="white"
-                  className="w-full md:w-auto"
-                />
-              ) : (
-                <HeroButton 
-                  text={t('register')}
-                  onClick={handleRegister}
-                  backgroundColor="#4f46e5"
-                  textColor="white"
-                  className="w-full md:w-auto"
-                  ref={registerSectionRef}
-                />
+              {getWorkshopStatus(workshop.startDate, workshop.endDate) !== 'past' && (
+                isRegistered ? (
+                  <HeroButton 
+                    text={t('unregister')}
+                    onClick={handleUnregister}
+                    backgroundColor="#FF0000"
+                    textColor="white"
+                    className="w-full md:w-auto"
+                  />
+                ) : (
+                  <HeroButton 
+                    text={t('register')}
+                    onClick={handleRegister}
+                    backgroundColor="#4f46e5"
+                    textColor="white"
+                    className="w-full md:w-auto"
+                    ref={registerSectionRef}
+                  />
+                )
               )}
             </div>
           </div>
