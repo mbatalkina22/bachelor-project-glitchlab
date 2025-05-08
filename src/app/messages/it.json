@@ -128,6 +128,8 @@
     "recommendationLevel": "Consiglieresti questo workshop ad altri?",
     "attendanceReason": "Qual è stato il motivo principale per cui hai partecipato a questo workshop?",
     "selectOption": "-- Seleziona un'opzione --",
+    "reviewsUnavailable": "Le recensioni non sono attualmente disponibili",
+    "reviewsAvailableAfterWorkshop": "Le recensioni saranno disponibili dopo la fine del workshop",
     
     "tooEasy": "Troppo Facile",
     "justRight": "Adeguato",

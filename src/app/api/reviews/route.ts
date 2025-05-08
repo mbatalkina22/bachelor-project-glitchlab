@@ -4,6 +4,8 @@ import dbConnect from '../lib/mongodb';
 import Review from '../lib/models/review';
 import User from '../lib/models/user';
 import mongoose from 'mongoose';
+import { getWorkshopStatus } from '@/utils/workshopStatus';
+import Workshop from '../lib/models/workshop';
 
 if (!process.env.JWT_SECRET) {
   throw new Error('Please define the JWT_SECRET environment variable inside .env');
@@ -65,41 +67,36 @@ export async function POST(request: Request) {
     }
 
     const token = authHeader.split(' ')[1];
-    const body = await request.json();
     
     try {
       const decoded = verify(token, process.env.JWT_SECRET!) as { userId: string };
       await dbConnect();
       
-      // Check if user exists
-      const user = await User.findById(decoded.userId);
-      if (!user) {
+      const body = await request.json();
+      const { workshop: workshopId } = body;
+      
+      // Find the workshop to check its status
+      const workshop = await Workshop.findById(workshopId);
+      if (!workshop) {
         return NextResponse.json(
-          { error: 'User not found' },
+          { error: 'Workshop not found' },
           { status: 404 }
         );
       }
       
-      // Check if required fields are provided
-      if (!body.workshopId || !body.circleColor || !body.circleFont || !body.circleText) {
+      // Check if the workshop is in the past (ended)
+      const workshopStatus = getWorkshopStatus(workshop.startDate, workshop.endDate);
+      if (workshopStatus !== 'past') {
         return NextResponse.json(
-          { error: 'Missing required fields' },
-          { status: 400 }
-        );
-      }
-      
-      // Check if workshop ID is valid
-      if (!mongoose.Types.ObjectId.isValid(body.workshopId)) {
-        return NextResponse.json(
-          { error: 'Invalid workshop ID' },
-          { status: 400 }
+          { error: 'Reviews can only be submitted for past workshops' },
+          { status: 403 }
         );
       }
       
       // Check if user has already reviewed this workshop
       const existingReview = await Review.findOne({ 
         user: decoded.userId,
-        workshop: body.workshopId 
+        workshop: workshopId
       });
       
       if (existingReview) {
@@ -109,16 +106,20 @@ export async function POST(request: Request) {
         );
       }
       
+      const userInfo = await User.findById(decoded.userId, 'name');
+      if (!userInfo) {
+        return NextResponse.json(
+          { error: 'User not found' },
+          { status: 404 }
+        );
+      }
+      
       // Create the review
       const review = await Review.create({
+        ...body,
         user: decoded.userId,
-        workshop: body.workshopId,
-        userName: user.name,
-        circleColor: body.circleColor,
-        circleFont: body.circleFont,
-        circleText: body.circleText,
-        comment: body.comment || '',
-        createdAt: new Date()
+        userName: userInfo.name,
+        workshop: workshopId
       });
       
       return NextResponse.json(review, { status: 201 });

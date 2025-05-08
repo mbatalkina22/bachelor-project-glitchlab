@@ -108,8 +108,8 @@ export async function GET() {
       {
         name: "Advanced CSS Animations",
         description: "Take your web animations to the next level with advanced CSS techniques. Create engaging interactions without JavaScript.",
-        startDate: new Date("2025-05-08T09:00:00"),
-        endDate: new Date("2025-05-08T12:00:00"),
+        startDate: new Date("2025-05-08T18:00:00"),
+        endDate: new Date("2025-05-08T18:02:00"),
         imageSrc: "/images/workshop.jpg",
         badgeImageSrc: "/images/badge.png",
         categories: ["design", "animation"],

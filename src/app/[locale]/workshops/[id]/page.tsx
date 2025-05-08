@@ -471,9 +471,21 @@ const WorkshopDetailPage = () => {
         )}
         
         {/* Reviews Section - Using ReviewList component with workshopId */}
-        <div className="mb-12">
-          <ReviewList workshopId={id} />
-        </div>
+        {getWorkshopStatus(workshop.startDate, workshop.endDate) === 'past' && (
+          <div className="mb-12">
+            <ReviewList workshopId={id} />
+          </div>
+        )}
+        {getWorkshopStatus(workshop.startDate, workshop.endDate) !== 'past' && (
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold mb-6 text-black">{t("reviews")}</h2>
+            <div className="bg-gray-100 p-6 rounded-lg text-center">
+              <Icon icon="heroicons:lock-closed" className="w-8 h-8 text-gray-500 mx-auto mb-2" />
+              <p className="text-gray-700 mb-1">{t("reviewsUnavailable")}</p>
+              <p className="text-sm text-gray-500">{t("reviewsAvailableAfterWorkshop")}</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

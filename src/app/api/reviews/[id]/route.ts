@@ -3,6 +3,8 @@ import { verify } from 'jsonwebtoken';
 import dbConnect from '../../lib/mongodb';
 import Review from '../../lib/models/review';
 import mongoose from 'mongoose';
+import { getWorkshopStatus } from '@/utils/workshopStatus';
+import Workshop from '../../lib/models/workshop';
 
 if (!process.env.JWT_SECRET) {
   throw new Error('Please define the JWT_SECRET environment variable inside .env');
@@ -92,6 +94,24 @@ export async function PUT(request: Request, { params }: Params) {
         );
       }
       
+      // Verify the workshop is in the past before allowing updates
+      const workshop = await Workshop.findById(review.workshop);
+      if (!workshop) {
+        return NextResponse.json(
+          { error: 'Workshop not found' },
+          { status: 404 }
+        );
+      }
+      
+      // Check if the workshop is in the past (ended)
+      const workshopStatus = getWorkshopStatus(workshop.startDate, workshop.endDate);
+      if (workshopStatus !== 'past') {
+        return NextResponse.json(
+          { error: 'Reviews can only be updated for past workshops' },
+          { status: 403 }
+        );
+      }
+      
       // Update only allowed fields
       if (body.circleColor) review.circleColor = body.circleColor;
       if (body.circleFont) review.circleFont = body.circleFont;
@@ -159,6 +179,24 @@ export async function DELETE(request: Request, { params }: Params) {
       if (review.user.toString() !== decoded.userId) {
         return NextResponse.json(
           { error: 'Unauthorized to delete this review' },
+          { status: 403 }
+        );
+      }
+      
+      // Verify the workshop is in the past before allowing deletion
+      const workshop = await Workshop.findById(review.workshop);
+      if (!workshop) {
+        return NextResponse.json(
+          { error: 'Workshop not found' },
+          { status: 404 }
+        );
+      }
+      
+      // Check if the workshop is in the past (ended)
+      const workshopStatus = getWorkshopStatus(workshop.startDate, workshop.endDate);
+      if (workshopStatus !== 'past') {
+        return NextResponse.json(
+          { error: 'Reviews can only be deleted for past workshops' },
           { status: 403 }
         );
       }
