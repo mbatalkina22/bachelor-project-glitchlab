@@ -200,7 +200,9 @@
     "deleteReview": "Delete Review",
     "registeredWorkshops": "Registered Workshops",
     "notLoggedIn": "Not Logged In",
-    "login": "Log In to View Profile"
+    "login": "Log In to View Profile",
+    "reviewLeft": "Review for workshop",
+    "viewWorkshop": "View Workshop"
   },
   "Settings": {
     "settings": "Settings",

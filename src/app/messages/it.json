@@ -209,7 +209,9 @@
     "editReview": "Modifica Recensione",
     "deleteReview": "Elimina Recensione",
     "notLoggedIn": "Non sei connesso",
-    "login": "Accedi per visualizzare il profilo"
+    "login": "Accedi per visualizzare il profilo",
+    "reviewLeft": "Recensione per il workshop",
+    "viewWorkshop": "Visualizza Workshop"
   },
   "Settings": {
     "settings": "Impostazioni",

@@ -40,6 +40,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
   const t = useTranslations("WorkshopDetail");
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
+  const reviewSectionRef = React.useRef<HTMLDivElement>(null);
   
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -74,37 +75,6 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
     t("creative"),
     t("confusing")
   ];
-
-  // Check if user has already reviewed the workshop
-  useEffect(() => {
-    const checkUserReview = async () => {
-      if (!isAuthenticated || !workshopId) return;
-      
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-        
-        const response = await fetch(`/api/reviews/check?workshopId=${workshopId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-          setHasReviewed(data.hasReviewed);
-          if (data.hasReviewed && data.review) {
-            setUserReview(data.review);
-          }
-        }
-      } catch (error) {
-        console.error("Error checking review status:", error);
-      }
-    };
-    
-    checkUserReview();
-  }, [isAuthenticated, workshopId]);
 
   // Fetch reviews for the workshop
   useEffect(() => {
@@ -142,6 +112,37 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
     setOffset(0); // Reset offset when workshopId changes
     fetchReviews();
   }, [workshopId, user?._id]);
+
+  // Check if user has already reviewed the workshop
+  useEffect(() => {
+    const checkUserReview = async () => {
+      if (!isAuthenticated || !workshopId) return;
+      
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        
+        const response = await fetch(`/api/reviews/check?workshopId=${workshopId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          setHasReviewed(data.hasReviewed);
+          if (data.hasReviewed && data.review) {
+            setUserReview(data.review);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking review status:", error);
+      }
+    };
+    
+    checkUserReview();
+  }, [isAuthenticated, workshopId]);
 
   // Load more reviews
   const handleLoadMore = async () => {
@@ -277,7 +278,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
       }
 
       const reviewData = {
-        workshopId,
+        workshop: workshopId,
         circleColor,
         circleFont,
         circleText,
@@ -489,8 +490,60 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
     );
   };
 
+  // Handle scrolling to the review section when hash is 'reviews'
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Check if the URL has the hash fragment '#reviews'
+      if (window.location.hash === '#reviews' && reviewSectionRef.current) {
+        // Small delay to ensure proper scrolling after page load
+        setTimeout(() => {
+          reviewSectionRef.current?.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }, 500);
+      }
+    }
+  }, []);
+
+  // Handle scrolling to the review section when hash is 'reviews'
+  useEffect(() => {
+    // Function to handle scrolling
+    const scrollToReviews = () => {
+      if (reviewSectionRef.current) {
+        // Add some extra offset to account for header/navigation
+        const yOffset = -80; 
+        const element = reviewSectionRef.current;
+        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        
+        window.scrollTo({
+          top: y,
+          behavior: 'smooth'
+        });
+        
+        console.log('Scrolling to reviews section');
+      }
+    };
+    
+    // Check if we should scroll (based on hash)
+    if (typeof window !== 'undefined' && window.location.hash === '#reviews') {
+      // Try immediately
+      scrollToReviews();
+      
+      // Also try after a delay to ensure content is loaded
+      setTimeout(scrollToReviews, 500);
+      
+      // And also try after images and other resources might have loaded
+      window.addEventListener('load', scrollToReviews);
+      
+      return () => {
+        window.removeEventListener('load', scrollToReviews);
+      };
+    }
+  }, [reviews]); // Re-run when reviews change to ensure we scroll after content loads
+
   return (
-    <div>
+    <div ref={reviewSectionRef} id="reviews">
       <h2 className="text-2xl font-bold mb-6 text-black">{t("reviews")}</h2>
 
       {/* Leave Review Button */}

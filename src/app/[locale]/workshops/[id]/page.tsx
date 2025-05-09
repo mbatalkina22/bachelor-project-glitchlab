@@ -431,10 +431,12 @@ const WorkshopDetailPage = () => {
                     </div>
                   )}
                 </div>
-                <div className="text-center md:text-left max-w-lg">
+                <div className={`${getWorkshopStatus(workshop.startDate, workshop.endDate) === 'past' ? 'text-left' : 'text-center md:text-left'} max-w-lg`}>
                   <h3 className="text-lg font-bold text-indigo-700 mb-2">{workshop.name} Badge</h3>
                   <p className="text-gray-700 mb-4">
-                    {t('badgeDescription')}
+                    {getWorkshopStatus(workshop.startDate, workshop.endDate) === 'past' 
+                      ? t('unlockBadge') 
+                      : t('badgeDescription')}
                   </p>
                 </div>
               </div>
