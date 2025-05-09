@@ -42,6 +42,15 @@ const WorkshopSchema = new Schema({
     type: String,
     required: [true, 'Please provide the name of the instructor'],
   },
+  capacity: {
+    type: Number,
+    default: 30,
+    required: [true, 'Please provide the maximum capacity for the workshop'],
+  },
+  registeredCount: {
+    type: Number,
+    default: 0,
+  },
 }, {
   collection: 'workshops'
 });

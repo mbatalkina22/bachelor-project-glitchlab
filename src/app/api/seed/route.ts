@@ -38,6 +38,7 @@ export async function GET() {
         level: "Advanced",
         location: "San Francisco",
         instructor: "Michael Chen",
+        capacity: 3,
      
       },
       {

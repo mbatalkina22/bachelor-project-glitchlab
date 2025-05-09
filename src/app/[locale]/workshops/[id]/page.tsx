@@ -26,6 +26,8 @@ interface Workshop {
   level: string;
   location: string;
   instructor: string;
+  capacity: number;
+  registeredCount: number;
 }
 
 const WorkshopDetailPage = () => {
@@ -150,6 +152,14 @@ const WorkshopDetailPage = () => {
       // Update local state first
       setIsRegistered(true);
       
+      // Update workshop count in the UI
+      if (workshop) {
+        setWorkshop({
+          ...workshop,
+          registeredCount: workshop.registeredCount + 1
+        });
+      }
+      
       // Then refresh the user data in the context
       await refreshUser();
     } catch (error: any) {
@@ -186,6 +196,14 @@ const WorkshopDetailPage = () => {
 
       // Update local state first
       setIsRegistered(false);
+      
+      // Update workshop count in the UI
+      if (workshop && workshop.registeredCount > 0) {
+        setWorkshop({
+          ...workshop,
+          registeredCount: workshop.registeredCount - 1
+        });
+      }
       
       // Then refresh the user data in the context
       await refreshUser();
@@ -336,8 +354,7 @@ const WorkshopDetailPage = () => {
                   <div className="flex items-center">
                     <Icon icon="heroicons:users" className="w-5 h-5 mr-2 text-gray-500" />
                     <span className="text-gray-700">
-                      {/* This would come from registration data in a real app */}
-                      24/30 {t('registered')}
+                      {workshop.registeredCount}/{workshop.capacity} {t('registered')}
                     </span>
                   </div>
                 )}
@@ -360,13 +377,24 @@ const WorkshopDetailPage = () => {
                     className="w-full md:w-auto"
                   />
                 ) : (
-                  <HeroButton 
-                    text={t('register')}
-                    onClick={handleRegister}
-                    backgroundColor="#4f46e5"
-                    textColor="white"
-                    className="w-full md:w-auto"
-                  />
+                  workshop.registeredCount >= workshop.capacity ? (
+                    <HeroButton 
+                      text={t('fullWorkshop')}
+                      onClick={() => {}}
+                      backgroundColor="#9CA3AF"
+                      textColor="white"
+                      className="w-full md:w-auto cursor-not-allowed opacity-75"
+                      disabled={true}
+                    />
+                  ) : (
+                    <HeroButton 
+                      text={t('register')}
+                      onClick={handleRegister}
+                      backgroundColor="#4f46e5"
+                      textColor="white"
+                      className="w-full md:w-auto"
+                    />
+                  )
                 )
               )}
             </div>
@@ -408,15 +436,6 @@ const WorkshopDetailPage = () => {
                   <p className="text-gray-700 mb-4">
                     {t('badgeDescription')}
                   </p>
-                  {getWorkshopStatus(workshop.startDate, workshop.endDate) !== 'past' && (
-                    <HeroButton 
-                      text={t('unlockBadge')}
-                      onClick={handleRegister}
-                      backgroundColor="white"
-                      textColor="#4f46e5"
-                      className="text-sm shadow-sm border border-indigo-100 hover:bg-gray-50"
-                    />
-                  )}
                 </div>
               </div>
             </ScrollReveal>

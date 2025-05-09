@@ -13,6 +13,7 @@ interface HeroButtonProps {
   backgroundColor?: string;
   textColor?: string;
   className?: string; // Optional class name for additional styling
+  disabled?: boolean; // Add disabled prop
 }
 
 // Helper function to darken a color for hover state
@@ -58,6 +59,7 @@ const HeroButton = forwardRef<HTMLButtonElement, HeroButtonProps>(({
   backgroundColor = '#7471f9', // Default indigo color
   textColor = 'white',
   className = '', // Default empty string for className
+  disabled = false, // Default to not disabled
 }, ref) => {
   const t = useTranslations('Hero');
   const router = useRouter();
@@ -106,7 +108,7 @@ const HeroButton = forwardRef<HTMLButtonElement, HeroButtonProps>(({
   const buttonContent = children || text || t('exploreButton');
 
   // If there's an href and no explicit onClick, use Link component
-  if (href && !onClick) {
+  if (href && !onClick && !disabled) {
     return (
       <Link href={href} className="inline-block">
         <button 
@@ -145,21 +147,26 @@ const HeroButton = forwardRef<HTMLButtonElement, HeroButtonProps>(({
       onClick={handleClick}
       className={baseClasses}
       style={buttonStyle}
+      disabled={disabled}
       onMouseOver={(e) => {
+        if (disabled) return;
         e.currentTarget.style.backgroundColor = hoverStyle.backgroundColor;
         e.currentTarget.style.transform = 'translateY(-2px)';
         e.currentTarget.style.boxShadow = '0 6px 8px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1)';
       }}
       onMouseOut={(e) => {
+        if (disabled) return;
         e.currentTarget.style.backgroundColor = buttonStyle.backgroundColor;
         e.currentTarget.style.transform = 'translateY(0)';
         e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)';
       }}
       onMouseDown={(e) => {
+        if (disabled) return;
         e.currentTarget.style.transform = 'translateY(1px)';
         e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04)';
       }}
       onMouseUp={(e) => {
+        if (disabled) return;
         e.currentTarget.style.transform = 'translateY(-2px)';
         e.currentTarget.style.boxShadow = '0 6px 8px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1)';
       }}

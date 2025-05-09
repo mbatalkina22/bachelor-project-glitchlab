@@ -52,8 +52,14 @@ export async function POST(request: Request) {
       }
 
       // Remove workshop from user's registered workshops
-      user.registeredWorkshops = user.registeredWorkshops.filter(id => id.toString() !== workshopId);
+      user.registeredWorkshops = user.registeredWorkshops.filter((id: any) => id.toString() !== workshopId);
       await user.save();
+      
+      // Decrement workshop registered count (ensure it doesn't go below 0)
+      if (workshop.registeredCount > 0) {
+        workshop.registeredCount -= 1;
+        await workshop.save();
+      }
 
       return NextResponse.json({ 
         message: 'Successfully unregistered from workshop',

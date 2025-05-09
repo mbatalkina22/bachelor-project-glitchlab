@@ -43,6 +43,14 @@ export async function POST(request: Request) {
         );
       }
       
+      // Check if workshop is at capacity
+      if (workshop.registeredCount >= workshop.capacity) {
+        return NextResponse.json(
+          { error: 'Workshop is at full capacity' },
+          { status: 400 }
+        );
+      }
+      
       // Update user's registered workshops
       const user = await User.findById(decoded.userId);
       if (!user) {
@@ -63,6 +71,10 @@ export async function POST(request: Request) {
       // Add workshop to user's registered workshops
       user.registeredWorkshops.push(workshopId);
       await user.save();
+      
+      // Increment workshop registered count
+      workshop.registeredCount += 1;
+      await workshop.save();
 
       return NextResponse.json({ 
         message: 'Successfully registered for workshop',
