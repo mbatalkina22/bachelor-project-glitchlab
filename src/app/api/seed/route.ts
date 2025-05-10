@@ -17,7 +17,7 @@ export async function GET() {
       {
         name: "UX Design Fundamentals",
         description: "Learn the basics of user experience design in this hands-on workshop. You'll discover essential UX principles and how to apply them to your projects.",
-        startDate: new Date("2025-05-15T14:00:00"),
+        startDate: new Date("2025-05-15T15:00:00"),
         endDate: new Date("2025-05-15T17:00:00"),
         imageSrc: "/images/workshop.jpg",
         badgeImageSrc: "/images/badge.png",
@@ -140,6 +140,19 @@ export async function GET() {
         imageSrc: "/images/workshop.jpg",
         badgeImageSrc: "/images/badge.png",
         categories: ["react", "state"],
+        level: "Intermediate",
+        location: "Chicago",
+        instructor: "Lisa Parker",
+       
+      },
+      {
+        name: "Testing for Frontend Developers",
+        description: "Learn how to test your frontend applications. Cover unit, integration, and end-to-end testing strategies.",
+        startDate: new Date("2025-05-10T20:00:00"),
+        endDate: new Date("2025-05-10T21:00:00"),
+        imageSrc: "/images/workshop.jpg",
+        badgeImageSrc: "/images/badge.png",
+        categories: ["testing", "16+", "coding"],
         level: "Intermediate",
         location: "Chicago",
         instructor: "Lisa Parker",

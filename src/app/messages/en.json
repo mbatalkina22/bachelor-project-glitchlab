@@ -265,5 +265,14 @@
     "alreadyHaveAccount": "Already have an account? Sign in",
     "selectAvatar": "Select an avatar",
     "signOut": "Sign out"
+  },
+  "Calendar": {
+    "title": "Workshop Calendar",
+    "subtitle": "View and manage your workshop schedule",
+    "today": "Today",
+    "month": "Month",
+    "week": "Week",
+    "day": "Day",
+    "registered": "Registered"
   }
 }

@@ -9,6 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fullcalendar/core": "^6.1.17",
+    "@fullcalendar/daygrid": "^6.1.17",
+    "@fullcalendar/interaction": "^6.1.17",
+    "@fullcalendar/react": "^6.1.17",
+    "@fullcalendar/timegrid": "^6.1.17",
     "@iconify-json/mdi": "^1.2.3",
     "@iconify/react": "^5.2.0",
     "bcryptjs": "^3.0.2",

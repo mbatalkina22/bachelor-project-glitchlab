@@ -275,5 +275,14 @@
     "alreadyHaveAccount": "Hai già un account? Accedi",
     "selectAvatar": "Seleziona un avatar",
     "signOut": "Esci"
+  },
+  "Calendar": {
+    "title": "Calendario Workshop",
+    "subtitle": "Visualizza e gestisci il programma dei workshop",
+    "today": "Oggi",
+    "month": "Mese",
+    "week": "Settimana",
+    "day": "Giorno",
+    "registered": "Registrato"
   }
 }
