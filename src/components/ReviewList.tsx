@@ -561,7 +561,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
         <HeroButton
           text={t("leaveReview")}
           onClick={openReviewModal}
-          backgroundColor="#4f46e5"
+          backgroundColor="#7471f9"
           textColor="white"
           className="mb-6"
         />
@@ -697,15 +697,16 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
                   />
                 </div>
               </div>
-              <button
-                type="submit"
-                disabled={isSubmittingReview}
-                className={`w-full py-2 px-4 rounded-md bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors ${isSubmittingReview ? "opacity-75 cursor-not-allowed" : ""}`}
-              >
-                {isSubmittingReview 
+              <HeroButton
+                text={isSubmittingReview 
                   ? t("submittingReview") 
                   : isEditMode ? t("updateReview") : t("submitReview")}
-              </button>
+                onClick={() => handleSubmitReview(new Event('submit') as unknown as FormEvent)}
+                backgroundColor="#7471f9"
+                textColor="white"
+                disabled={isSubmittingReview}
+                className="w-full"
+              />
             </form>
           </div>
         </div>
