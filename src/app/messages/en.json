@@ -9,7 +9,8 @@
     "settings": "Settings",
     "signOut": "Sign Out",
     "login": "Login",
-    "register": "Register"
+    "register": "Register",
+    "ourTeam": "Our Team"
   },
   "Hero": {
     "title": "Glitch Lab",
@@ -42,7 +43,8 @@
     "email": "contact@workshopmanager.com",
     "phone": "+1 (555) 123-4567",
     "address": "123 Learning Street, Education City, EC 12345",
-    "allRightsReserved": "All rights reserved."
+    "allRightsReserved": "All rights reserved.",
+    "ourTeam": "Our Team"
   },
   "FAQ": {
     "title": "Frequently Asked Questions",
@@ -274,5 +276,26 @@
     "week": "Week",
     "day": "Day",
     "registered": "Registered"
+  },
+  "OurTeam": {
+    "title": "Meet Our Team",
+    "subtitle": "Get to know the passionate individuals behind our workshops and learning experiences.",
+    "teamMembers": {
+      "sarah": {
+        "name": "Sarah Johnson",
+        "role": "Founder & Lead Instructor",
+        "bio": "With over 10 years of experience in UX design and development, Sarah leads our team with passion and expertise."
+      },
+      "michael": {
+        "name": "Michael Chen",
+        "role": "Senior Developer",
+        "bio": "Michael brings extensive knowledge in full-stack development and loves sharing his expertise with workshop participants."
+      },
+      "emma": {
+        "name": "Emma Rodriguez",
+        "role": "UX/UI Designer",
+        "bio": "Emma specializes in creating intuitive and beautiful user interfaces, bringing creativity to every workshop."
+      }
+    }
   }
 }

@@ -41,6 +41,11 @@ const Footer = () => {
                   {t('calendar')}
                 </Link>
               </li>
+              <li>
+                <Link href="/our-team" className="text-base text-gray-500 hover:text-gray-900">
+                  {t('ourTeam')}
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -61,12 +66,6 @@ const Footer = () => {
               </li>
             </ul>
           </div>
-        </div>
-
-        <div className="mt-8 border-t border-gray-200 pt-8">
-          <p className="text-base text-gray-400 text-center">
-            &copy; {new Date().getFullYear()} {t('companyName')}. {t('allRightsReserved')}
-          </p>
         </div>
       </div>
     </footer>

@@ -6,7 +6,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { Icon } from '@iconify/react';
 
 interface Workshop {
@@ -24,6 +24,8 @@ interface Workshop {
 export default function CalendarPage() {
   const t = useTranslations('Calendar');
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string;
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
   const [registeredWorkshops, setRegisteredWorkshops] = useState<string[]>([]);
 
@@ -141,6 +143,13 @@ export default function CalendarPage() {
     <div className="pt-20 pb-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-4">
+          <style jsx global>{`
+            .fc-toolbar-title {
+              font-family: 'Secular One', sans-serif !important;
+              font-size: 1.5rem !important;
+              text-transform: capitalize;
+            }
+          `}</style>
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             initialView="dayGridMonth"
@@ -149,6 +158,8 @@ export default function CalendarPage() {
               center: 'title',
               right: 'dayGridMonth,timeGridWeek,timeGridDay'
             }}
+            locale={locale}
+            titleFormat={{ month: 'long', year: 'numeric' }}
             events={events}
             eventContent={(eventInfo) => {
               const start = eventInfo.event.start;

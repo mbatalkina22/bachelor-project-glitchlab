@@ -106,6 +106,9 @@ const Navbar = () => {
             <Link href={`/${locale}/calendar`} className={`px-3 py-2 rounded-md text-sm font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
               {t('calendar')}
             </Link>
+            <Link href={`/${locale}/our-team`} className={`px-3 py-2 rounded-md text-sm font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
+              {t('ourTeam')}
+            </Link>
             
             {/* Language switcher */}
             <div className="relative ml-3">
@@ -275,6 +278,9 @@ const Navbar = () => {
           </Link>
           <Link href={`/${locale}/calendar`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
             {t('calendar')}
+          </Link>
+          <Link href={`/${locale}/our-team`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
+            {t('ourTeam')}
           </Link>
           {user && (
             <>
