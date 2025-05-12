@@ -17,8 +17,8 @@ export async function GET() {
       {
         name: "UX Design Fundamentals",
         description: "Learn the basics of user experience design in this hands-on workshop. You'll discover essential UX principles and how to apply them to your projects.",
-        startDate: new Date("2025-05-15T15:00:00"),
-        endDate: new Date("2025-05-15T17:00:00"),
+        startDate: new Date("2025-05-12T15:00:00"),
+        endDate: new Date("2025-05-12T17:00:00"),
         imageSrc: "/images/workshop.jpg",
         badgeImageSrc: "/images/badge.png",
         categories: ["design", "beginner"],

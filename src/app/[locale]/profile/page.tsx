@@ -275,16 +275,6 @@ const ProfilePage = () => {
           <div className="border-t border-gray-200">
             <nav className="flex -mb-px">
               <button
-                onClick={() => setActiveTab('overview')}
-                className={`py-4 px-6 text-sm font-medium ${
-                  activeTab === 'overview'
-                    ? 'border-b-2 border-indigo-500 text-indigo-600'
-                    : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                {t('overview')}
-              </button>
-              <button
                 onClick={() => setActiveTab('workshops')}
                 className={`py-4 px-6 text-sm font-medium ${
                   activeTab === 'workshops'
@@ -319,13 +309,6 @@ const ProfilePage = () => {
         </div>
 
         <div className="mt-6">
-          {/* Overview Tab */}
-          {activeTab === 'overview' && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Content will be added here */}
-            </div>
-          )}
-
           {/* Workshops Tab */}
           {activeTab === 'workshops' && (
             <div className="bg-white rounded-lg shadow-md p-6">
@@ -358,6 +341,56 @@ const ProfilePage = () => {
                   <h3 className="text-xl font-medium text-gray-900 mb-2">{t('noWorkshopsYet')}</h3>
                   <p className="text-gray-500 mb-4">{t('noWorkshopsMessage')}</p>
                   <Link href="/workshops">
+                    <HeroButton
+                      text={t('exploreWorkshops')}
+                      backgroundColor="#7471f9"
+                      textColor="white"
+                    />
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Badges Tab */}
+          {activeTab === 'badges' && (
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-semibold mb-4 text-[#2f2f2f]">{t('earnedBadges')}</h2>
+              {badges.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {badges.map((badge) => (
+                    <ScrollReveal key={badge.id}>
+                      <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-6">
+                        <div className="flex flex-col items-center">
+                          <div className="relative w-32 h-32 transform hover:scale-110 transition-transform duration-300 hover:rotate-3 mb-4">
+                            <div className="absolute inset-0 rounded-full overflow-hidden border-4 border-indigo-100 shadow-xl bg-white">
+                              <div className="absolute inset-0 bg-indigo-100 animate-pulse opacity-30"></div>
+                              <Image 
+                                src={badge.image} 
+                                alt={badge.name} 
+                                fill
+                                className="object-cover p-1 relative z-10 rounded-full"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.src = "https://via.placeholder.com/200?text=Badge";
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <h3 className="text-lg font-bold text-indigo-700 mb-2">{badge.name}</h3>
+                          <p className="text-gray-600 text-sm mb-2">{badge.description}</p>
+                          <p className="text-gray-500 text-xs">{badge.date}</p>
+                        </div>
+                      </div>
+                    </ScrollReveal>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Icon icon="heroicons:academic-cap" className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+                  <p className="text-gray-500 mb-4">{t('noBadgesYet')}</p>
+                  <p className="text-gray-400 mb-6">{t('noBadgesMessage')}</p>
+                  <Link href={`/${locale}/workshops`}>
                     <HeroButton
                       text={t('exploreWorkshops')}
                       backgroundColor="#7471f9"
