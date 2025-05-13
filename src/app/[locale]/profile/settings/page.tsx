@@ -1,16 +1,43 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import HeroButton from '@/components/HeroButton';
+import { useRouter } from 'next/navigation';
 
 const ProfileSettingsPage = () => {
   const t = useTranslations('Settings');
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('profile');
   const [showAvatarSelector, setShowAvatarSelector] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // Animation style for modal
+  const modalAnimation = {
+    animation: 'fadeIn 0.3s ease-out',
+  };
+
+  const modalContentAnimation = {
+    animation: 'scaleIn 0.3s ease-out',
+  };
+
+  // CSS keyframes for animations
+  const keyframes = `
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes scaleIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  `;
 
   // Predefined avatar options
   const avatarOptions = [
@@ -20,46 +47,80 @@ const ProfileSettingsPage = () => {
     "/images/avatar4.jpg",
     "/images/avatar5.jpg",
     "/images/avatar6.jpg",
-    
   ];
 
-  // Mock user data - this would come from an API/auth provider in a real app
+  // User data state
   const [userData, setUserData] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
+    name: "",
+    email: "",
     avatar: "/images/avatar.jpg",
-    bio: "UX/UI designer and developer with a passion for creating user-friendly interfaces.",
-    location: "New York, USA",
-    phone: "+1 (555) 123-4567",
-    socialLinks: {
-      twitter: "https://twitter.com/johndoe",
-      linkedin: "https://linkedin.com/in/johndoe",
-      github: "https://github.com/johndoe"
-    },
     emailNotifications: {
       workshops: true,
-      reviews: true,
-      updates: false
-    },
-    language: "en"
+      changes: true
+    }
   });
+
+  // Password state
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+
+  // Ensure activeTab is valid
+  useEffect(() => {
+    if (activeTab === 'account') {
+      setActiveTab('security');
+    }
+  }, [activeTab]);
+
+  // Fetch user data on component mount
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setIsLoading(true);
+        const token = localStorage.getItem('token');
+        if (!token) {
+          router.push('/login');
+          return;
+        }
+
+        const response = await fetch('/api/auth/me', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+
+        const data = await response.json();
+        setUserData({
+          name: data.user.name,
+          email: data.user.email,
+          avatar: data.user.avatar || "/images/avatar.jpg",
+          emailNotifications: {
+            workshops: true,
+            changes: true
+          }
+        });
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+        setError('Failed to load user data');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [router]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setUserData({
       ...userData,
       [name]: value
-    });
-  };
-
-  const handleSocialInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUserData({
-      ...userData,
-      socialLinks: {
-        ...userData.socialLinks,
-        [name]: value
-      }
     });
   };
 
@@ -74,10 +135,11 @@ const ProfileSettingsPage = () => {
     });
   };
 
-  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setUserData({
-      ...userData,
-      language: e.target.value
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setPasswordData({
+      ...passwordData,
+      [name]: value
     });
   };
 
@@ -89,10 +151,130 @@ const ProfileSettingsPage = () => {
     setShowAvatarSelector(false);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would send the updated user data to an API
-    alert('Profile updated successfully!');
+    setError('');
+    setSuccessMessage('');
+    
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+
+      const response = await fetch('/api/users/update', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: userData.name,
+          email: userData.email,
+          avatar: userData.avatar
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update profile');
+      }
+
+      setSuccessMessage('Profile updated successfully!');
+    } catch (err: any) {
+      console.error('Error updating profile:', err);
+      setError(err.message || 'Failed to update profile');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccessMessage('');
+    
+    // Validate passwords
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setError('New passwords do not match');
+      return;
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+
+      const response = await fetch('/api/users/password', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update password');
+      }
+
+      setSuccessMessage('Password updated successfully!');
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+    } catch (err: any) {
+      console.error('Error updating password:', err);
+      setError(err.message || 'Failed to update password');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+
+      const response = await fetch('/api/users/delete', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete account');
+      }
+
+      localStorage.removeItem('token');
+      router.push('/');
+    } catch (err: any) {
+      console.error('Error deleting account:', err);
+      setError(err.message || 'Failed to delete account');
+      setIsLoading(false);
+      setShowDeleteModal(false);
+    }
   };
 
   return (
@@ -103,13 +285,13 @@ const ProfileSettingsPage = () => {
           <div className="w-full md:w-64 flex-shrink-0">
             <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
               <div className="p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('settings')}</h2>
+                <h2 className="text-xl font-secularone text-gray-900 mb-4">{t('settings')}</h2>
                 <nav className="space-y-1">
                   <button
                     onClick={() => setActiveTab('profile')}
                     className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md ${
                       activeTab === 'profile' 
-                        ? 'bg-indigo-50 text-indigo-600' 
+                        ? 'bg-purple-50 text-[#7471f9]' 
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >
@@ -117,21 +299,10 @@ const ProfileSettingsPage = () => {
                     {t('profileInfo')}
                   </button>
                   <button
-                    onClick={() => setActiveTab('account')}
-                    className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md ${
-                      activeTab === 'account' 
-                        ? 'bg-indigo-50 text-indigo-600' 
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                  >
-                    <Icon icon="heroicons:cog-6-tooth" className="mr-3 h-5 w-5 text-current" />
-                    {t('accountSettings')}
-                  </button>
-                  <button
                     onClick={() => setActiveTab('notifications')}
                     className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md ${
                       activeTab === 'notifications' 
-                        ? 'bg-indigo-50 text-indigo-600' 
+                        ? 'bg-purple-50 text-[#7471f9]' 
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >
@@ -142,7 +313,7 @@ const ProfileSettingsPage = () => {
                     onClick={() => setActiveTab('security')}
                     className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md ${
                       activeTab === 'security' 
-                        ? 'bg-indigo-50 text-indigo-600' 
+                        ? 'bg-purple-50 text-[#7471f9]' 
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >
@@ -154,7 +325,7 @@ const ProfileSettingsPage = () => {
             </div>
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="p-6">
-                <Link href="/profile" className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center">
+                <Link href="/profile" className="text-[#7471f9] hover:text-purple-800 text-sm font-medium flex items-center">
                   <Icon icon="heroicons:arrow-left" className="mr-2 h-4 w-4" />
                   {t('backToProfile')}
                 </Link>
@@ -164,14 +335,26 @@ const ProfileSettingsPage = () => {
           
           {/* Main Content */}
           <div className="flex-1">
+            {/* Status Messages */}
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md">
+                {error}
+              </div>
+            )}
+            {successMessage && (
+              <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 rounded-md">
+                {successMessage}
+              </div>
+            )}
+            
             {/* Profile Info Tab */}
             {activeTab === 'profile' && (
               <div className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="p-6 border-b border-gray-200">
-                  <h2 className="text-lg font-semibold text-gray-900">{t('profileInfo')}</h2>
+                  <h2 className="text-2xl font-secularone text-gray-900">{t('profileInfo')}</h2>
                   <p className="text-gray-500 text-sm">{t('profileInfoDesc')}</p>
                 </div>
-                <form onSubmit={handleSubmit} className="p-6">
+                <form onSubmit={handleProfileSubmit} className="p-6">
                   <div className="mb-6">
                     <label className="block text-sm font-medium text-gray-900 mb-1">
                       {t('profilePicture')}
@@ -185,7 +368,7 @@ const ProfileSettingsPage = () => {
                           className="object-cover"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
-                            target.src = "https://via.placeholder.com/80?text=User";
+                            target.src = "/images/default-avatar.png";
                           }}
                         />
                       </div>
@@ -226,7 +409,7 @@ const ProfileSettingsPage = () => {
                                 className="object-cover"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement;
-                                  target.src = "https://via.placeholder.com/64?text=Avatar";
+                                  target.src = "/images/default-avatar.png";
                                 }}
                               />
                             </button>
@@ -247,7 +430,7 @@ const ProfileSettingsPage = () => {
                         name="name"
                         value={userData.name}
                         onChange={handleInputChange}
-                        className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
                         required
                       />
                     </div>
@@ -262,140 +445,21 @@ const ProfileSettingsPage = () => {
                         name="email"
                         value={userData.email}
                         onChange={handleInputChange}
-                        className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
                         required
                       />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="location">
-                        {t('location')}
-                      </label>
-                      <input
-                        type="text"
-                        id="location"
-                        name="location"
-                        value={userData.location}
-                        onChange={handleInputChange}
-                        className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="phone">
-                        {t('phone')}
-                      </label>
-                      <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        value={userData.phone}
-                        onChange={handleInputChange}
-                        className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="bio">
-                      {t('bio')}
-                    </label>
-                    <textarea
-                      id="bio"
-                      name="bio"
-                      rows={4}
-                      value={userData.bio}
-                      onChange={handleInputChange}
-                      className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    />
-                    <p className="mt-1 text-xs text-gray-500">
-                      {t('bioDesc')}
-                    </p>
-                  </div>
-                  
-                  <div className="mb-6">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-3">{t('socialProfiles')}</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-center">
-                        <Icon icon="mdi:twitter" className="w-5 h-5 text-gray-400 mr-3" />
-                        <input
-                          type="url"
-                          name="twitter"
-                          placeholder="https://twitter.com/username"
-                          value={userData.socialLinks.twitter}
-                          onChange={handleSocialInputChange}
-                          className="flex-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                        />
-                      </div>
-                      <div className="flex items-center">
-                        <Icon icon="mdi:linkedin" className="w-5 h-5 text-gray-400 mr-3" />
-                        <input
-                          type="url"
-                          name="linkedin"
-                          placeholder="https://linkedin.com/in/username"
-                          value={userData.socialLinks.linkedin}
-                          onChange={handleSocialInputChange}
-                          className="flex-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                        />
-                      </div>
-                      <div className="flex items-center">
-                        <Icon icon="mdi:github" className="w-5 h-5 text-gray-400 mr-3" />
-                        <input
-                          type="url"
-                          name="github"
-                          placeholder="https://github.com/username"
-                          value={userData.socialLinks.github}
-                          onChange={handleSocialInputChange}
-                          className="flex-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                        />
-                      </div>
                     </div>
                   </div>
                   
                   <div className="flex justify-end">
                     <HeroButton
                       text={t('saveChanges')}
-                      backgroundColor="#4f46e5"
+                      backgroundColor="#7471f9" // Updated purple color
                       textColor="white"
+                      disabled={isLoading}
                     />
                   </div>
                 </form>
-              </div>
-            )}
-            
-            {/* Account Settings Tab */}
-            {activeTab === 'account' && (
-              <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="p-6 border-b border-gray-200">
-                  <h2 className="text-lg font-semibold text-gray-900">{t('accountSettings')}</h2>
-                  <p className="text-gray-500 text-sm">{t('accountSettingsDesc')}</p>
-                </div>
-                <div className="p-6">
-                  <div className="mb-6">
-                    <h3 className="text-sm font-medium text-gray-900 mb-2">{t('language')}</h3>
-                    <select
-                      value={userData.language}
-                      onChange={handleLanguageChange}
-                      className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                      <option value="en">English</option>
-                      <option value="it">Italiano</option>
-                    </select>
-                  </div>
-                  
-                  <div className="border-t border-gray-200 pt-6">
-                    <h3 className="text-sm font-medium text-red-700 mb-2">{t('dangerZone')}</h3>
-                    <p className="text-sm text-gray-500 mb-4">
-                      {t('deleteAccountWarning')}
-                    </p>
-                    <button
-                      type="button"
-                      className="inline-flex items-center px-4 py-2 border border-red-300 shadow-sm text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50"
-                    >
-                      {t('deleteAccount')}
-                    </button>
-                  </div>
-                </div>
               </div>
             )}
             
@@ -403,7 +467,7 @@ const ProfileSettingsPage = () => {
             {activeTab === 'notifications' && (
               <div className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="p-6 border-b border-gray-200">
-                  <h2 className="text-lg font-semibold text-gray-900">{t('notifications')}</h2>
+                  <h2 className="text-2xl font-secularone text-gray-900">{t('notifications')}</h2>
                   <p className="text-gray-500 text-sm">{t('notificationsDesc')}</p>
                 </div>
                 <div className="p-6">
@@ -417,7 +481,7 @@ const ProfileSettingsPage = () => {
                           type="checkbox"
                           checked={userData.emailNotifications.workshops}
                           onChange={handleNotificationChange}
-                          className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                          className="focus:ring-[#7471f9] h-4 w-4 text-[#7471f9] border-gray-300 rounded"
                         />
                       </div>
                       <div className="ml-3">
@@ -433,41 +497,20 @@ const ProfileSettingsPage = () => {
                     <div className="flex items-start">
                       <div className="flex items-center h-5">
                         <input
-                          id="reviews"
-                          name="reviews"
+                          id="changes"
+                          name="changes"
                           type="checkbox"
-                          checked={userData.emailNotifications.reviews}
+                          checked={userData.emailNotifications.changes}
                           onChange={handleNotificationChange}
-                          className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                          className="focus:ring-[#7471f9] h-4 w-4 text-[#7471f9] border-gray-300 rounded"
                         />
                       </div>
                       <div className="ml-3">
-                        <label htmlFor="reviews" className="text-sm font-medium text-gray-900">
-                          {t('reviewNotifications')}
+                        <label htmlFor="changes" className="text-sm font-medium text-gray-900">
+                          {t('changeNotifications')}
                         </label>
                         <p className="text-gray-500 text-xs">
-                          {t('reviewNotificationsDesc')}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start">
-                      <div className="flex items-center h-5">
-                        <input
-                          id="updates"
-                          name="updates"
-                          type="checkbox"
-                          checked={userData.emailNotifications.updates}
-                          onChange={handleNotificationChange}
-                          className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                        />
-                      </div>
-                      <div className="ml-3">
-                        <label htmlFor="updates" className="text-sm font-medium text-gray-900">
-                          {t('updateNotifications')}
-                        </label>
-                        <p className="text-gray-500 text-xs">
-                          {t('updateNotificationsDesc')}
+                          {t('changeNotificationsDesc')}
                         </p>
                       </div>
                     </div>
@@ -476,8 +519,9 @@ const ProfileSettingsPage = () => {
                   <div className="mt-6 flex justify-end">
                     <HeroButton
                       text={t('savePreferences')}
-                      backgroundColor="#4f46e5"
+                      backgroundColor="#7471f9" // Updated purple color
                       textColor="white"
+                      disabled={isLoading}
                     />
                   </div>
                 </div>
@@ -488,47 +532,53 @@ const ProfileSettingsPage = () => {
             {activeTab === 'security' && (
               <div className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="p-6 border-b border-gray-200">
-                  <h2 className="text-lg font-semibold text-gray-900">{t('security')}</h2>
+                  <h2 className="text-2xl font-secularone text-gray-900">{t('security')}</h2>
                   <p className="text-gray-500 text-sm">{t('securityDesc')}</p>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-sm font-medium text-gray-900 mb-4">{t('changePassword')}</h3>
-                  <form className="space-y-4">
+                  <h3 className="text-lg font-bold text-[#2f2f2f] mb-6">{t('changePassword')}</h3>
+                  <form onSubmit={handlePasswordSubmit} className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="current-password">
+                      <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="currentPassword">
                         {t('currentPassword')}
                       </label>
                       <input
                         type="password"
-                        id="current-password"
-                        name="current-password"
-                        className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        id="currentPassword"
+                        name="currentPassword"
+                        value={passwordData.currentPassword}
+                        onChange={handlePasswordChange}
+                        className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
                         required
                       />
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="new-password">
+                      <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="newPassword">
                         {t('newPassword')}
                       </label>
                       <input
                         type="password"
-                        id="new-password"
-                        name="new-password"
-                        className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        id="newPassword"
+                        name="newPassword"
+                        value={passwordData.newPassword}
+                        onChange={handlePasswordChange}
+                        className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
                         required
                       />
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="confirm-password">
+                      <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="confirmPassword">
                         {t('confirmPassword')}
                       </label>
                       <input
                         type="password"
-                        id="confirm-password"
-                        name="confirm-password"
-                        className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        value={passwordData.confirmPassword}
+                        onChange={handlePasswordChange}
+                        className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
                         required
                       />
                     </div>
@@ -536,34 +586,26 @@ const ProfileSettingsPage = () => {
                     <div className="pt-2">
                       <HeroButton
                         text={t('updatePassword')}
-                        backgroundColor="#4f46e5"
+                        backgroundColor="#7471f9" // Updated purple color
                         textColor="white"
+                        disabled={isLoading}
                       />
                     </div>
                   </form>
-                  
-                  <div className="mt-8 pt-6 border-t border-gray-200">
-                    <h3 className="text-sm font-medium text-gray-900 mb-4">{t('sessionHistory')}</h3>
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-md">
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">Chrome on Windows</p>
-                          <p className="text-xs text-gray-500">New York, USA • {t('currentSession')}</p>
-                        </div>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          {t('active')}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-md">
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">Safari on MacOS</p>
-                          <p className="text-xs text-gray-500">San Francisco, USA • 2 days ago</p>
-                        </div>
-                        <button className="text-xs text-red-600 hover:text-red-800 font-medium">
-                          {t('revoke')}
-                        </button>
-                      </div>
-                    </div>
+
+                  <div className="mt-12 pt-6 border-t border-gray-200">
+                    <h3 className="text-sm font-medium text-red-700 mb-2">{t('dangerZone')}</h3>
+                    <p className="text-sm text-gray-500 mb-4">
+                      {t('deleteAccountWarning')}
+                    </p>
+                    <HeroButton
+                      text={t('deleteAccount')}
+                      backgroundColor="#b91c1c" // Red-700 in hex
+                      textColor="white"
+                      onClick={() => setShowDeleteModal(true)}
+                      disabled={isLoading}
+                      className="text-sm"
+                    />
                   </div>
                 </div>
               </div>
@@ -571,6 +613,64 @@ const ProfileSettingsPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Delete Account Modal */}
+      {showDeleteModal && (
+        <>
+          <style jsx global>{keyframes}</style>
+          <div 
+            className="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50 p-4"
+            style={modalAnimation}
+          >
+            <div 
+              className="bg-white rounded-lg shadow-xl max-w-md w-full p-6"
+              style={modalContentAnimation}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">{t('deleteAccount')}</h3>
+                <button 
+                  onClick={() => setShowDeleteModal(false)}
+                  className="text-gray-400 hover:text-gray-500"
+                >
+                  <Icon icon="heroicons:x-mark" className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="mb-6">
+                <div className="flex items-center text-red-600 mb-4">
+                  <Icon icon="heroicons:exclamation-triangle" className="h-6 w-6 mr-2" />
+                  <p className="font-medium">{t('deleteAccountWarning')}</p>
+                </div>
+                <p className="text-gray-600 text-sm">
+                  This action cannot be undone. All your data, including profile information, reviews, and workshop registrations will be permanently deleted.
+                </p>
+              </div>
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                  disabled={isLoading}
+                >
+                  {t('cancel')}
+                </button>
+                <button
+                  onClick={handleDeleteAccount}
+                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 flex items-center"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Icon icon="heroicons:arrow-path" className="h-4 w-4 mr-2 animate-spin" />
+                      {t('deleting')}
+                    </>
+                  ) : (
+                    t('deleteAccount')
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
