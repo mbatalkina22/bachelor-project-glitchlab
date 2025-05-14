@@ -41,6 +41,14 @@ export async function PUT(request: Request) {
       if (body.email) user.email = body.email;
       if (body.avatar) user.avatar = body.avatar;
       
+      // Update instructor fields if user is an instructor
+      if (user.role === 'instructor') {
+        if (body.surname !== undefined) user.surname = body.surname;
+        if (body.description !== undefined) user.description = body.description;
+        if (body.website !== undefined) user.website = body.website;
+        if (body.linkedin !== undefined) user.linkedin = body.linkedin;
+      }
+      
       await user.save();
       
       // Return user without password

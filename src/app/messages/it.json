@@ -213,7 +213,46 @@
     "notLoggedIn": "Non sei connesso",
     "login": "Accedi per visualizzare il profilo",
     "reviewLeft": "Recensione per il workshop",
-    "viewWorkshop": "Visualizza Workshop"
+    "viewWorkshop": "Visualizza Workshop",
+    "loading": "Caricamento...",
+    "addNewInstructor": "Aggiungi Nuovo Istruttore",
+    "registerNewInstructor": "Registra un nuovo istruttore sulla piattaforma",
+    "basicInformation": "Informazioni di Base",
+    "aboutInformation": "Informazioni Aggiuntive",
+    "firstName": "Nome",
+    "lastName": "Cognome",
+    "emailAddress": "Indirizzo Email",
+    "emailForLogin": "Questa email sarà utilizzata dall'istruttore per accedere",
+    "password": "Password",
+    "confirmPassword": "Conferma Password",
+    "cancel": "Annulla",
+    "nextAboutInfo": "Avanti: Informazioni Aggiuntive",
+    "bioDescription": "Bio / Descrizione",
+    "optionalAddLater": "Opzionale - L'istruttore può aggiungerlo successivamente",
+    "personalWebsite": "Sito Web Personale",
+    "linkedinProfile": "Profilo LinkedIn",
+    "backToBasic": "Torna alle Informazioni di Base",
+    "registerInstructor": "Registra Istruttore",
+    "passwordsDoNotMatch": "Le password non corrispondono",
+    "passwordTooShort": "La password deve contenere almeno 6 caratteri",
+    "failedToRegister": "Impossibile registrare l'istruttore",
+    "instructorRegistered": "Istruttore registrato con successo!",
+    "aboutMe": "Su di Me",
+    "bio": "Biografia",
+    "website": "Sito Web",
+    "noInformationAdded": "Nessuna Informazione Aggiunta",
+    "noInfoAddedMessage": "Non hai ancora aggiunto informazioni al tuo profilo.",
+    "completeProfile": "Completa il Tuo Profilo",
+    "noUpcomingWorkshops": "Nessun Workshop Imminente",
+    "noUpcomingWorkshopsMessage": "Non hai workshop imminenti programmati.",
+    "noPastWorkshops": "Nessun Workshop Passato",
+    "noPastWorkshopsMessage": "Non hai ancora condotto workshop.",
+    "uploadPhoto": "Carica Foto",
+    "instructor": "Istruttore",
+    "noEmailProvided": "Nessuna email fornita",
+    "notSpecified": "Non specificato",
+    "notProvided": "Non fornito",
+    "failedToFetchWorkshops": "Impossibile recuperare i workshop dell'istruttore"
   },
   "Settings": {
     "settings": "Impostazioni",
@@ -226,6 +265,7 @@
     "profilePicture": "Immagine Profilo",
     "changePhoto": "Cambia Foto",
     "removePhoto": "Rimuovi",
+    "photoFormats": "JPG, PNG, GIF",
     "photoRequirements": "JPG, GIF o PNG. Dimensione max 800K",
     "changeAvatar": "Cambia Avatar",
     "selectFromAvailable": "Seleziona tra le opzioni di avatar disponibili",
@@ -237,12 +277,20 @@
     "bio": "Bio",
     "bioDesc": "Breve descrizione per il tuo profilo",
     "socialProfiles": "Profili Social",
+    "website": "Sito Web",
+    "linkedinProfile": "Profilo LinkedIn",
+    "firstName": "Nome",
+    "lastName": "Cognome",
+    "about": "Informazioni",
+    "websitePlaceholder": "https://tuosito.com",
+    "linkedinPlaceholder": "https://linkedin.com/in/tuonome",
     "saveChanges": "Salva Modifiche",
     "accountSettingsDesc": "Gestisci le preferenze del tuo account",
     "language": "Lingua",
     "dangerZone": "Zona Pericolosa",
     "deleteAccountWarning": "Una volta eliminato il tuo account, non si può tornare indietro. Per favore, sii certo.",
     "deleteAccount": "Elimina Account",
+    "deleteAccountDescription": "Questa azione non può essere annullata. Tutti i tuoi dati, incluse le informazioni del profilo, i workshop e lo stato di istruttore saranno eliminati permanentemente.",
     "notificationsDesc": "Gestisci le tue preferenze di notifica email",
     "emailNotifications": "Notifiche Email",
     "workshopNotifications": "Notifiche Workshop",
@@ -261,7 +309,15 @@
     "sessionHistory": "Cronologia Sessioni",
     "currentSession": "Sessione Attuale",
     "active": "Attiva",
-    "revoke": "Revoca"
+    "revoke": "Revoca",
+    "profileUpdatedSuccess": "Profilo aggiornato con successo!",
+    "failedToUpdateProfile": "Impossibile aggiornare il profilo",
+    "passwordUpdatedSuccess": "Password aggiornata con successo!",
+    "failedToUpdatePassword": "Impossibile aggiornare la password",
+    "failedToDeleteAccount": "Impossibile eliminare l'account",
+    "loading": "Caricamento...",
+    "failedToFetchUserData": "Impossibile recuperare i dati dell'utente",
+    "failedToLoadUserData": "Impossibile caricare i dati dell'utente"
   },
   "Auth": {
     "signInToAccount": "Accedi al tuo account",
@@ -289,23 +345,6 @@
   },
   "OurTeam": {
     "title": "Conosci il Nostro Team",
-    "subtitle": "Scopri le persone appassionate dietro i nostri workshop ed esperienze di apprendimento.",
-    "teamMembers": {
-      "sarah": {
-        "name": "Sarah Johnson",
-        "role": "Fondatrice e Istruttrice Principale",
-        "bio": "Con oltre 10 anni di esperienza nel design UX e nello sviluppo, Sarah guida il nostro team con passione ed esperienza."
-      },
-      "michael": {
-        "name": "Michael Chen",
-        "role": "Sviluppatore Senior",
-        "bio": "Michael porta una vasta conoscenza nello sviluppo full-stack e ama condividere la sua esperienza con i partecipanti ai workshop."
-      },
-      "emma": {
-        "name": "Emma Rodriguez",
-        "role": "UX/UI Designer",
-        "bio": "Emma si specializza nella creazione di interfacce utente intuitive e belle, portando creatività in ogni workshop."
-      }
-    }
+    "noInstructors": "Nessun istruttore trovato."
   }
 }

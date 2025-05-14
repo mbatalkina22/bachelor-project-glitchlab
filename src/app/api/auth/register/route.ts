@@ -4,7 +4,7 @@ import User from '../../lib/models/user';
 
 export async function POST(request: Request) {
   try {
-    const { name, email, password, avatar } = await request.json();
+    const { name, email, password, avatar, role, surname, description, website, linkedin } = await request.json();
 
     // Validate input
     if (!name || !email || !password) {
@@ -25,13 +25,25 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create new user
-    const user = await User.create({
+    // Create user object with basic fields
+    const userData: any = {
       name,
       email,
       password,
       avatar: avatar || '/images/default-avatar.png'
-    });
+    };
+
+    // Add instructor fields if role is instructor
+    if (role === 'instructor') {
+      userData.role = 'instructor';
+      if (surname) userData.surname = surname;
+      if (description) userData.description = description;
+      if (website) userData.website = website;
+      if (linkedin) userData.linkedin = linkedin;
+    }
+
+    // Create new user
+    const user = await User.create(userData);
 
     // Return user without password
     const { password: _, ...userWithoutPassword } = user.toObject();

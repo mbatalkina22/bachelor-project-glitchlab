@@ -204,7 +204,46 @@
     "notLoggedIn": "Not Logged In",
     "login": "Log In to View Profile",
     "reviewLeft": "Review for workshop",
-    "viewWorkshop": "View Workshop"
+    "viewWorkshop": "View Workshop",
+    "loading": "Loading...",
+    "addNewInstructor": "Add New Instructor",
+    "registerNewInstructor": "Register a new instructor to the platform",
+    "basicInformation": "Basic Information",
+    "aboutInformation": "About Information",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "emailAddress": "Email Address",
+    "emailForLogin": "This email will be used by the instructor to log in",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "cancel": "Cancel",
+    "nextAboutInfo": "Next: About Information",
+    "bioDescription": "Bio / Description",
+    "optionalAddLater": "Optional - The instructor can add this later",
+    "personalWebsite": "Personal Website",
+    "linkedinProfile": "LinkedIn Profile",
+    "backToBasic": "Back to Basic Information",
+    "registerInstructor": "Register Instructor",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 6 characters long",
+    "failedToRegister": "Failed to register instructor",
+    "instructorRegistered": "Instructor registered successfully!",
+    "aboutMe": "About Me",
+    "bio": "Bio",
+    "website": "Website",
+    "noInformationAdded": "No Information Added",
+    "noInfoAddedMessage": "You haven't added any profile information yet.",
+    "completeProfile": "Complete Your Profile",
+    "noUpcomingWorkshops": "No Upcoming Workshops",
+    "noUpcomingWorkshopsMessage": "You don't have any upcoming workshops scheduled.",
+    "noPastWorkshops": "No Past Workshops",
+    "noPastWorkshopsMessage": "You haven't conducted any workshops yet.",
+    "uploadPhoto": "Upload Photo",
+    "instructor": "Instructor",
+    "noEmailProvided": "No email provided",
+    "notSpecified": "Not specified",
+    "notProvided": "Not provided",
+    "failedToFetchWorkshops": "Failed to fetch instructor workshops"
   },
   "Settings": {
     "settings": "Settings",
@@ -217,6 +256,7 @@
     "profilePicture": "Profile Picture",
     "changePhoto": "Change Photo",
     "removePhoto": "Remove",
+    "photoFormats": "JPG, PNG, GIF",
     "changeAvatar": "Change Avatar",
     "selectFromAvailable": "Select from available avatar options",
     "selectAvatar": "Select an Avatar",
@@ -227,12 +267,20 @@
     "bio": "Bio",
     "bioDesc": "Brief description for your profile",
     "socialProfiles": "Social Profiles",
+    "website": "Website",
+    "linkedinProfile": "LinkedIn Profile",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "about": "About",
+    "websitePlaceholder": "https://yourwebsite.com",
+    "linkedinPlaceholder": "https://linkedin.com/in/yourname",
     "saveChanges": "Save Changes",
     "accountSettingsDesc": "Manage your account preferences",
     "language": "Language",
     "dangerZone": "Danger Zone",
     "deleteAccountWarning": "Once you delete your account, there is no going back. Please be certain.",
     "deleteAccount": "Delete Account",
+    "deleteAccountDescription": "This action cannot be undone. All your data, including profile information, workshops, and instructor status will be permanently deleted.",
     "notificationsDesc": "Manage your email notification preferences",
     "emailNotifications": "Email Notifications",
     "workshopNotifications": "Workshop Notifications",
@@ -249,7 +297,15 @@
     "currentPassword": "Current Password",
     "newPassword": "New Password",
     "confirmPassword": "Confirm New Password",
-    "updatePassword": "Update Password"
+    "updatePassword": "Update Password",
+    "profileUpdatedSuccess": "Profile updated successfully!",
+    "failedToUpdateProfile": "Failed to update profile",
+    "passwordUpdatedSuccess": "Password updated successfully!",
+    "failedToUpdatePassword": "Failed to update password",
+    "failedToDeleteAccount": "Failed to delete account",
+    "loading": "Loading...",
+    "failedToFetchUserData": "Failed to fetch user data",
+    "failedToLoadUserData": "Failed to load user data"
   },
   "Auth": {
     "signInToAccount": "Sign in to your account",
@@ -276,23 +332,6 @@
   },
   "OurTeam": {
     "title": "Meet Our Team",
-    "subtitle": "Get to know the passionate individuals behind our workshops and learning experiences.",
-    "teamMembers": {
-      "sarah": {
-        "name": "Sarah Johnson",
-        "role": "Founder & Lead Instructor",
-        "bio": "With over 10 years of experience in UX design and development, Sarah leads our team with passion and expertise."
-      },
-      "michael": {
-        "name": "Michael Chen",
-        "role": "Senior Developer",
-        "bio": "Michael brings extensive knowledge in full-stack development and loves sharing his expertise with workshop participants."
-      },
-      "emma": {
-        "name": "Emma Rodriguez",
-        "role": "UX/UI Designer",
-        "bio": "Emma specializes in creating intuitive and beautiful user interfaces, bringing creativity to every workshop."
-      }
-    }
+    "noInstructors": "No instructors found."
   }
 }

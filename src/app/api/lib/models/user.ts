@@ -25,10 +25,31 @@ const UserSchema = new Schema({
     type: String,
     default: '/images/default-avatar.png',
   },
+  role: {
+    type: String,
+    enum: ['user', 'instructor'],
+    default: 'user',
+  },
   registeredWorkshops: [{
     type: Schema.Types.ObjectId,
     ref: 'Workshop'
-  }]
+  }],
+  // Instructor specific fields
+  surname: {
+    type: String,
+    trim: true,
+  },
+  description: {
+    type: String,
+  },
+  website: {
+    type: String,
+    trim: true,
+  },
+  linkedin: {
+    type: String,
+    trim: true,
+  },
 }, {
   timestamps: true,
   collection: 'users'

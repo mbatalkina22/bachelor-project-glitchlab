@@ -11,7 +11,7 @@ import ScrollReveal from '@/components/ScrollReveal';
 import { useAuth } from '@/context/AuthContext';
 import { Arvo, Bebas_Neue, Dancing_Script, Lobster } from "next/font/google";
 import { getWorkshopReviewsUrl } from '@/utils/navigation';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 // Initialize the fonts
 const dancingScript = Dancing_Script({ subsets: ["latin"] });
@@ -49,13 +49,21 @@ interface UserReview {
 const ProfilePage = () => {
   const t = useTranslations('Profile');
   const [activeTab, setActiveTab] = useState('workshops');
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isInstructor } = useAuth();
   const [registeredWorkshops, setRegisteredWorkshops] = useState<Workshop[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [userReviews, setUserReviews] = useState<UserReview[]>([]);
   const [isLoadingReviews, setIsLoadingReviews] = useState(true);
   const params = useParams();
   const locale = params.locale as string;
+  const router = useRouter();
+
+  // Redirect to instructor profile if user is an instructor
+  useEffect(() => {
+    if (isAuthenticated && isInstructor) {
+      router.push(`/${locale}/profile/instructor`);
+    }
+  }, [isAuthenticated, isInstructor, locale, router]);
 
   const fetchRegisteredWorkshops = async () => {
     if (!user?.registeredWorkshops?.length) {

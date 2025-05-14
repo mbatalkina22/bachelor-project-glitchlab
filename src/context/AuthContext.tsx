@@ -9,6 +9,11 @@ interface User {
   email: string;
   avatar: string;
   registeredWorkshops: string[];
+  role: string;
+  surname?: string;
+  description?: string;
+  website?: string;
+  linkedin?: string;
 }
 
 interface AuthContextType {
@@ -17,8 +22,19 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string, avatar?: string) => Promise<void>;
+  registerInstructor: (instructorData: {
+    name: string;
+    email: string;
+    password: string;
+    surname?: string;
+    description?: string;
+    website?: string;
+    linkedin?: string;
+    avatar?: string;
+  }) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
+  isInstructor: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -107,6 +123,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await login(email, password);
   };
 
+  const registerInstructor = async (instructorData: {
+    name: string;
+    email: string;
+    password: string;
+    surname?: string;
+    description?: string;
+    website?: string;
+    linkedin?: string;
+    avatar?: string;
+  }) => {
+    const response = await fetch('/api/auth/register-instructor', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(instructorData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Instructor registration failed');
+    }
+
+    // After successful instructor registration, log the user in
+    await login(instructorData.email, instructorData.password);
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
@@ -116,8 +160,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Compute isAuthenticated based on whether user is set
   const isAuthenticated = !!user;
 
+  // Compute isInstructor based on user role
+  const isInstructor = user?.role === 'instructor';
+
   return (
-    <AuthContext.Provider value={{ user, loading, isAuthenticated, login, register, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, isAuthenticated, login, register, registerInstructor, logout, refreshUser, isInstructor }}>
       {children}
     </AuthContext.Provider>
   );
