@@ -325,7 +325,7 @@ const ProfileSettingsPage = () => {
             </div>
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="p-6">
-                <Link href="/profile" className="text-[#7471f9] hover:text-purple-800 text-sm font-medium flex items-center">
+                <Link href="/profile" className="text-[#7471f9] hover:text-[#5a57c7] text-sm font-medium flex items-center">
                   <Icon icon="heroicons:arrow-left" className="mr-2 h-4 w-4" />
                   {t('backToProfile')}
                 </Link>

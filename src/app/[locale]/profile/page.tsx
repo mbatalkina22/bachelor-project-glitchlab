@@ -48,7 +48,7 @@ interface UserReview {
 
 const ProfilePage = () => {
   const t = useTranslations('Profile');
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('workshops');
   const { user, isAuthenticated } = useAuth();
   const [registeredWorkshops, setRegisteredWorkshops] = useState<Workshop[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -264,8 +264,8 @@ const ProfilePage = () => {
               <Link href="/profile/settings">
                 <HeroButton
                   text={t('editProfile')}
-                  backgroundColor="white"
-                  textColor="black"
+                  backgroundColor="#7471f9"
+                  textColor="white"
                 />
               </Link>
             </div>
