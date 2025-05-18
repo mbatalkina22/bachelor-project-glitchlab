@@ -22,9 +22,10 @@ const WorkshopSchema = new Schema({
     type: String,
     required: [true, 'Please provide an image URL for the workshop'],
   },
-  badgeImageSrc: {
+
+  badgeName: {
     type: String,
-    required: [true, 'Please provide a badge image URL for the workshop'],
+    required: [true, 'Please provide a name for the workshop badge'],
   },
   categories: {
     type: [String],

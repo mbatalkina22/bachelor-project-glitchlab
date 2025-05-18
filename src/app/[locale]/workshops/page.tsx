@@ -8,6 +8,7 @@ import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import Link from 'next/link';
 
 interface Workshop {
     _id: string;
@@ -16,7 +17,6 @@ interface Workshop {
     startDate: Date;
     endDate: Date;
     imageSrc: string;
-    badgeImageSrc: string;
     categories: string[];
     level: string;
     location: string;
@@ -28,6 +28,7 @@ interface Workshop {
 const WorkshopsPage = () => {
     const t = useTranslations('WorkshopsPage');
     const { user } = useAuth();
+    const params = useParams();
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('all');
     const [workshops, setWorkshops] = useState<Workshop[]>([]);
@@ -193,6 +194,15 @@ const WorkshopsPage = () => {
                                 >
                                     <Icon icon="heroicons:arrow-path" className="h-5 w-5" />
                                 </button>
+                                {user && user.role === 'instructor' && (
+                                    <Link 
+                                        href={`/${params.locale}/workshops/create`}
+                                        className="ml-3 px-4 py-2 bg-[#7471f9] text-white rounded-full hover:bg-[#5f5dd6] focus:outline-none flex items-center"
+                                    >
+                                        <Icon icon="heroicons:plus" className="h-5 w-5 mr-1" />
+                                        {t('createWorkshop')}
+                                    </Link>
+                                )}
                             </div>
                         </div>
 

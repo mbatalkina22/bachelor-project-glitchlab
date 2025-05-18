@@ -18,7 +18,6 @@ interface Workshop {
   startDate: Date;
   endDate: Date;
   imageSrc: string;
-  badgeImageSrc: string;
   categories: string[];
   level: string;
   location: string;

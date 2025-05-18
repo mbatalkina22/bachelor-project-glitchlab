@@ -21,7 +21,6 @@ interface Workshop {
   startDate: Date;
   endDate: Date;
   imageSrc: string;
-  badgeImageSrc: string;
   categories: string[];
   level: string;
   location: string;
@@ -415,7 +414,7 @@ const WorkshopDetailPage = () => {
                   <div className="absolute inset-0 rounded-full overflow-hidden border-4 border-indigo-100 shadow-xl bg-white">
                     <div className="absolute inset-0 bg-indigo-100 animate-pulse opacity-30"></div>
                     <Image 
-                      src={workshop.badgeImageSrc || "/images/badge.png"} 
+                      src={"/images/badge.png"} 
                       alt="Workshop Badge" 
                       fill
                       className="object-cover p-1 relative z-10 rounded-full"
