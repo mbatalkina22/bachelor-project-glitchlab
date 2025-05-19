@@ -73,10 +73,7 @@ export async function POST(request: Request) {
         );
       }
       
-      // Set instructor name for backward compatibility
-      body.instructor = `${instructorUser.name} ${instructorUser.surname || ''}`.trim();
-      
-      // Create the workshop
+      // Create the workshop - removed instructor string field
       const workshop = await Workshop.create(body);
       return NextResponse.json(workshop, { status: 201 });
     } catch (error: any) {

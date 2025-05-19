@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '../lib/mongodb';
 import Workshop from '../lib/models/workshop';
+import User from '../lib/models/user';
 import mongoose from 'mongoose';
 
 export async function GET() {
@@ -12,7 +13,20 @@ export async function GET() {
     if (count > 0) {
       return NextResponse.json({ message: 'Database already seeded' }, { status: 200 });
     }
-    // Sample workshop data
+
+    // Find instructors in the database
+    const instructors = await User.find({ role: 'instructor' });
+    
+    if (instructors.length === 0) {
+      return NextResponse.json({ 
+        error: 'No instructors found in the database. Please add instructors first.' 
+      }, { status: 400 });
+    }
+
+    // Log found instructors for debugging
+    console.log(`Found ${instructors.length} instructors in the database`);
+    
+    // Sample workshop data - using instructorId instead of instructor string
     const sampleWorkshops = [
       {
         name: "Web Development Bootcamp",
@@ -24,8 +38,8 @@ export async function GET() {
         categories: ["coding", "web", "frontend"],
         level: "Beginner",
         location: "Online",
-        instructor: "Alex Morgan",
-        capacity: 25,
+        instructorId: instructors[0]._id,
+        capacity: 10,
         registeredCount: 0
       },
       {
@@ -38,8 +52,8 @@ export async function GET() {
         categories: ["design", "ux", "creative"],
         level: "Intermediate",
         location: "San Francisco",
-        instructor: "Sofia Chen",
-        capacity: 20,
+        instructorId: instructors[1 % instructors.length]._id,
+        capacity: 10,
         registeredCount: 0
       },
       {
@@ -52,8 +66,8 @@ export async function GET() {
         categories: ["coding", "mobile", "react"],
         level: "Advanced",
         location: "New York",
-        instructor: "James Wilson",
-        capacity: 15,
+        instructorId: instructors[0]._id,
+        capacity: 10,
         registeredCount: 0
       },
       {
@@ -66,8 +80,8 @@ export async function GET() {
         categories: ["data", "visualization", "javascript"],
         level: "Intermediate",
         location: "Online",
-        instructor: "Luna Park",
-        capacity: 30,
+        instructorId: instructors[1 % instructors.length]._id,
+        capacity: 10,
         registeredCount: 0
       },
       {
@@ -80,8 +94,8 @@ export async function GET() {
         categories: ["ai", "data", "python"],
         level: "Beginner",
         location: "Boston",
-        instructor: "Daniel Smith",
-        capacity: 20,
+        instructorId: instructors[0]._id,
+        capacity: 10,
         registeredCount: 0
       },
       {
@@ -94,8 +108,8 @@ export async function GET() {
         categories: ["devops", "cloud", "infrastructure"],
         level: "Advanced",
         location: "Seattle",
-        instructor: "Olivia Johnson",
-        capacity: 15,
+        instructorId: instructors[1 % instructors.length]._id,
+        capacity: 10,
         registeredCount: 0
       },
       {
@@ -108,8 +122,8 @@ export async function GET() {
         categories: ["blockchain", "web3", "coding"],
         level: "Intermediate",
         location: "Online",
-        instructor: "Marcus Lee",
-        capacity: 20,
+        instructorId: instructors[0]._id,
+        capacity: 10,
         registeredCount: 0
       },
       {
@@ -122,8 +136,8 @@ export async function GET() {
         categories: ["security", "hacking", "defense"],
         level: "Advanced",
         location: "Chicago",
-        instructor: "Elena Rodriguez",
-        capacity: 20,
+        instructorId: instructors[1 % instructors.length]._id,
+        capacity: 10,
         registeredCount: 0
       },
       {
@@ -136,8 +150,8 @@ export async function GET() {
         categories: ["game-dev", "unity", "coding"],
         level: "Beginner",
         location: "Los Angeles",
-        instructor: "Nathan Parker",
-        capacity: 25,
+        instructorId: instructors[0]._id,
+        capacity: 10,
         registeredCount: 0
       },
       {
@@ -150,8 +164,8 @@ export async function GET() {
         categories: ["api", "backend", "graphql"],
         level: "Advanced",
         location: "Online",
-        instructor: "Priya Patel",
-        capacity: 20,
+        instructorId: instructors[1 % instructors.length]._id,
+        capacity: 10,
         registeredCount: 0
       }
     ];
@@ -159,7 +173,10 @@ export async function GET() {
     // Create workshops with the new schema
     await Workshop.insertMany(sampleWorkshops);
 
-    return NextResponse.json({ message: 'Database seeded successfully' }, { status: 201 });
+    return NextResponse.json({ 
+      message: 'Database seeded successfully', 
+      instructorsUsed: instructors.length 
+    }, { status: 201 });
   } catch (error: any) {
     console.error('Error seeding database:', error);
     return NextResponse.json({ 

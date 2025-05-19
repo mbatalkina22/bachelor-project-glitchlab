@@ -15,10 +15,17 @@ interface Workshop {
   description: string;
   startDate: Date;
   endDate: Date;
-  location: string;
-  instructor: string;
-  level: string;
+  imageSrc: string;
   categories: string[];
+  level: string;
+  location: string;
+  instructorId: string;
+  instructorDetails?: {
+    name: string;
+    surname?: string;
+  };
+  capacity: number;
+  registeredCount: number;
 }
 
 export default function CalendarPage() {
@@ -131,7 +138,7 @@ export default function CalendarPage() {
         id: workshop._id,
         description: workshop.description,
         location: workshop.location,
-        instructor: workshop.instructor,
+        instructor: workshop.instructorId,
         level: workshop.level,
         categories: workshop.categories,
         isRegistered,
@@ -413,4 +420,4 @@ export default function CalendarPage() {
       </div>
     </div>
   );
-} 
+}

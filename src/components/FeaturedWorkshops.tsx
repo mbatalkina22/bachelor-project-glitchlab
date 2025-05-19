@@ -19,7 +19,7 @@ interface Workshop {
   categories: string[];
   level: string;
   location: string;
-  instructor: string;
+  instructorId: string;
   delay?: string;
   bgColor?: string;
 }
@@ -233,4 +233,4 @@ const FeaturedWorkshops = () => {
   );
 };
 
-export default FeaturedWorkshops; 
+export default FeaturedWorkshops;

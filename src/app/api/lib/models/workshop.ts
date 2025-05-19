@@ -39,11 +39,6 @@ const WorkshopSchema = new Schema({
     type: String,
     required: [true, 'Please provide a location for the workshop'],
   },
-  instructor: {
-    type: String,
-    required: [true, 'Please provide the name of the instructor'],
-  },
-  // Add instructorId field to store a reference to the instructor document
   instructorId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -51,7 +46,7 @@ const WorkshopSchema = new Schema({
   },
   capacity: {
     type: Number,
-    default: 30,
+    default: 10,
     required: [true, 'Please provide the maximum capacity for the workshop'],
   },
   registeredCount: {

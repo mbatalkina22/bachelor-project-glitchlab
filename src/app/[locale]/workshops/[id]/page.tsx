@@ -32,8 +32,7 @@ interface Workshop {
   categories: string[];
   level: string;
   location: string;
-  instructor: string;
-  instructorId?: string;
+  instructorId: string;
   instructorDetails?: InstructorDetails;
   capacity: number;
   registeredCount: number;
@@ -470,7 +469,7 @@ const WorkshopDetailPage = () => {
               <div className="relative w-20 h-20 rounded-full overflow-hidden mr-4 border-2 border-indigo-100">
                 <Image 
                   src={workshop.instructorDetails?.avatar || "/images/avatar.jpg"} 
-                  alt={workshop.instructorDetails?.name || workshop.instructor} 
+                  alt={(workshop.instructorDetails?.name || '') + ' ' + (workshop.instructorDetails?.surname || '')}
                   width={80}
                   height={80}
                   style={{ objectFit: 'cover', width: '100%', height: '100%' }}
@@ -483,22 +482,22 @@ const WorkshopDetailPage = () => {
               </div>
                 <div>
                   <div className="flex items-center relative">
-                  <h3 className="font-semibold text-black">{workshop.instructorDetails?.name || workshop.instructor}</h3>
-                  <p className="font-semibold text-black ml-1">{workshop.instructorDetails?.surname || ""}</p>
-                  <div className="relative ml-2 group">
-                    <Icon 
-                    icon="heroicons:information-circle" 
-                    className="w-5 h-5 text-indigo-600 cursor-pointer hover:text-indigo-800" 
-                    />
-                    <div className="absolute left-0 top-0 transform -translate-y-full invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 bg-indigo-50 border border-indigo-100 p-3 rounded shadow-md z-10 w-64">
-                    <p className="text-gray-700 text-sm">
-                      {t('instructorNote')}{' '}
-                      <Link href={`/${locale}/our-team`} className="text-indigo-600 hover:text-indigo-800 font-medium">
-                      {t('ourTeamPage')}
-                      </Link>
-                    </p>
+                    <h3 className="font-semibold text-black">{workshop.instructorDetails?.name || 'Instructor'}</h3>
+                    <p className="font-semibold text-black ml-1">{workshop.instructorDetails?.surname || ""}</p>
+                    <div className="relative ml-2 group">
+                      <Icon 
+                      icon="heroicons:information-circle" 
+                      className="w-5 h-5 text-indigo-600 cursor-pointer hover:text-indigo-800" 
+                      />
+                      <div className="absolute left-0 top-0 transform -translate-y-full invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 bg-indigo-50 border border-indigo-100 p-3 rounded shadow-md z-10 w-64">
+                      <p className="text-gray-700 text-sm">
+                        {t('instructorNote')}{' '}
+                        <Link href={`/${locale}/our-team`} className="text-indigo-600 hover:text-indigo-800 font-medium">
+                        {t('ourTeamPage')}
+                        </Link>
+                      </p>
+                      </div>
                     </div>
-                  </div>
                   </div>
                 </div>
             </div>

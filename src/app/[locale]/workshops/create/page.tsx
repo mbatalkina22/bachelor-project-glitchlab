@@ -72,7 +72,7 @@ const CreateWorkshopPage = () => {
     endTime: "10:00",
     level: "beginner",
     location: "",
-    capacity: 30,
+    capacity: 10,
     categories: [] as string[],
     ageRange: "",
     instructorId: "", // Added field for instructor ID
