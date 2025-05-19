@@ -484,7 +484,7 @@ const WorkshopDetailPage = () => {
                 <div>
                   <div className="flex items-center relative">
                   <h3 className="font-semibold text-black">{workshop.instructorDetails?.name || workshop.instructor}</h3>
-                  <p className="text-gray-500 ml-1">{workshop.instructorDetails?.surname || ""}</p>
+                  <p className="font-semibold text-black ml-1">{workshop.instructorDetails?.surname || ""}</p>
                   <div className="relative ml-2 group">
                     <Icon 
                     icon="heroicons:information-circle" 

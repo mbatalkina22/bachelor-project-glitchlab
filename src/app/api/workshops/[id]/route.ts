@@ -19,18 +19,23 @@ export async function GET(request: Request, { params }: Params) {
       return NextResponse.json({ error: 'Workshop not found' }, { status: 404 });
     }
 
-    // Fetch instructor details if instructorId exists
+    // Fetch instructor details from instructorId
     let instructorDetails = null;
     if (workshop.instructorId) {
       instructorDetails = await User.findById(workshop.instructorId)
         .select('name surname avatar description'); // Only select needed fields
+      
+      if (!instructorDetails) {
+        console.warn(`Instructor with ID ${workshop.instructorId} not found for workshop ${params.id}`);
+      }
     }
 
     // Combine workshop data with instructor details
     const workshopData = workshop.toObject();
-    if (instructorDetails) {
-      workshopData.instructorDetails = instructorDetails;
-    }
+    workshopData.instructorDetails = instructorDetails || {
+      name: workshop.instructor,
+      avatar: "/images/avatar.jpg"
+    };
 
     return NextResponse.json(workshopData, { status: 200 });
   } catch (error) {

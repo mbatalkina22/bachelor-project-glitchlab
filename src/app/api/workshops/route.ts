@@ -56,18 +56,25 @@ export async function POST(request: Request) {
       // Get workshop data from request body
       const body = await request.json();
       
-      // Verify that instructorId is a valid instructor
-      if (body.instructorId) {
-        const instructorUser = await User.findById(body.instructorId);
-        if (!instructorUser || instructorUser.role !== 'instructor') {
-          return NextResponse.json(
-            { error: 'Selected instructor is not valid' },
-            { status: 400 }
-          );
-        }
-        // Get instructor name for backward compatibility
-        body.instructor = `${instructorUser.name} ${instructorUser.surname || ''}`.trim();
+      // Ensure instructorId is provided
+      if (!body.instructorId) {
+        return NextResponse.json(
+          { error: 'Instructor ID is required' },
+          { status: 400 }
+        );
       }
+      
+      // Verify that instructorId is a valid instructor
+      const instructorUser = await User.findById(body.instructorId);
+      if (!instructorUser || instructorUser.role !== 'instructor') {
+        return NextResponse.json(
+          { error: 'Selected instructor is not valid' },
+          { status: 400 }
+        );
+      }
+      
+      // Set instructor name for backward compatibility
+      body.instructor = `${instructorUser.name} ${instructorUser.surname || ''}`.trim();
       
       // Create the workshop
       const workshop = await Workshop.create(body);

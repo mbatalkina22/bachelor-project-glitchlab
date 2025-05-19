@@ -278,7 +278,6 @@ const CreateWorkshopPage = () => {
         categories: [...workshopData.categories, workshopData.ageRange],
         level: workshopData.level,
         location: workshopData.location,
-        instructor: user?.name || "Unknown",
         instructorId: workshopData.instructorId,
         capacity: workshopData.capacity,
       };

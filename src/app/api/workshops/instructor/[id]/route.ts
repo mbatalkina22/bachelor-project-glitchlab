@@ -21,10 +21,8 @@ export async function GET(
       );
     }
     
-    // Find workshops created by this instructor
-    // This assumes you've updated the Workshop model to store the instructor ID
-    // For now, we'll search by instructor name
-    const workshops = await Workshop.find({ instructor: instructor.name });
+    // Find workshops created by this instructor using instructorId
+    const workshops = await Workshop.find({ instructorId: instructorId });
     
     return NextResponse.json({ workshops }, { status: 200 });
   } catch (error: any) {
@@ -34,4 +32,4 @@ export async function GET(
       { status: 500 }
     );
   }
-} 
+}
