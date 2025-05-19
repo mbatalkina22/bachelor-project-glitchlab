@@ -132,6 +132,8 @@
     "workshops": "Workshops",
     "description": "Description",
     "instructor": "Instructor",
+    "instructorNote": "If you want to learn more about our instructors, please visit our",
+    "ourTeamPage": "Our Team page",
     "register": "Register for Workshop",
     "unregister": "Cancel Registration",
     "registered": "Registered",
@@ -161,24 +163,20 @@
     "selectOption": "-- Select an option --",
     "reviewsUnavailable": "Reviews are currently unavailable",
     "reviewsAvailableAfterWorkshop": "Reviews will be available after the workshop ends",
-    
     "tooEasy": "Too Easy",
     "justRight": "Just Right",
     "challenging": "Challenging",
     "tooDifficult": "Too Difficult",
-    
     "definitely": "Definitely",
     "probably": "Probably",
     "notSure": "Not Sure",
     "probablyNot": "Probably Not",
     "definitelyNot": "Definitely Not",
-    
     "inspiring": "Inspiring",
     "boring": "Boring",
     "fun": "Fun",
     "creative": "Creative", 
     "confusing": "Confusing",
-    
     "previewText": "Preview",
     "circleColor": "Circle Color",
     "circleFont": "Circle Font",
@@ -201,7 +199,16 @@
     "reviewUpdated": "Your review has been updated!",
     "cancel": "Cancel",
     "delete": "Delete",
-    "deleting": "Deleting..."
+    "deleting": "Deleting...",
+    "viewRegisteredUsers": "View Registered Users",
+    "registeredUsers": "Registered Users",
+    "totalRegistered": "Total Registered",
+    "noRegisteredUsers": "No Registered Users",
+    "noRegisteredUsersMessage": "No users have registered for this workshop yet.",
+    "user": "User",
+    "email": "Email",
+    "backToWorkshop": "Back to Workshop",
+    "pleaseLogin": "Please Login"
   },
   "Profile": {
     "editProfile": "Edit Profile",

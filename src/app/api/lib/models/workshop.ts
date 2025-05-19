@@ -43,6 +43,12 @@ const WorkshopSchema = new Schema({
     type: String,
     required: [true, 'Please provide the name of the instructor'],
   },
+  // Add instructorId field to store a reference to the instructor document
+  instructorId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'Please provide the ID of the instructor'],
+  },
   capacity: {
     type: Number,
     default: 30,
@@ -56,4 +62,4 @@ const WorkshopSchema = new Schema({
   collection: 'workshops'
 });
 
-export default mongoose.models.Workshop || mongoose.model('Workshop', WorkshopSchema); 
+export default mongoose.models.Workshop || mongoose.model('Workshop', WorkshopSchema);

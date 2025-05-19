@@ -9,6 +9,15 @@ import HeroButton from "@/components/HeroButton";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
+// Add instructor interface
+interface Instructor {
+  _id: string;
+  name: string;
+  surname?: string;
+  avatar?: string;
+  description?: string;
+}
+
 const CreateWorkshopPage = () => {
   const t = useTranslations("WorkshopsPage");
   const router = useRouter();
@@ -19,6 +28,9 @@ const CreateWorkshopPage = () => {
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // Add state for instructors
+  const [instructors, setInstructors] = useState<Instructor[]>([]);
+  const [loadingInstructors, setLoadingInstructors] = useState(false);
 
   // Redirect to workshops page if not an instructor
   useEffect(() => {
@@ -27,7 +39,29 @@ const CreateWorkshopPage = () => {
     }
   }, [isAuthenticated, isInstructor, router, locale]);
 
-  // Workshop data state
+  // Add effect to fetch instructors
+  useEffect(() => {
+    const fetchInstructors = async () => {
+      try {
+        setLoadingInstructors(true);
+        const response = await fetch('/api/instructors');
+        if (!response.ok) {
+          throw new Error('Failed to fetch instructors');
+        }
+        const data = await response.json();
+        setInstructors(data.instructors);
+      } catch (err) {
+        console.error('Error fetching instructors:', err);
+        setError('Failed to load instructors');
+      } finally {
+        setLoadingInstructors(false);
+      }
+    };
+
+    fetchInstructors();
+  }, []);
+
+  // Workshop data state - update to include instructorId
   const [workshopData, setWorkshopData] = useState({
     name: "",
     description: "",
@@ -41,6 +75,7 @@ const CreateWorkshopPage = () => {
     capacity: 30,
     categories: [] as string[],
     ageRange: "",
+    instructorId: "", // Added field for instructor ID
   });
 
   // Age options
@@ -208,6 +243,11 @@ const CreateWorkshopPage = () => {
       return;
     }
 
+    if (!workshopData.instructorId) {
+      setError("Please select an instructor");
+      return;
+    }
+
     try {
       setIsLoading(true);
 
@@ -239,6 +279,7 @@ const CreateWorkshopPage = () => {
         level: workshopData.level,
         location: workshopData.location,
         instructor: user?.name || "Unknown",
+        instructorId: workshopData.instructorId,
         capacity: workshopData.capacity,
       };
 
@@ -558,6 +599,35 @@ const CreateWorkshopPage = () => {
                 onChange={handleInputChange}
                 className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
               ></input>
+            </div>
+
+            {/* Instructor Selection */}
+            <div className="mb-6">
+              <label
+                className="block text-sm font-medium text-gray-900 mb-1"
+                htmlFor="instructorId"
+              >
+                {t("instructor") || "Instructor"}
+              </label>
+              <select
+                id="instructorId"
+                name="instructorId"
+                value={workshopData.instructorId}
+                onChange={handleInputChange}
+                className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base bg-white appearance-none"
+                required
+              >
+                <option value="" disabled>
+                  {loadingInstructors
+                    ? t("loadingInstructors") || "Loading instructors..."
+                    : t("selectInstructor") || "Select an instructor"}
+                </option>
+                {instructors.map((instructor) => (
+                  <option key={instructor._id} value={instructor._id}>
+                    {instructor.name} {instructor.surname}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Age Range */}

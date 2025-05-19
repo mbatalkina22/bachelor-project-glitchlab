@@ -132,6 +132,8 @@
     "workshops": "Workshop",
     "description": "Descrizione",
     "instructor": "Istruttore",
+    "instructorNote": "Se vuoi saperne di più sui nostri istruttori, visita la nostra",
+    "ourTeamPage": "pagina del nostro team",
     "register": "Registrati al Workshop",
     "unregister": "Annulla Registrazione",
     "registered": "Registrati",
@@ -161,25 +163,21 @@
     "selectOption": "-- Seleziona un'opzione --",
     "reviewsUnavailable": "Le recensioni non sono attualmente disponibili",
     "reviewsAvailableAfterWorkshop": "Le recensioni saranno disponibili dopo la fine del workshop",
-    
     "tooEasy": "Troppo Facile",
     "justRight": "Adeguato",
     "challenging": "Impegnativo",
     "tooDifficult": "Troppo Difficile",
-    
     "definitely": "Sicuramente",
     "probably": "Probabilmente",
     "notSure": "Non sono sicuro",
     "probablyNot": "Probabilmente no",
     "definitelyNot": "Assolutamente no",
-    
     "professionalDevelopment": "Sviluppo Professionale",
     "personalInterest": "Interesse Personale",
     "academicRequirement": "Requisito Accademico",
     "careerChange": "Cambio di Carriera",
     "networking": "Networking",
     "other": "Altro",
-    
     "previewText": "Anteprima",
     "circleColor": "Colore del Cerchio",
     "circleFont": "Font del Cerchio",
@@ -189,13 +187,11 @@
     "optional": "Opzionale",
     "enterComment": "Inserisci il tuo commento qui...",
     "language": "Lingua",
-    
     "inspiring": "Ispirante",
     "boring": "Noioso",
     "fun": "Divertente",
     "creative": "Creativo",
     "confusing": "Confuso",
-    
     "youHaveReviewed": "Hai già recensito questo workshop",
     "noReviewsYet": "Nessuna recensione ancora. Sii il primo a lasciare una recensione!",
     "you": "Tu",
@@ -211,7 +207,16 @@
     "reviewUpdated": "La tua recensione è stata aggiornata!",
     "cancel": "Annulla",
     "delete": "Elimina",
-    "deleting": "Eliminazione in corso..."
+    "deleting": "Eliminazione in corso...",
+    "viewRegisteredUsers": "Visualizza Utenti Registrati",
+    "registeredUsers": "Utenti Registrati",
+    "totalRegistered": "Totale Registrati",
+    "noRegisteredUsers": "Nessun Utente Registrato",
+    "noRegisteredUsersMessage": "Nessun utente si è ancora registrato per questo workshop.",
+    "user": "Utente",
+    "email": "Email",
+    "backToWorkshop": "Torna al Workshop",
+    "pleaseLogin": "Effettua l'Accesso"
   },
   "Profile": {
     "editProfile": "Modifica Profilo",

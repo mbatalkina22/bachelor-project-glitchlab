@@ -56,6 +56,19 @@ export async function POST(request: Request) {
       // Get workshop data from request body
       const body = await request.json();
       
+      // Verify that instructorId is a valid instructor
+      if (body.instructorId) {
+        const instructorUser = await User.findById(body.instructorId);
+        if (!instructorUser || instructorUser.role !== 'instructor') {
+          return NextResponse.json(
+            { error: 'Selected instructor is not valid' },
+            { status: 400 }
+          );
+        }
+        // Get instructor name for backward compatibility
+        body.instructor = `${instructorUser.name} ${instructorUser.surname || ''}`.trim();
+      }
+      
       // Create the workshop
       const workshop = await Workshop.create(body);
       return NextResponse.json(workshop, { status: 201 });
@@ -72,4 +85,4 @@ export async function POST(request: Request) {
     console.error('Error creating workshop:', error);
     return NextResponse.json({ error: error.message || 'Failed to create workshop' }, { status: 500 });
   }
-} 
+}

@@ -152,21 +152,46 @@ const Navbar = () => {
                       <div className="user-menu origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
                         <div className="py-1">
                           <div className="px-4 py-2 border-b">
-                            <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                            <p className="text-sm font-medium text-gray-900">
+                              {user.name} {user.surname || ''}
+                            </p>
                             <p className="text-xs text-gray-500 truncate">{user.email}</p>
                           </div>
-                          <Link 
-                            href={`/${locale}/profile`} 
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            {t('yourProfile')}
-                          </Link>
-                          <Link 
-                            href={`/${locale}/profile/settings`} 
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            {t('settings')}
-                          </Link>
+                          
+                          {user.role === 'instructor' ? (
+                            // Instructor profile links
+                            <>
+                              <Link 
+                                href={`/${locale}/profile/instructor`} 
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              >
+                                {t('yourProfile')}
+                              </Link>
+                              <Link 
+                                href={`/${locale}/profile/instructor/settings`} 
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              >
+                                {t('settings')}
+                              </Link>
+                            </>
+                          ) : (
+                            // Regular user profile links
+                            <>
+                              <Link 
+                                href={`/${locale}/profile`} 
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              >
+                                {t('yourProfile')}
+                              </Link>
+                              <Link 
+                                href={`/${locale}/profile/settings`} 
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              >
+                                {t('settings')}
+                              </Link>
+                            </>
+                          )}
+                          
                           <button
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-t"
                             onClick={handleLogout}
@@ -206,7 +231,7 @@ const Navbar = () => {
               user ? (
                 <button
                   className="mr-2 flex text-sm rounded-full focus:outline-none"
-                  onClick={() => router.push(`/${locale}/profile`)}
+                  onClick={() => router.push(user.role === 'instructor' ? `/${locale}/profile/instructor` : `/${locale}/profile`)}
                 >
                   <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-gray-200">
                     <Image
@@ -283,20 +308,34 @@ const Navbar = () => {
             {t('ourTeam')}
           </Link>
           {user && (
-            <>
-              <Link href={`/${locale}/profile`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
-                {t('profile')}
-              </Link>
-              <Link href={`/${locale}/profile/settings`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
-                {t('settings')}
-              </Link>
-              <button
-                className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}
-                onClick={handleLogout}
-              >
-                {t('signOut')}
-              </button>
-            </>
+            user.role === 'instructor' ? (
+              <>
+                <Link href={`/${locale}/profile/instructor`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
+                  {t('profile')}
+                </Link>
+                <Link href={`/${locale}/profile/instructor/settings`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
+                  {t('settings')}
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href={`/${locale}/profile`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
+                  {t('profile')}
+                </Link>
+                <Link href={`/${locale}/profile/settings`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
+                  {t('settings')}
+                </Link>
+              </>
+            )
+          )}
+          
+          {user && (
+            <button
+              className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}
+              onClick={handleLogout}
+            >
+              {t('signOut')}
+            </button>
           )}
           
           {/* Language switcher for mobile */}
