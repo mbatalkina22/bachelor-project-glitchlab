@@ -62,12 +62,30 @@ export async function GET(request: Request) {
       }
       
       // Find all users registered for this workshop
+      // Include badges field to check which users already have badges for this workshop
       const registeredUsers = await User.find({
         registeredWorkshops: { $in: [workshopId] }
-      }).select('name email avatar');
+      }).select('name email avatar badges');
+      
+      // Process users to properly format badge info
+      const processedUsers = registeredUsers.map(user => {
+        // Convert Mongoose document to plain object
+        const plainUser = user.toObject();
+        
+        // Include only essential badge data if needed
+        if (plainUser.badges && plainUser.badges.length > 0) {
+          // Keep the badges array but only include relevant fields
+          plainUser.badges = plainUser.badges.map(badge => ({
+            workshopId: badge.workshopId,
+            name: badge.name
+          }));
+        }
+        
+        return plainUser;
+      });
       
       return NextResponse.json({ 
-        users: registeredUsers,
+        users: processedUsers,
         workshop: {
           name: workshop.name,
           registeredCount: workshop.registeredCount,

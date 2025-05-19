@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
+import HeroButton from '@/components/HeroButton';
 
 interface Workshop {
     _id: string;
@@ -20,7 +21,7 @@ interface Workshop {
     categories: string[];
     level: string;
     location: string;
-    instructorId: string;
+    instructor: string;
     delay?: string;
     bgColor?: string;
 }
@@ -187,20 +188,14 @@ const WorkshopsPage = () => {
                                     value={searchTerm}
                                     onChange={handleSearch}
                                 />
-                                <button 
-                                    onClick={fetchWorkshops} 
-                                    className="ml-3 p-2 bg-[#7471f9] text-white rounded-full hover:bg-[#5f5dd6] focus:outline-none"
-                                    title="Refresh workshops"
-                                >
-                                    <Icon icon="heroicons:arrow-path" className="h-5 w-5" />
-                                </button>
                                 {user && user.role === 'instructor' && (
                                     <Link 
                                         href={`/${params.locale}/workshops/create`}
-                                        className="ml-3 px-4 py-2 bg-[#7471f9] text-white rounded-full hover:bg-[#5f5dd6] focus:outline-none flex items-center"
+                                        className="ml-4 flex items-center"
                                     >
-                                        <Icon icon="heroicons:plus" className="h-5 w-5 mr-1" />
-                                        {t('createWorkshop')}
+                                        <HeroButton className="flex items-center">
+                                            <Icon icon="heroicons:plus" className="h-5 w-5" /> 
+                                        </HeroButton>
                                     </Link>
                                 )}
                             </div>
@@ -246,4 +241,4 @@ const WorkshopsPage = () => {
     );
 };
 
-export default WorkshopsPage;
+export default WorkshopsPage; 

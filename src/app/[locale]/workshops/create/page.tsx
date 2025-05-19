@@ -61,7 +61,7 @@ const CreateWorkshopPage = () => {
     fetchInstructors();
   }, []);
 
-  // Workshop data state - update to include instructorId
+  // Workshop data state - update to include instructorIds array instead of single instructorId
   const [workshopData, setWorkshopData] = useState({
     name: "",
     description: "",
@@ -75,7 +75,7 @@ const CreateWorkshopPage = () => {
     capacity: 10,
     categories: [] as string[],
     ageRange: "",
-    instructorId: "", // Added field for instructor ID
+    instructorIds: [] as string[], // Changed to array for multiple instructors
   });
 
   // Age options
@@ -243,8 +243,8 @@ const CreateWorkshopPage = () => {
       return;
     }
 
-    if (!workshopData.instructorId) {
-      setError("Please select an instructor");
+    if (workshopData.instructorIds.length === 0) {
+      setError("Please select at least one instructor");
       return;
     }
 
@@ -278,9 +278,12 @@ const CreateWorkshopPage = () => {
         categories: [...workshopData.categories, workshopData.ageRange],
         level: workshopData.level,
         location: workshopData.location,
-        instructorId: workshopData.instructorId,
+        instructorIds: workshopData.instructorIds,
         capacity: workshopData.capacity,
       };
+      
+      console.log("Sending workshop payload:", JSON.stringify(workshopPayload));
+      console.log("Instructors selected:", workshopData.instructorIds);
 
       // Send request to create workshop
       const token = localStorage.getItem("token");
@@ -604,29 +607,45 @@ const CreateWorkshopPage = () => {
             <div className="mb-6">
               <label
                 className="block text-sm font-medium text-gray-900 mb-1"
-                htmlFor="instructorId"
+                htmlFor="instructorIds"
               >
-                {t("instructor") || "Instructor"}
+                {t("instructors") || "Instructors"}
               </label>
               <select
-                id="instructorId"
-                name="instructorId"
-                value={workshopData.instructorId}
-                onChange={handleInputChange}
-                className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base bg-white appearance-none"
+                id="instructorIds"
+                name="instructorIds"
+                value={workshopData.instructorIds}
+                onChange={(e) => {
+                  console.log("Selected options:", Array.from(e.target.selectedOptions).map(option => option.value));
+                  setWorkshopData({
+                    ...workshopData,
+                    instructorIds: Array.from(
+                      e.target.selectedOptions,
+                      (option) => option.value
+                    ),
+                  });
+                }}
+                multiple
+                size={4}
+                className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base bg-white"
                 required
               >
-                <option value="" disabled>
-                  {loadingInstructors
-                    ? t("loadingInstructors") || "Loading instructors..."
-                    : t("selectInstructor") || "Select an instructor"}
-                </option>
-                {instructors.map((instructor) => (
-                  <option key={instructor._id} value={instructor._id}>
-                    {instructor.name} {instructor.surname}
+                {loadingInstructors ? (
+                  <option disabled>
+                    {t("loadingInstructors") || "Loading instructors..."}
                   </option>
-                ))}
+                ) : (
+                  instructors.map((instructor) => (
+                    <option key={instructor._id} value={instructor._id}>
+                      {instructor.name} {instructor.surname}
+                    </option>
+                  ))
+                )}
               </select>
+              <p className="mt-1 text-xs text-gray-500">
+                {t("multipleInstructorsNote") || "You can select multiple instructors for the workshop"} 
+                <span className="ml-1 text-xs italic">(Ctrl+Click or Cmd+Click to select multiple)</span>
+              </p>
             </div>
 
             {/* Age Range */}

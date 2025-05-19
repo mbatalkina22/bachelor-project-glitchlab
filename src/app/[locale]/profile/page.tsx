@@ -45,6 +45,16 @@ interface UserReview {
   createdAt: string;
 }
 
+// Add new Badge interface
+interface Badge {
+  id: string;
+  workshopId: string;
+  name: string;
+  image: string;
+  date: Date;
+  description: string;
+}
+
 const ProfilePage = () => {
   const t = useTranslations('Profile');
   const [activeTab, setActiveTab] = useState('workshops');
@@ -216,30 +226,8 @@ const ProfilePage = () => {
     );
   }
 
-  // Mock badges earned by the user
-  const badges = [
-    {
-      id: "1",
-      name: "UX Fundamentals Badge",
-      image: "/images/badge.png",
-      date: "June 20, 2023",
-      description: "Completed the UX Design Fundamentals workshop"
-    },
-    {
-      id: "2",
-      name: "JavaScript Expert",
-      image: "/images/badge.png",
-      date: "July 25, 2023",
-      description: "Completed the Advanced JavaScript Patterns workshop"
-    },
-    {
-      id: "3",
-      name: "Data Viz Master",
-      image: "/images/badge.png",
-      date: "August 10, 2023",
-      description: "Completed the Data Visualization with D3.js workshop"
-    }
-  ];
+  // Get earned badges from user data
+  const userBadges: Badge[] = user.badges || [];
 
   return (
     <div className="pt-16 min-h-screen bg-gray-50">
@@ -363,9 +351,9 @@ const ProfilePage = () => {
           {activeTab === 'badges' && (
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-xl font-semibold mb-4 text-[#2f2f2f]">{t('earnedBadges')}</h2>
-              {badges.length > 0 ? (
+              {userBadges.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {badges.map((badge) => (
+                  {userBadges.map((badge) => (
                     <ScrollReveal key={badge.id}>
                       <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-6">
                         <div className="flex flex-col items-center">
@@ -386,7 +374,7 @@ const ProfilePage = () => {
                           </div>
                           <h3 className="text-lg font-bold text-indigo-700 mb-2">{badge.name}</h3>
                           <p className="text-gray-600 text-sm mb-2">{badge.description}</p>
-                          <p className="text-gray-500 text-xs">{badge.date}</p>
+                          <p className="text-gray-500 text-xs">{new Date(badge.date).toLocaleDateString()}</p>
                         </div>
                       </div>
                     </ScrollReveal>
@@ -486,4 +474,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage; 
+export default ProfilePage;

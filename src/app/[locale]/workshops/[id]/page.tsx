@@ -32,8 +32,10 @@ interface Workshop {
   categories: string[];
   level: string;
   location: string;
-  instructorId: string;
+  instructorId?: string;
+  instructorIds?: string[];
   instructorDetails?: InstructorDetails;
+  instructorDetailsList?: InstructorDetails[];
   capacity: number;
   registeredCount: number;
 }
@@ -461,45 +463,69 @@ const WorkshopDetailPage = () => {
               </div>
             </ScrollReveal>
           </div>
-          
-          {/* Instructor */}
+
+          {/* Instructors Section */}
           <div className="p-6 border-t border-gray-200">
-            <h2 className="text-xl font-semibold mb-4 text-black">{t('instructor')}</h2>
-            <div className="flex items-center">
-              <div className="relative w-20 h-20 rounded-full overflow-hidden mr-4 border-2 border-indigo-100">
-                <Image 
-                  src={workshop.instructorDetails?.avatar || "/images/avatar.jpg"} 
-                  alt={(workshop.instructorDetails?.name || '') + ' ' + (workshop.instructorDetails?.surname || '')}
-                  width={80}
-                  height={80}
-                  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = "/images/avatar.jpg";
-                  }}
-                  priority
+            <div className="flex items-center mb-4">
+              <h2 className="text-xl font-semibold text-black mr-2">
+                {workshop.instructorDetailsList && workshop.instructorDetailsList.length > 1 
+                  ? t('instructors') 
+                  : t('instructor')}
+              </h2>
+              <div className="relative group">
+                <Icon 
+                  icon="heroicons:information-circle" 
+                  className="w-5 h-5 text-indigo-600 cursor-pointer hover:text-indigo-800" 
                 />
-              </div>
-                <div>
-                  <div className="flex items-center relative">
-                    <h3 className="font-semibold text-black">{workshop.instructorDetails?.name || 'Instructor'}</h3>
-                    <p className="font-semibold text-black ml-1">{workshop.instructorDetails?.surname || ""}</p>
-                    <div className="relative ml-2 group">
-                      <Icon 
-                      icon="heroicons:information-circle" 
-                      className="w-5 h-5 text-indigo-600 cursor-pointer hover:text-indigo-800" 
-                      />
-                      <div className="absolute left-0 top-0 transform -translate-y-full invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 bg-indigo-50 border border-indigo-100 p-3 rounded shadow-md z-10 w-64">
-                      <p className="text-gray-700 text-sm">
-                        {t('instructorNote')}{' '}
-                        <Link href={`/${locale}/our-team`} className="text-indigo-600 hover:text-indigo-800 font-medium">
-                        {t('ourTeamPage')}
-                        </Link>
-                      </p>
-                      </div>
-                    </div>
-                  </div>
+                <div className="absolute left-0 top-full invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 bg-indigo-50 border border-indigo-100 p-3 rounded shadow-md z-10 w-64">
+                  <p className="text-gray-700 text-sm">
+                    {t('instructorInfoTooltip')}{' '}
+                    <Link href={`/${locale}/our-team`} className="text-indigo-600 hover:text-indigo-800 font-medium">
+                      {t('ourTeamPage')}
+                    </Link>
+                  </p>
                 </div>
+              </div>
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-3">
+              {workshop.instructorDetailsList && workshop.instructorDetailsList.length > 0 ? (
+                <>
+                  {workshop.instructorDetailsList.map((instructor, index) => (
+                    <div key={instructor._id || index} className="flex items-center bg-gray-50 px-3 py-1.5 rounded-full">
+                      <div className="relative w-8 h-8 rounded-full overflow-hidden mr-2">
+                        <Image 
+                          src={instructor.avatar || "/images/avatar.jpg"} 
+                          alt={(instructor.name || '') + ' ' + (instructor.surname || '')}
+                          width={32}
+                          height={32}
+                          style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = "/images/avatar.jpg";
+                          }}
+                        />
+                      </div>
+                      <span className="text-gray-700 text-sm font-medium">
+                        {instructor.name || 'Instructor'} {instructor.surname || ""}
+                      </span>
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <div className="flex items-center bg-gray-50 px-3 py-1.5 rounded-full">
+                  <div className="relative w-8 h-8 rounded-full overflow-hidden mr-2">
+                    <Image 
+                      src="/images/avatar.jpg" 
+                      alt="Instructor"
+                      width={32}
+                      height={32}
+                      style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                    />
+                  </div>
+                  <span className="text-gray-700 text-sm font-medium">Instructor</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -1,6 +1,23 @@
 import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+// Define the badge schema
+const BadgeSchema = new Schema({
+  id: String,
+  workshopId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Workshop'
+  },
+  name: String,
+  image: String,
+  date: Date,
+  description: String,
+  awardedBy: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }
+});
+
 const UserSchema = new Schema({
   name: {
     type: String,
@@ -34,6 +51,8 @@ const UserSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Workshop'
   }],
+  // Added badges array to store user's earned badges
+  badges: [BadgeSchema],
   // Instructor specific fields
   surname: {
     type: String,
@@ -73,4 +92,4 @@ UserSchema.methods.comparePassword = async function(candidatePassword: string) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-export default mongoose.models.User || mongoose.model('User', UserSchema); 
+export default mongoose.models.User || mongoose.model('User', UserSchema);

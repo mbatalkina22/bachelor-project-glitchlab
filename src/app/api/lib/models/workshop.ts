@@ -39,10 +39,10 @@ const WorkshopSchema = new Schema({
     type: String,
     required: [true, 'Please provide a location for the workshop'],
   },
-  instructorId: {
-    type: Schema.Types.ObjectId,
+  instructorIds: {
+    type: [Schema.Types.ObjectId],
     ref: 'User',
-    required: [true, 'Please provide the ID of the instructor'],
+    required: [true, 'Please provide at least one instructor ID'],
   },
   capacity: {
     type: Number,

@@ -56,27 +56,42 @@ export async function POST(request: Request) {
       // Get workshop data from request body
       const body = await request.json();
       
-      // Ensure instructorId is provided
-      if (!body.instructorId) {
+      console.log("Workshop payload received:", JSON.stringify(body));
+      
+      // Ensure instructorIds array is provided
+      if (!body.instructorIds || !Array.isArray(body.instructorIds) || body.instructorIds.length === 0) {
+        console.error("Invalid instructorIds:", body.instructorIds);
         return NextResponse.json(
-          { error: 'Instructor ID is required' },
+          { error: 'At least one instructor ID must be provided' },
           { status: 400 }
         );
       }
       
-      // Verify that instructorId is a valid instructor
-      const instructorUser = await User.findById(body.instructorId);
-      if (!instructorUser || instructorUser.role !== 'instructor') {
+      // Verify that each instructorId is a valid instructor
+      const instructorPromises = body.instructorIds.map((id: string) => User.findById(id));
+      const instructors = await Promise.all(instructorPromises);
+      
+      console.log(`Found ${instructors.filter(Boolean).length} valid instructors out of ${body.instructorIds.length} requested`);
+      
+      // Check if any instructor is not found or not an instructor
+      const invalidInstructors = instructors.filter((instructor, index) => 
+        !instructor || instructor.role !== 'instructor'
+      );
+      
+      if (invalidInstructors.length > 0) {
+        console.error("Invalid instructors found:", invalidInstructors.length);
         return NextResponse.json(
-          { error: 'Selected instructor is not valid' },
+          { error: 'One or more selected instructors are not valid' },
           { status: 400 }
         );
       }
       
-      // Create the workshop - removed instructor string field
+      // Create the workshop
       const workshop = await Workshop.create(body);
+      console.log("Workshop created successfully with ID:", workshop._id);
       return NextResponse.json(workshop, { status: 201 });
     } catch (error: any) {
+      console.error("Error in workshop creation process:", error);
       if (error.name === 'JsonWebTokenError') {
         return NextResponse.json(
           { error: 'Invalid token' },

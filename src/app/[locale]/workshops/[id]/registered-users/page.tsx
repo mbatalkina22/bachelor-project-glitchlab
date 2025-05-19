@@ -13,6 +13,10 @@ interface RegisteredUser {
   name: string;
   email: string;
   avatar: string;
+  badges?: {
+    workshopId: string;
+    name: string;
+  }[];
 }
 
 interface WorkshopDetails {
@@ -32,6 +36,14 @@ const RegisteredUsersPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [users, setUsers] = useState<RegisteredUser[]>([]);
   const [workshop, setWorkshop] = useState<WorkshopDetails | null>(null);
+  const [awarding, setAwarding] = useState<Record<string, boolean>>({});
+  const [removing, setRemoving] = useState<Record<string, boolean>>({});
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Helper function to check if user already has a badge
+  const userHasBadge = (user: RegisteredUser) => {
+    return user.badges?.some(badge => badge.workshopId === workshopId as string);
+  };
 
   // Redirect if not an instructor
   useEffect(() => {
@@ -75,6 +87,148 @@ const RegisteredUsersPage = () => {
       fetchRegisteredUsers();
     }
   }, [workshopId, isAuthenticated, isInstructor]);
+
+  // Handle removing a user from the workshop
+  const handleRemoveUser = async (userId: string, userName: string) => {
+    // Don't allow removing users who have already been awarded a badge
+    const user = users.find(u => u._id === userId);
+    if (user && userHasBadge(user)) {
+      setError("Cannot remove a user who has been awarded a badge");
+      
+      // Clear error after 3 seconds
+      setTimeout(() => {
+        setError(null);
+      }, 3000);
+      return;
+    }
+    
+    try {
+      // Show loading state for this specific user
+      setRemoving(prev => ({ ...prev, [userId]: true }));
+      
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication token not found');
+      }
+
+      const response = await fetch('/api/workshops/remove-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          userId: userId,
+          workshopId: workshopId
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to remove user');
+      }
+
+      // Remove user from the list
+      setUsers(prevUsers => prevUsers.filter(u => u._id !== userId));
+      
+      // Update workshop count
+      if (workshop) {
+        setWorkshop({
+          ...workshop,
+          registeredCount: Math.max(0, workshop.registeredCount - 1)
+        });
+      }
+
+      // Show success message
+      setSuccessMessage(`${userName} has been removed from the workshop`);
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
+
+    } catch (error: any) {
+      console.error('Error removing user:', error);
+      setError(error.message || 'Failed to remove user');
+      
+      // Clear error after 3 seconds
+      setTimeout(() => {
+        setError(null);
+      }, 3000);
+    } finally {
+      // Clear loading state for this specific user
+      setRemoving(prev => ({ ...prev, [userId]: false }));
+    }
+  };
+
+  // Handle awarding a badge to a user
+  const handleAwardBadge = async (userId: string) => {
+    try {
+      // Show loading state for this specific user
+      setAwarding(prev => ({ ...prev, [userId]: true }));
+      
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication token not found');
+      }
+
+      const response = await fetch('/api/badges/award', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          userId: userId,
+          workshopId: workshopId
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to award badge');
+      }
+
+      const data = await response.json();
+      
+      // Update the user in the local state to show they now have the badge
+      setUsers(prevUsers => 
+        prevUsers.map(user => {
+          if (user._id === userId) {
+            const badges = user.badges || [];
+            return {
+              ...user,
+              badges: [...badges, {
+                workshopId: workshopId as string,
+                name: data.badge.name
+              }]
+            };
+          }
+          return user;
+        })
+      );
+
+      // Show success message
+      setSuccessMessage(`Badge awarded to ${users.find(u => u._id === userId)?.name}!`);
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
+
+    } catch (error: any) {
+      console.error('Error awarding badge:', error);
+      setError(error.message || 'Failed to award badge');
+      
+      // Clear error after 3 seconds
+      setTimeout(() => {
+        setError(null);
+      }, 3000);
+    } finally {
+      // Clear loading state for this specific user
+      setAwarding(prev => ({ ...prev, [userId]: false }));
+    }
+  };
 
   if (!isAuthenticated) {
     return (
@@ -134,6 +288,22 @@ const RegisteredUsersPage = () => {
           </Link>
         </div>
 
+        {/* Success message */}
+        {successMessage && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-md flex items-center">
+            <Icon icon="heroicons:check-circle" className="w-5 h-5 mr-2" />
+            {successMessage}
+          </div>
+        )}
+
+        {/* Error message */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-md flex items-center">
+            <Icon icon="heroicons:exclamation-circle" className="w-5 h-5 mr-2" />
+            {error}
+          </div>
+        )}
+
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="p-6 border-b border-gray-200">
             <h2 className="text-2xl font-secularone text-gray-900">
@@ -161,6 +331,9 @@ const RegisteredUsersPage = () => {
                       </th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         {t('email')}
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {t('actions')}
                       </th>
                     </tr>
                   </thead>
@@ -191,6 +364,50 @@ const RegisteredUsersPage = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">{user.email}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <div className="flex items-center justify-end space-x-2">
+                            {userHasBadge(user) ? (
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <Icon icon="heroicons:check-circle" className="w-4 h-4 mr-1" />
+                                Badge Awarded
+                              </span>
+                            ) : (
+                              <>
+                                <button
+                                  onClick={() => handleAwardBadge(user._id)}
+                                  disabled={awarding[user._id]}
+                                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs leading-4 font-medium rounded-full text-white bg-[#7471f9] hover:bg-[#5f5dd6] focus:outline-none focus:border-[#5f5dd6] focus:shadow-outline-indigo active:bg-[#5f5dd6] transition ease-in-out duration-150 disabled:opacity-50"
+                                >
+                                  {awarding[user._id] ? (
+                                  <>
+                                    <Icon icon="heroicons:arrow-path" className="w-4 h-4 mr-1 animate-spin" />
+                                    Awarding...
+                                  </>
+                                  ) : (
+                                  <>
+                                    <Icon icon="heroicons:gift" className="w-4 h-4 mr-1" />
+                                    Award Badge
+                                  </>
+                                  )}
+                                </button>
+                                
+                                {/* Remove button - moved to right side after award button */}
+                                <button
+                                  onClick={() => handleRemoveUser(user._id, user.name)}
+                                  disabled={removing[user._id]}
+                                  className="inline-flex items-center justify-center p-1 text-xs leading-4 font-medium text-gray-500 hover:text-red-600 focus:outline-none transition ease-in-out duration-150 disabled:opacity-50"
+                                  title="Remove user from workshop"
+                                >
+                                  {removing[user._id] ? (
+                                    <Icon icon="heroicons:arrow-path" className="w-4 h-4 animate-spin" />
+                                  ) : (
+                                    <Icon icon="heroicons:x-mark" className="w-4 h-4" />
+                                  )}
+                                </button>
+                              </>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))}
