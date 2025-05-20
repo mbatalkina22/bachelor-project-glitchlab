@@ -2,16 +2,16 @@ import React from 'react';
 import { useTranslations } from 'next-intl';
 
 interface WorkshopFiltersProps {
-  ageFilter: string;
-  skillFilter: string;
-  locationFilter: string;
-  categoryFilter: string;
-  techFilter: string;
-  statusFilter: string;
-  typeFilter: string;
-  selectedDate: Date | null;
+  ageFilter: string[] | string;
+  skillFilter: string[] | string;
+  locationFilter: string[] | string;
+  categoryFilter: string[] | string;
+  techFilter: string[] | string;
+  statusFilter: string[] | string;
+  typeFilter?: string[] | string;
+  selectedDate?: Date | null;
   handleFilterChange: (filterType: string, value: string) => void;
-  handleDateChange: (date: Date | null) => void;
+  handleDateChange?: (date: Date | null) => void;
 }
 
 const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
@@ -28,6 +28,19 @@ const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
 }) => {
   const t = useTranslations('WorkshopsPage');
 
+  // Helper function to check if a value is selected in array or string comparison
+  const isValueSelected = (filterValue: string[] | string, value: string) => {
+    if (Array.isArray(filterValue)) {
+      return filterValue.includes(value);
+    }
+    return filterValue === value;
+  };
+
+  // Helper function to handle filter button clicks
+  const handleFilterClick = (filterType: string, value: string) => {
+    handleFilterChange(filterType, value);
+  };
+
   return (
     <div className="lg:w-1/6 pl-2 lg:pl-0 pr-2 h-full lg:sticky lg:top-20 self-start">
       <h2 className="text-lg font-semibold text-gray-800 mb-4">Filters</h2>
@@ -40,17 +53,15 @@ const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
             <button
               key={status}
               className={`px-2.5 py-1 text-xs rounded-full border ${
-                statusFilter === status ? 'bg-[#7471f9] text-white border-[#7471f9]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#7471f9]'
+                isValueSelected(statusFilter, status) ? 'bg-[#7471f9] text-white border-[#7471f9]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#7471f9]'
               }`}
-              onClick={() => handleFilterChange('status', status)}
+              onClick={() => handleFilterClick('status', status)}
             >
               {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
             </button>
           ))}
         </div>
       </div>
-
-      
 
       {/* Age Filter */}
       <div className="filter-group mb-4">
@@ -60,9 +71,9 @@ const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
             <button
               key={age}
               className={`px-2.5 py-1 text-xs rounded-full border ${
-                ageFilter === age ? 'bg-[#7471f9] text-white border-[#7471f9]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#7471f9]'
+                isValueSelected(ageFilter, age) ? 'bg-[#7471f9] text-white border-[#7471f9]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#7471f9]'
               }`}
-              onClick={() => handleFilterChange('age', age)}
+              onClick={() => handleFilterClick('age', age)}
             >
               {age === 'all' ? 'All Ages' : age}
             </button>
@@ -78,9 +89,9 @@ const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
             <button
               key={skill}
               className={`px-2.5 py-1 text-xs rounded-full border ${
-                skillFilter === skill ? 'bg-[#7471f9] text-white border-[#7471f9]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#7471f9]'
+                isValueSelected(skillFilter, skill) ? 'bg-[#7471f9] text-white border-[#7471f9]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#7471f9]'
               }`}
-              onClick={() => handleFilterChange('skill', skill)}
+              onClick={() => handleFilterClick('skill', skill)}
             >
               {skill.charAt(0).toUpperCase() + skill.slice(1)}
             </button>
@@ -96,9 +107,9 @@ const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
             <button
               key={location}
               className={`px-2.5 py-1 text-xs rounded-full border ${
-                locationFilter === location ? 'bg-[#7471f9] text-white border-[#7471f9]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#7471f9]'
+                isValueSelected(locationFilter, location) ? 'bg-[#7471f9] text-white border-[#7471f9]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#7471f9]'
               }`}
-              onClick={() => handleFilterChange('location', location)}
+              onClick={() => handleFilterClick('location', location)}
             >
               {location === 'all' ? 'All' : 
                location === 'in-class' ? 'In Class' : 'Out Class'}
@@ -111,13 +122,13 @@ const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
       <div className="filter-group mb-4">
         <h3 className="text-sm font-medium text-gray-700 mb-2">Category</h3>
         <div className="flex flex-wrap gap-1.5 max-w-[180px]">
-          {['all', 'design', 'test', 'code'].map((category) => (
+          {['all', 'design', 'test', 'prototype'].map((category) => (
             <button
               key={category}
               className={`px-2.5 py-1 text-xs rounded-full border ${
-                categoryFilter === category ? 'bg-[#7471f9] text-white border-[#7471f9]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#7471f9]'
+                isValueSelected(categoryFilter, category) ? 'bg-[#7471f9] text-white border-[#7471f9]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#7471f9]'
               }`}
-              onClick={() => handleFilterChange('category', category)}
+              onClick={() => handleFilterClick('category', category)}
             >
               {category === 'all' ? 'All' : category.charAt(0).toUpperCase() + category.slice(1)}
             </button>
@@ -133,9 +144,9 @@ const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
             <button
               key={tech}
               className={`px-2.5 py-1 text-xs rounded-full border ${
-                techFilter === tech ? 'bg-[#7471f9] text-white border-[#7471f9]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#7471f9]'
+                isValueSelected(techFilter, tech) ? 'bg-[#7471f9] text-white border-[#7471f9]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#7471f9]'
               }`}
-              onClick={() => handleFilterChange('tech', tech)}
+              onClick={() => handleFilterClick('tech', tech)}
             >
               {tech === 'all' ? 'All' : tech.charAt(0).toUpperCase() + tech.slice(1)}
             </button>
@@ -146,4 +157,4 @@ const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
   );
 };
 
-export default WorkshopFilters; 
+export default WorkshopFilters;

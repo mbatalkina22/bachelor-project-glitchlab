@@ -53,6 +53,10 @@ const WorkshopSchema = new Schema({
     type: Number,
     default: 0,
   },
+  bgColor: {
+    type: String,
+    default: '#ffffff',
+  },
 }, {
   collection: 'workshops'
 });

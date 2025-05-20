@@ -133,7 +133,16 @@
     "techType": "Tipo di Tecnologia",
     "creating": "Creazione in corso...",
     "backToWorkshops": "Torna ai Workshop",
-    "locationType": "Tipo di Luogo"
+    "locationType": "Tipo di Luogo",
+    "selectedInstructors": "Istruttori selezionati",
+    "noInstructorsFound": "Nessun istruttore trovato.",
+    "cardColor": "Colore della Scheda",
+    "cardPreview": "Anteprima Scheda",
+    "selectedColor": "Colore selezionato",
+    "selectedAgeRanges": "Fasce d'età selezionate",
+    "multipleAgeRangesNote": "Puoi selezionare più fasce d'età per il workshop",
+    "selectedCategories": "Categorie selezionate",
+    "multipleCategoriesNote": "Puoi selezionare più categorie per il workshop"
   },
   "WorkshopDetail": {
     "home": "Home",
@@ -150,7 +159,6 @@
     "fullWorkshop": "Workshop Completo",
     "requiredLevel": "Livello Richiesto",
     "reviews": "Recensioni",
-    "similarWorkshops": "Workshop Simili",
     "earnableBadge": "Badge di Risultato",
     "badgeDescription": "Completa questo workshop per guadagnare questo badge esclusivo. Aggiungilo al tuo profilo per mostrare le tue competenze e i tuoi risultati a potenziali datori di lavoro e colleghi.",
     "unlockBadge": "Riceverai automaticamente questo badge dopo aver completato il workshop.",

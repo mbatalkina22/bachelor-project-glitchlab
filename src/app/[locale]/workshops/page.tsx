@@ -36,14 +36,23 @@ const WorkshopsPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
     
-    // Filter states
-    const [ageFilter, setAgeFilter] = useState('all');
-    const [skillFilter, setSkillFilter] = useState('all');
-    const [locationFilter, setLocationFilter] = useState('all');
-    const [categoryFilter, setCategoryFilter] = useState('all');
-    const [timeFilter, setTimeFilter] = useState('all');
-    const [techFilter, setTechFilter] = useState('all');
-    const [statusFilter, setStatusFilter] = useState('all');
+    // Filter states - converted to string arrays for multiple selection
+    const [ageFilter, setAgeFilter] = useState<string[]>(['all']);
+    const [skillFilter, setSkillFilter] = useState<string[]>(['all']);
+    const [locationFilter, setLocationFilter] = useState<string[]>(['all']);
+    const [categoryFilter, setCategoryFilter] = useState<string[]>(['all']);
+    const [techFilter, setTechFilter] = useState<string[]>(['all']);
+    const [statusFilter, setStatusFilter] = useState<string[]>(['all']);
+
+    // Filter option counts for checking if all options are selected
+    const filterCounts = {
+        age: 5, // '6-8', '9-11', '12-13', '14-16', '16+'
+        skill: 3, // 'beginner', 'intermediate', 'advanced'
+        location: 2, // 'in-class', 'out-of-class'
+        category: 3, // 'design', 'test', 'prototype'
+        tech: 2, // 'plug', 'unplug'
+        status: 3, // 'future', 'ongoing', 'past'
+    };
 
     const fetchWorkshops = async () => {
         try {
@@ -57,7 +66,7 @@ const WorkshopsPage = () => {
             
             const data = await response.json();
             
-            // Add UI specific properties
+            // Add UI specific properties without modifying the bgColor
             const workshopsWithUIProps = data.map((workshop: Workshop, index: number) => ({
                 ...workshop,
                 id: workshop._id,
@@ -86,13 +95,25 @@ const WorkshopsPage = () => {
         return colors[index % colors.length];
     };
 
-    // Filter workshops based on search term and category
+    // Helper function to check if all filters are set to 'all'
+    const isFilterSetToAll = (filterArray: string[]) => {
+        return filterArray.length === 1 && filterArray[0] === 'all';
+    };
+
+    // Filter workshops based on search term and multiple selected filters
     const filteredWorkshops = workshops.filter(workshop => {
         const matchesSearch = workshop.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                             workshop.description.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = categoryFilter === 'all' || (workshop.categories && workshop.categories.includes(categoryFilter));
-        const matchesLocation = locationFilter === 'all' || workshop.location === locationFilter;
-        const matchesLevel = skillFilter === 'all' || workshop.level === skillFilter;
+                              workshop.description.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        // Category filter with multiple selections
+        const matchesCategory = isFilterSetToAll(categoryFilter) || 
+                              (workshop.categories && workshop.categories.some(cat => categoryFilter.includes(cat)));
+        
+        // Location filter with multiple selections
+        const matchesLocation = isFilterSetToAll(locationFilter) || locationFilter.includes(workshop.location);
+        
+        // Skill level filter with multiple selections
+        const matchesLevel = isFilterSetToAll(skillFilter) || skillFilter.includes(workshop.level);
         
         return matchesSearch && matchesCategory && matchesLocation && matchesLevel;
     });
@@ -105,29 +126,60 @@ const WorkshopsPage = () => {
     const handleFilterChange = (filterType: string, value: string) => {
         switch(filterType) {
             case 'age':
-                setAgeFilter(value);
+                updateFilterArray(setAgeFilter, value, filterType);
                 break;
             case 'skill':
-                setSkillFilter(value);
+                updateFilterArray(setSkillFilter, value, filterType);
                 break;
             case 'location':
-                setLocationFilter(value);
+                updateFilterArray(setLocationFilter, value, filterType);
                 break;
             case 'category':
-                setCategoryFilter(value);
-                break;
-            case 'time':
-                setTimeFilter(value);
+                updateFilterArray(setCategoryFilter, value, filterType);
                 break;
             case 'tech':
-                setTechFilter(value);
+                updateFilterArray(setTechFilter, value, filterType);
                 break;
             case 'status':
-                setStatusFilter(value);
+                updateFilterArray(setStatusFilter, value, filterType);
                 break;
             default:
                 break;
         }
+    };
+
+    // Helper function to update filter arrays
+    const updateFilterArray = (
+        setterFunction: React.Dispatch<React.SetStateAction<string[]>>,
+        value: string,
+        filterType: string
+    ) => {
+        setterFunction(prevState => {
+            // If "all" is selected
+            if (value === 'all') {
+                return ['all'];
+            }
+            
+            // If the current filter already includes the value, remove it
+            if (prevState.includes(value)) {
+                const newState = prevState.filter(item => item !== value);
+                // If removing the last non-all value, set back to "all"
+                return newState.length === 0 ? ['all'] : newState;
+            } 
+            // Otherwise add the value and ensure "all" is removed
+            else {
+                const newState = prevState.filter(item => item !== 'all');
+                const updatedState = [...newState, value];
+
+                // If all options are selected, switch back to "all"
+                const totalOptions = filterCounts[filterType as keyof typeof filterCounts] || 0;
+                if (updatedState.length === totalOptions) {
+                    return ['all'];
+                }
+
+                return updatedState;
+            }
+        });
     };
 
     if (isLoading) {
@@ -167,7 +219,6 @@ const WorkshopsPage = () => {
                         skillFilter={skillFilter}
                         locationFilter={locationFilter}
                         categoryFilter={categoryFilter}
-                        timeFilter={timeFilter}
                         techFilter={techFilter}
                         statusFilter={statusFilter}
                         handleFilterChange={handleFilterChange}
@@ -241,4 +292,4 @@ const WorkshopsPage = () => {
     );
 };
 
-export default WorkshopsPage; 
+export default WorkshopsPage;

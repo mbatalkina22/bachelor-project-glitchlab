@@ -74,8 +74,9 @@ const CreateWorkshopPage = () => {
     location: "",
     capacity: 10,
     categories: [] as string[],
-    ageRange: "",
+    ageRanges: [] as string[], // Changed from ageRange string to ageRanges array
     instructorIds: [] as string[], // Changed to array for multiple instructors
+    bgColor: "#ffffff", // Default background color (white)
   });
 
   // Age options
@@ -85,7 +86,7 @@ const CreateWorkshopPage = () => {
   const categoryOptions = {
     design: false,
     test: false,
-    code: false,
+    prototype: false,
   };
 
   // Tech options
@@ -105,6 +106,25 @@ const CreateWorkshopPage = () => {
       [name]: value,
     });
   };
+  
+  // Add toggle instructor selection handler
+  const handleInstructorToggle = (instructorId: string) => {
+    const updatedInstructorIds = [...workshopData.instructorIds];
+    const index = updatedInstructorIds.indexOf(instructorId);
+    
+    if (index !== -1) {
+      // If already selected, remove it
+      updatedInstructorIds.splice(index, 1);
+    } else {
+      // If not selected, add it
+      updatedInstructorIds.push(instructorId);
+    }
+    
+    setWorkshopData({
+      ...workshopData,
+      instructorIds: updatedInstructorIds,
+    });
+  };
 
   const handleCapacityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
@@ -117,33 +137,44 @@ const CreateWorkshopPage = () => {
   };
 
   const handleAgeChange = (age: string) => {
+    const updatedAgeRanges = [...workshopData.ageRanges];
+    const index = updatedAgeRanges.indexOf(age);
+
+    if (index !== -1) {
+      // If already selected, remove it
+      updatedAgeRanges.splice(index, 1);
+    } else {
+      // If not selected, add it
+      updatedAgeRanges.push(age);
+    }
+
     setWorkshopData({
       ...workshopData,
-      ageRange: workshopData.ageRange === age ? "" : age,
+      ageRanges: updatedAgeRanges,
     });
   };
 
   const handleCategoryChange = (category: string) => {
     const updatedCategories = [...workshopData.categories];
-    const categoryOptions = ["design", "test", "code"];
+    const mainCategories = ["design", "test", "prototype"];
     
-    // Remove any existing category selection
-    categoryOptions.forEach(cat => {
-      const index = updatedCategories.indexOf(cat);
+    // Only for main categories (design, test, prototype)
+    if (mainCategories.includes(category)) {
+      const index = updatedCategories.indexOf(category);
+      
       if (index !== -1) {
+        // If already selected, remove it
         updatedCategories.splice(index, 1);
+      } else {
+        // If not selected, add it
+        updatedCategories.push(category);
       }
-    });
-    
-    // Add the new category if it wasn't already selected
-    if (!categoryOptions.some(cat => updatedCategories.includes(cat))) {
-      updatedCategories.push(category);
+      
+      setWorkshopData({
+        ...workshopData,
+        categories: updatedCategories,
+      });
     }
-    
-    setWorkshopData({
-      ...workshopData,
-      categories: updatedCategories,
-    });
   };
 
   const handleTechChange = (tech: string) => {
@@ -233,12 +264,12 @@ const CreateWorkshopPage = () => {
       return;
     }
 
-    if (!workshopData.ageRange) {
-      setError("Please select an age range");
+    if (workshopData.ageRanges.length === 0) {
+      setError("Please select at least one age range");
       return;
     }
 
-    if (workshopData.categories.length === 0) {
+    if (workshopData.categories.filter(cat => ["design", "test", "prototype"].includes(cat)).length === 0) {
       setError("Please select at least one category");
       return;
     }
@@ -275,11 +306,12 @@ const CreateWorkshopPage = () => {
         endDate: endDateTime.toISOString(),
         imageSrc: workshopData.imageSrc,
         badgeName: workshopData.badgeName,
-        categories: [...workshopData.categories, workshopData.ageRange],
+        categories: [...workshopData.categories, ...workshopData.ageRanges],
         level: workshopData.level,
         location: workshopData.location,
         instructorIds: workshopData.instructorIds,
         capacity: workshopData.capacity,
+        bgColor: workshopData.bgColor,
       };
       
       console.log("Sending workshop payload:", JSON.stringify(workshopPayload));
@@ -606,45 +638,73 @@ const CreateWorkshopPage = () => {
             {/* Instructor Selection */}
             <div className="mb-6">
               <label
-                className="block text-sm font-medium text-gray-900 mb-1"
+                className="block text-sm font-medium text-gray-900 mb-2"
                 htmlFor="instructorIds"
               >
                 {t("instructors") || "Instructors"}
               </label>
-              <select
-                id="instructorIds"
-                name="instructorIds"
-                value={workshopData.instructorIds}
-                onChange={(e) => {
-                  console.log("Selected options:", Array.from(e.target.selectedOptions).map(option => option.value));
-                  setWorkshopData({
-                    ...workshopData,
-                    instructorIds: Array.from(
-                      e.target.selectedOptions,
-                      (option) => option.value
-                    ),
-                  });
-                }}
-                multiple
-                size={4}
-                className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base bg-white"
-                required
-              >
-                {loadingInstructors ? (
-                  <option disabled>
-                    {t("loadingInstructors") || "Loading instructors..."}
-                  </option>
-                ) : (
-                  instructors.map((instructor) => (
-                    <option key={instructor._id} value={instructor._id}>
-                      {instructor.name} {instructor.surname}
-                    </option>
-                  ))
-                )}
-              </select>
-              <p className="mt-1 text-xs text-gray-500">
-                {t("multipleInstructorsNote") || "You can select multiple instructors for the workshop"} 
-                <span className="ml-1 text-xs italic">(Ctrl+Click or Cmd+Click to select multiple)</span>
+              
+              {loadingInstructors ? (
+                <div className="flex items-center justify-center p-6 border rounded-md">
+                  <Icon icon="heroicons:arrow-path" className="w-5 h-5 mr-2 animate-spin text-[#7471f9]" />
+                  <span>{t("loadingInstructors") || "Loading instructors..."}</span>
+                </div>
+              ) : instructors.length === 0 ? (
+                <div className="p-4 border rounded-md bg-gray-50 text-gray-500">
+                  {t("noInstructorsFound") || "No instructors found."}
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {instructors.map((instructor) => (
+                      <div 
+                        key={instructor._id}
+                        onClick={() => handleInstructorToggle(instructor._id)}
+                        className={`
+                          flex items-center p-3 rounded-lg border cursor-pointer transition-all
+                          ${workshopData.instructorIds.includes(instructor._id) 
+                            ? "border-[#7471f9] bg-[#7471f9]/5 shadow-sm" 
+                            : "border-gray-300 hover:border-[#7471f9] hover:bg-gray-50"}
+                        `}
+                      >
+                        <div className="flex-shrink-0 relative w-12 h-12 rounded-full overflow-hidden bg-gray-200">
+                          <Image 
+                            src={instructor.avatar || "/images/avatar.jpg"} 
+                            alt={`${instructor.name} ${instructor.surname || ''}`}
+                            fill
+                            className="object-cover" 
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = "/images/avatar.jpg";
+                            }}
+                          />
+                        </div>
+                        <div className="ml-3 flex-grow">
+                          <p className="font-medium text-gray-900 text-sm">
+                            {instructor.name} {instructor.surname || ''}
+                          </p>
+                        </div>
+                        {workshopData.instructorIds.includes(instructor._id) && (
+                          <div className="flex-shrink-0 ml-2">
+                            <Icon icon="heroicons:check-circle" className="w-5 h-5 text-[#7471f9]" />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {workshopData.instructorIds.length > 0 && (
+                    <div className="mt-3 text-sm">
+                      <p className="font-medium text-gray-900">
+                        {t("selectedInstructors") || "Selected instructors"}:{" "}
+                        <span className="text-[#7471f9]">{workshopData.instructorIds.length}</span>
+                      </p>
+                    </div>
+                  )}
+                </>
+              )}
+              <p className="mt-2 text-xs text-gray-500">
+                {t("multipleInstructorsNote") || "You can select multiple instructors for the workshop"}
               </p>
             </div>
 
@@ -659,7 +719,7 @@ const CreateWorkshopPage = () => {
                     key={age}
                     type="button"
                     className={`px-2.5 py-1 text-xs rounded-full border ${
-                      workshopData.ageRange === age
+                      workshopData.ageRanges.includes(age)
                         ? "bg-[#7471f9] text-white border-[#7471f9]"
                         : "bg-white text-gray-700 border-gray-300 hover:border-[#7471f9]"
                     }`}
@@ -669,6 +729,17 @@ const CreateWorkshopPage = () => {
                   </button>
                 ))}
               </div>
+              {workshopData.ageRanges.length > 0 && (
+                <div className="mt-3 text-sm">
+                  <p className="font-medium text-gray-900">
+                    {t("selectedAgeRanges") || "Selected age ranges"}:{" "}
+                    <span className="text-[#7471f9]">{workshopData.ageRanges.length}</span>
+                  </p>
+                </div>
+              )}
+              <p className="mt-2 text-xs text-gray-500">
+                {t("multipleAgeRangesNote") || "You can select multiple age ranges for the workshop"}
+              </p>
             </div>
 
             {/* Location Type (In-Class / Out-of-Class) */}
@@ -700,7 +771,7 @@ const CreateWorkshopPage = () => {
                 {t("category") || "Category"}
               </h3>
               <div className="flex flex-wrap gap-1.5 max-w-full">
-                {["design", "test", "code"].map((category) => (
+                {["design", "test", "prototype"].map((category) => (
                   <button
                     key={category}
                     type="button"
@@ -715,6 +786,20 @@ const CreateWorkshopPage = () => {
                   </button>
                 ))}
               </div>
+              {/* Display count of selected main categories */}
+              {workshopData.categories.filter(cat => ["design", "test", "prototype"].includes(cat)).length > 0 && (
+                <div className="mt-3 text-sm">
+                  <p className="font-medium text-gray-900">
+                    {t("selectedCategories") || "Selected categories"}:{" "}
+                    <span className="text-[#7471f9]">{
+                      workshopData.categories.filter(cat => ["design", "test", "prototype"].includes(cat)).length
+                    }</span>
+                  </p>
+                </div>
+              )}
+              <p className="mt-2 text-xs text-gray-500">
+                {t("multipleCategoriesNote") || "You can select multiple categories for the workshop"}
+              </p>
             </div>
 
             {/* Tech Type Filter */}
@@ -737,6 +822,55 @@ const CreateWorkshopPage = () => {
                     {tech.charAt(0).toUpperCase() + tech.slice(1)}
                   </button>
                 ))}
+              </div>
+            </div>
+
+            {/* Card Color Selection */}
+            <div className="mb-6">
+              <h3 className="text-sm font-medium text-gray-900 mb-2">
+                {t("cardColor") || "Card Color"}
+              </h3>
+              <div className="flex flex-wrap gap-3">
+                {[
+                  "#ffffff", // White (default)
+                  "#c3c2fc", // Soft purple
+                  "#f8c5f4", // Soft pink
+                  "#fee487", // Soft yellow
+                  "#aef9e1"  // Soft mint
+                ].map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    className={`w-10 h-10 rounded-full border-2 transition-all ${
+                      workshopData.bgColor === color
+                        ? "border-[#7471f9] scale-110 shadow-md"
+                        : "border-gray-300"
+                    }`}
+                    style={{ backgroundColor: color }}
+                    onClick={() => setWorkshopData({
+                      ...workshopData,
+                      bgColor: color
+                    })}
+                    aria-label={`Select ${color} as card background color`}
+                  >
+                    {workshopData.bgColor === color && (
+                      <Icon
+                        icon="heroicons:check"
+                        className="w-5 h-5 text-[#7471f9] mx-auto"
+                      />
+                    )}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-3">
+                <div 
+                  className="p-3 rounded-md border border-gray-200 shadow-sm"
+                  style={{ backgroundColor: workshopData.bgColor }}
+                >
+                  <p className="text-xs text-gray-600">
+                    {t("cardPreview") || "Card Preview"} - {t("selectedColor") || "Selected color"}: <span className="font-medium">{workshopData.bgColor}</span>
+                  </p>
+                </div>
               </div>
             </div>
 

@@ -52,7 +52,6 @@ const WorkshopDetailPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isRegistered, setIsRegistered] = useState(false);
-  const [similarWorkshops, setSimilarWorkshops] = useState<Workshop[]>([]);
 
   // Update isRegistered whenever user data changes
   useEffect(() => {
@@ -103,17 +102,6 @@ const WorkshopDetailPage = () => {
         const data = await response.json();
         
         setWorkshop(data);
-        
-        // Fetch similar workshops
-        if (data.categories && data.categories.length > 0) {
-          const category = data.categories[0]; // Use the first category to find similar workshops
-          const similarResponse = await fetch(`/api/workshops/similar?category=${category}&id=${id}`);
-          
-          if (similarResponse.ok) {
-            const similarData = await similarResponse.json();
-            setSimilarWorkshops(similarData.slice(0, 3)); // Limit to 3 similar workshops
-          }
-        }
         
         setIsLoading(false);
       } catch (error) {
@@ -529,29 +517,6 @@ const WorkshopDetailPage = () => {
             </div>
           </div>
         </div>
-        
-        {/* Similar Workshops */}
-        {similarWorkshops.length > 0 && (
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold mb-6 text-black">{t('similarWorkshops')}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {similarWorkshops.map((workshop, index) => (
-                <WorkshopCard
-                  key={workshop._id}
-                  id={workshop._id}
-                  title={workshop.name}
-                  description={workshop.description}
-                  startDate={new Date(workshop.startDate)}
-                  endDate={new Date(workshop.endDate)}
-                  imageSrc={workshop.imageSrc}
-                  delay={`delay-${(index % 3 + 1) * 100}`}
-                  bgColor="#ffffff"
-                  isRegistered={user?.registeredWorkshops?.includes(workshop._id) || false}
-                />
-              ))}
-            </div>
-          </div>
-        )}
         
         {/* Reviews Section - Using ReviewList component with workshopId */}
         {getWorkshopStatus(workshop.startDate, workshop.endDate) === 'past' && (
