@@ -151,6 +151,7 @@
     "register": "Register for Workshop",
     "unregister": "Cancel Registration",
     "registered": "Registered",
+    "instructing": "Instructing",
     "fullWorkshop": "Workshop Full",
     "requiredLevel": "Required Level",
     "reviews": "Reviews",
@@ -375,7 +376,8 @@
     "month": "Month",
     "week": "Week",
     "day": "Day",
-    "registered": "Registered"
+    "registered": "Registered",
+    "instructing": "Instructing"
   },
   "OurTeam": {
     "title": "Meet Our Team",

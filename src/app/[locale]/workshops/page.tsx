@@ -22,6 +22,7 @@ interface Workshop {
     level: string;
     location: string;
     instructor: string;
+    instructorIds?: string[]; // Adding instructorIds property
     delay?: string;
     bgColor?: string;
 }
@@ -269,6 +270,7 @@ const WorkshopsPage = () => {
                                             delay={workshop.delay || ""}
                                             bgColor={workshop.bgColor}
                                             isRegistered={user?.registeredWorkshops?.includes(workshop._id) || false}
+                                            isInstructing={workshop.instructorIds?.includes(user?._id) || false}
                                         />
                                     </ScrollReveal>
                                 ))

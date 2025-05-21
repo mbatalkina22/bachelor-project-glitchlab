@@ -19,6 +19,7 @@ interface WorkshopCardProps {
   headingColor?: string;
   buttonColor?: string;
   isRegistered?: boolean;
+  isInstructing?: boolean;
 }
 
 const WorkshopCard = ({ 
@@ -30,7 +31,8 @@ const WorkshopCard = ({
   imageSrc, 
   delay, 
   bgColor = "#ffffff",
-  isRegistered = false
+  isRegistered = false,
+  isInstructing = false
 }: WorkshopCardProps) => {
   const params = useParams();
   const locale = params.locale as string;
@@ -62,6 +64,14 @@ const WorkshopCard = ({
           <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-md flex items-center">
             <Icon icon="heroicons:check-circle" className="w-4 h-4 mr-1" />
             {t('registered')}
+          </span>
+        </div>
+      )}
+      {isInstructing && (
+        <div className={`absolute ${isRegistered ? 'top-11' : 'top-2'} right-4 z-10`}>
+          <span className="bg-[#7471f9] text-white px-3 py-1 rounded-full text-sm font-medium shadow-md flex items-center">
+            <Icon icon="heroicons:academic-cap" className="w-4 h-4 mr-1" />
+            {t('instructing', 'Instructing')}
           </span>
         </div>
       )}

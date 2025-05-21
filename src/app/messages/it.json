@@ -156,6 +156,7 @@
     "register": "Registrati al Workshop",
     "unregister": "Annulla Registrazione",
     "registered": "Registrati",
+    "instructing": "Istruttore",
     "fullWorkshop": "Workshop Completo",
     "requiredLevel": "Livello Richiesto",
     "reviews": "Recensioni",
@@ -392,7 +393,8 @@
     "month": "Mese",
     "week": "Settimana",
     "day": "Giorno",
-    "registered": "Registrato"
+    "registered": "Registrato",
+    "instructing": "Istruttore"
   },
   "OurTeam": {
     "title": "Conosci il Nostro Team",

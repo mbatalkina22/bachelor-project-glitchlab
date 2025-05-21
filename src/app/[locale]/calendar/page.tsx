@@ -20,6 +20,7 @@ interface Workshop {
   level: string;
   location: string;
   instructorId: string;
+  instructorIds?: string[]; // Adding instructorIds property
   instructorDetails?: {
     name: string;
     surname?: string;
@@ -36,6 +37,8 @@ export default function CalendarPage() {
   const locale = params.locale as string;
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
   const [registeredWorkshops, setRegisteredWorkshops] = useState<string[]>([]);
+  const [instructingWorkshops, setInstructingWorkshops] = useState<string[]>([]);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchWorkshops = async () => {
@@ -105,6 +108,34 @@ export default function CalendarPage() {
     fetchRegisteredWorkshops();
   }, []);
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          return;
+        }
+
+        const response = await fetch('/api/auth/me', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          return;
+        }
+        
+        const userData = await response.json();
+        setUserId(userData._id);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   // Filter workshops to show only future and ongoing ones
   const filteredWorkshops = workshops.filter(workshop => {
     const now = new Date();
@@ -115,12 +146,7 @@ export default function CalendarPage() {
 
   const events = filteredWorkshops.map((workshop, index) => {
     const isRegistered = registeredWorkshops.includes(workshop._id);
-    console.log('Creating event for workshop:', {
-      id: workshop._id,
-      title: workshop.name,
-      isRegistered,
-      registeredWorkshops
-    });
+    const isInstructing = userId && workshop.instructorIds?.includes(userId);
     
     // Use the stored bgColor from the database, or default to a standard color if not present
     const backgroundColor = workshop.bgColor || "#c3c2fc";
@@ -141,6 +167,7 @@ export default function CalendarPage() {
         level: workshop.level,
         categories: workshop.categories,
         isRegistered,
+        isInstructing,
       },
     };
   });
@@ -175,6 +202,7 @@ export default function CalendarPage() {
               const isDayView = eventInfo.view.type === 'timeGridDay';
               const showLocation = !isShortEvent && !isWeekView && !isDayView;
               const isRegistered = eventInfo.event.extendedProps.isRegistered;
+              const isInstructing = eventInfo.event.extendedProps.isInstructing;
 
               return (
                 <div 
@@ -184,7 +212,7 @@ export default function CalendarPage() {
                     const workshopId = eventInfo.event.extendedProps.id;
                     console.log('Workshop clicked:', workshopId, eventInfo.event.extendedProps);
                     if (workshopId) {
-                      router.push(`/workshops/${workshopId}`);
+                      router.push(`/${locale}/workshops/${workshopId}`);
                     }
                   }}
                 >
@@ -202,6 +230,12 @@ export default function CalendarPage() {
                       {t('registered')}
                     </div>
                   )}
+                  {isInstructing && (
+                    <div className="text-xs text-white bg-[#7471f9] px-1.5 py-0.5 rounded-full mt-1 inline-flex items-center">
+                      <Icon icon="heroicons:academic-cap" className="w-3 h-3 mr-1" />
+                      {t('instructing')}
+                    </div>
+                  )}
                 </div>
               );
             }}
@@ -210,7 +244,7 @@ export default function CalendarPage() {
               console.log('Event clicked:', info.event.extendedProps);
               const workshopId = info.event.extendedProps.id;
               if (workshopId) {
-                router.push(`/workshops/${workshopId}`);
+                router.push(`/${locale}/workshops/${workshopId}`);
               }
             }}
             dayHeaderFormat={{ weekday: 'long' }}

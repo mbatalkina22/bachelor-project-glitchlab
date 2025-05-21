@@ -262,6 +262,7 @@ const InstructorProfilePage = () => {
                         imageSrc={workshop.imageSrc}
                         delay={`delay-${(index % 3 + 1) * 100}`}
                         bgColor={["#c3c2fc", "#f8c5f4", "#fee487"][index % 3]}
+                        isInstructing={true}
                       />
                     </ScrollReveal>
                   ))}
@@ -297,6 +298,7 @@ const InstructorProfilePage = () => {
                         imageSrc={workshop.imageSrc}
                         delay={`delay-${(index % 3 + 1) * 100}`}
                         bgColor={["#c3c2fc", "#f8c5f4", "#fee487"][index % 3]}
+                        isInstructing={true}
                       />
                     </ScrollReveal>
                   ))}
@@ -316,4 +318,4 @@ const InstructorProfilePage = () => {
   );
 };
 
-export default InstructorProfilePage; 
+export default InstructorProfilePage;
