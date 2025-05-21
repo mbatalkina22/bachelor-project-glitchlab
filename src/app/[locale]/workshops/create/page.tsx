@@ -76,7 +76,7 @@ const CreateWorkshopPage = () => {
     categories: [] as string[],
     ageRanges: [] as string[], // Changed from ageRange string to ageRanges array
     instructorIds: [] as string[], // Changed to array for multiple instructors
-    bgColor: "#ffffff", // Default background color (white)
+    bgColor: "#c3c2fc", // Default background color (soft purple) instead of white
   });
 
   // Age options
@@ -832,7 +832,6 @@ const CreateWorkshopPage = () => {
               </h3>
               <div className="flex flex-wrap gap-3">
                 {[
-                  "#ffffff", // White (default)
                   "#c3c2fc", // Soft purple
                   "#f8c5f4", // Soft pink
                   "#fee487", // Soft yellow

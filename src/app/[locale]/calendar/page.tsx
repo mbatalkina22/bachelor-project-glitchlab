@@ -26,6 +26,7 @@ interface Workshop {
   };
   capacity: number;
   registeredCount: number;
+  bgColor?: string; // Added bgColor property
 }
 
 export default function CalendarPage() {
@@ -104,12 +105,6 @@ export default function CalendarPage() {
     fetchRegisteredWorkshops();
   }, []);
 
-  // Function to get background color based on index (matching workshop cards)
-  const getBgColor = (index: number) => {
-    const colors = ["#c3c2fc", "#f8c5f4", "#fee487", "#aef9e1"];
-    return colors[index % colors.length];
-  };
-
   // Filter workshops to show only future and ongoing ones
   const filteredWorkshops = workshops.filter(workshop => {
     const now = new Date();
@@ -126,12 +121,16 @@ export default function CalendarPage() {
       isRegistered,
       registeredWorkshops
     });
+    
+    // Use the stored bgColor from the database, or default to a standard color if not present
+    const backgroundColor = workshop.bgColor || "#c3c2fc";
+    
     return {
       title: workshop.name,
       start: workshop.startDate,
       end: workshop.endDate,
-      backgroundColor: getBgColor(index),
-      borderColor: getBgColor(index),
+      backgroundColor: backgroundColor,
+      borderColor: backgroundColor,
       textColor: '#2f2f2f',
       display: 'block',
       extendedProps: {

@@ -66,13 +66,14 @@ const WorkshopsPage = () => {
             
             const data = await response.json();
             
-            // Add UI specific properties without modifying the bgColor
+            // Add UI specific properties without modifying the database bgColor
             const workshopsWithUIProps = data.map((workshop: Workshop, index: number) => ({
                 ...workshop,
                 id: workshop._id,
                 title: workshop.name,
                 delay: `delay-${(index % 3 + 1) * 100}`,
-                bgColor: getBgColor(index)
+                // Use the stored bgColor from database, or default to white if not present
+                bgColor: workshop.bgColor || "#ffffff"
             }));
             
             setWorkshops(workshopsWithUIProps);
@@ -89,12 +90,6 @@ const WorkshopsPage = () => {
         fetchWorkshops();
     }, []);
     
-    // Function to rotate through background colors
-    const getBgColor = (index: number) => {
-        const colors = ["#c3c2fc", "#f8c5f4", "#fee487", "#aef9e1"];
-        return colors[index % colors.length];
-    };
-
     // Helper function to check if all filters are set to 'all'
     const isFilterSetToAll = (filterArray: string[]) => {
         return filterArray.length === 1 && filterArray[0] === 'all';

@@ -26,6 +26,20 @@ export async function GET() {
     // Log found instructors for debugging
     console.log(`Found ${instructors.length} instructors in the database`);
     
+    // Define workshop card colors - removed white (#ffffff)
+    const workshopColors = [
+      "#c3c2fc", // Soft purple
+      "#f8c5f4", // Soft pink
+      "#fee487", // Soft yellow
+      "#aef9e1"  // Soft mint
+    ];
+
+    // Function to get a random color from the array
+    const getRandomColor = () => {
+      const randomIndex = Math.floor(Math.random() * workshopColors.length);
+      return workshopColors[randomIndex];
+    };
+    
     // Sample workshop data - using instructorId instead of instructor string
     const sampleWorkshops = [
       {
@@ -40,7 +54,8 @@ export async function GET() {
         location: "Online",
         instructorId: instructors[0]._id,
         capacity: 10,
-        registeredCount: 0
+        registeredCount: 0,
+        bgColor: getRandomColor()
       },
       {
         name: "UI/UX Design Principles",
@@ -54,7 +69,8 @@ export async function GET() {
         location: "San Francisco",
         instructorId: instructors[1 % instructors.length]._id,
         capacity: 10,
-        registeredCount: 0
+        registeredCount: 0,
+        bgColor: getRandomColor()
       },
       {
         name: "Mobile App Development with React Native",
@@ -68,7 +84,8 @@ export async function GET() {
         location: "New York",
         instructorId: instructors[0]._id,
         capacity: 10,
-        registeredCount: 0
+        registeredCount: 0,
+        bgColor: getRandomColor()
       },
       {
         name: "Data Visualization with D3.js",
@@ -82,7 +99,8 @@ export async function GET() {
         location: "Online",
         instructorId: instructors[1 % instructors.length]._id,
         capacity: 10,
-        registeredCount: 0
+        registeredCount: 0,
+        bgColor: getRandomColor()
       },
       {
         name: "Introduction to Machine Learning",
@@ -96,7 +114,8 @@ export async function GET() {
         location: "Boston",
         instructorId: instructors[0]._id,
         capacity: 10,
-        registeredCount: 0
+        registeredCount: 0,
+        bgColor: getRandomColor()
       },
       {
         name: "DevOps Essentials",
@@ -110,7 +129,8 @@ export async function GET() {
         location: "Seattle",
         instructorId: instructors[1 % instructors.length]._id,
         capacity: 10,
-        registeredCount: 0
+        registeredCount: 0,
+        bgColor: getRandomColor()
       },
       {
         name: "Blockchain Development Fundamentals",
@@ -124,7 +144,8 @@ export async function GET() {
         location: "Online",
         instructorId: instructors[0]._id,
         capacity: 10,
-        registeredCount: 0
+        registeredCount: 0,
+        bgColor: getRandomColor()
       },
       {
         name: "Cybersecurity Best Practices",
@@ -138,7 +159,8 @@ export async function GET() {
         location: "Chicago",
         instructorId: instructors[1 % instructors.length]._id,
         capacity: 10,
-        registeredCount: 0
+        registeredCount: 0,
+        bgColor: getRandomColor()
       },
       {
         name: "Game Development with Unity",
@@ -152,7 +174,8 @@ export async function GET() {
         location: "Los Angeles",
         instructorId: instructors[0]._id,
         capacity: 10,
-        registeredCount: 0
+        registeredCount: 0,
+        bgColor: getRandomColor()
       },
       {
         name: "Advanced GraphQL API Development",
@@ -166,7 +189,8 @@ export async function GET() {
         location: "Online",
         instructorId: instructors[1 % instructors.length]._id,
         capacity: 10,
-        registeredCount: 0
+        registeredCount: 0,
+        bgColor: getRandomColor()
       }
     ];
 
