@@ -249,7 +249,7 @@ const WorkshopDetailPage = () => {
     return new Date(date).toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: 'numeric',
-      hour12: true
+      hour12: false
     });
   };
 

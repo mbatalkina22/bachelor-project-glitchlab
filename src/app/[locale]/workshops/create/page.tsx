@@ -32,6 +32,22 @@ const CreateWorkshopPage = () => {
   const [instructors, setInstructors] = useState<Instructor[]>([]);
   const [loadingInstructors, setLoadingInstructors] = useState(false);
 
+  // Add time options state for dropdowns
+  const [timeOptions, setTimeOptions] = useState<string[]>([]);
+
+  // Generate time options for dropdowns (24h format)
+  useEffect(() => {
+    const options: string[] = [];
+    for (let hour = 0; hour < 24; hour++) {
+      for (let minute = 0; minute < 60; minute += 15) {
+        const formattedHour = hour.toString().padStart(2, '0');
+        const formattedMinute = minute.toString().padStart(2, '0');
+        options.push(`${formattedHour}:${formattedMinute}`);
+      }
+    }
+    setTimeOptions(options);
+  }, []);
+
   // Redirect to workshops page if not an instructor
   useEffect(() => {
     if (isAuthenticated && !isInstructor) {
@@ -569,15 +585,20 @@ const CreateWorkshopPage = () => {
                 >
                   {t("startTime") || "Start Time"}
                 </label>
-                <input
-                  type="time"
+                <select
                   id="startTime"
                   name="startTime"
                   value={workshopData.startTime}
                   onChange={handleInputChange}
-                  className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
+                  className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base bg-white appearance-none"
                   required
-                />
+                >
+                  {timeOptions.map((time) => (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>
@@ -587,15 +608,20 @@ const CreateWorkshopPage = () => {
                 >
                   {t("endTime") || "End Time"}
                 </label>
-                <input
-                  type="time"
+                <select
                   id="endTime"
                   name="endTime"
                   value={workshopData.endTime}
                   onChange={handleInputChange}
-                  className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
+                  className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base bg-white appearance-none"
                   required
-                />
+                >
+                  {timeOptions.map((time) => (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
