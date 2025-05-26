@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import HeroButton from "./HeroButton";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import ConfirmationModal from "@/components/modals/ConfirmationModal";
 
 // Add Google Fonts import
 import { Arvo, Bebas_Neue, Dancing_Script, Lobster } from "next/font/google";
@@ -715,50 +716,17 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
       )}
 
       {/* Delete Confirmation Modal */}
-      {isDeleteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-            onClick={closeDeleteModal}
-          ></div>
-
-          <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full m-4 z-10">
-            <div className="p-6">
-              <div className="flex items-center justify-center mb-4">
-                <div className="rounded-full bg-red-100 p-3">
-                  <Icon
-                    icon="heroicons:exclamation-triangle"
-                    className="w-6 h-6 text-red-600"
-                  />
-                </div>
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 text-center mb-2">
-                {t("confirmDeleteReview")}
-              </h3>
-              <p className="text-sm text-gray-500 text-center mb-6">
-                {t("deleteReviewConfirmation")}
-              </p>
-              <div className="flex justify-center space-x-4">
-                <button
-                  onClick={closeDeleteModal}
-                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
-                >
-                  {t("cancel")}
-                </button>
-                <button
-                  onClick={handleDeleteReview}
-                  disabled={isDeleting}
-                  className={`px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors ${
-                    isDeleting ? "opacity-75 cursor-not-allowed" : ""
-                  }`}
-                >
-                  {isDeleting ? t("deleting") : t("delete")}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        title={t("confirmDeleteReview")}
+        message={t("deleteReviewConfirmation")}
+        confirmText={t("delete")}
+        cancelText={t("cancel")}
+        onConfirm={handleDeleteReview}
+        onCancel={closeDeleteModal}
+        isProcessing={isDeleting}
+        processingText={t("deleting")}
+      />
 
       {/* Reviews List */}
       <div className="space-y-6">

@@ -223,7 +223,11 @@
     "user": "User",
     "email": "Email",
     "backToWorkshop": "Back to Workshop",
-    "pleaseLogin": "Please Login"
+    "pleaseLogin": "Please Login",
+    "editWorkshop": "Edit Workshop",
+    "deleteWorkshop": "Delete Workshop",
+    "confirmDelete": "Confirm Delete",
+    "deleteWorkshopConfirmation": "Are you sure you want to delete this workshop? This action cannot be undone and will remove all registrations."
   },
   "Profile": {
     "editProfile": "Edit Profile",

@@ -236,7 +236,11 @@
     "user": "Utente",
     "email": "Email",
     "backToWorkshop": "Torna al Workshop",
-    "pleaseLogin": "Effettua l'Accesso"
+    "pleaseLogin": "Effettua l'Accesso",
+    "editWorkshop": "Modifica Workshop",
+    "deleteWorkshop": "Elimina Workshop",
+    "confirmDelete": "Conferma Eliminazione",
+    "deleteWorkshopConfirmation": "Sei sicuro di voler eliminare questo workshop? Questa azione non può essere annullata e rimuoverà tutte le registrazioni."
   },
   "Profile": {
     "editProfile": "Modifica Profilo",

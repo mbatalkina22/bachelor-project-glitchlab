@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import ConfirmationModal from "@/components/modals/ConfirmationModal";
 import { Icon } from '@iconify/react';
 import ScrollReveal from '@/components/ScrollReveal';
 import WorkshopCard from '@/components/WorkshopCard';
@@ -52,6 +53,8 @@ const WorkshopDetailPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isRegistered, setIsRegistered] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Update isRegistered whenever user data changes
   useEffect(() => {
@@ -211,6 +214,48 @@ const WorkshopDetailPage = () => {
     }
   };
 
+  const handleDeleteWorkshop = async () => {
+    if (!workshop?._id) return;
+    
+    try {
+      setIsDeleting(true);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      const response = await fetch(`/api/workshops/${workshop._id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to delete workshop');
+      }
+
+      // Navigate back to workshops page
+      router.push(`/${locale}/workshops`);
+    } catch (error: any) {
+      console.error('Error deleting workshop:', error);
+      alert(error.message || 'Failed to delete workshop');
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
+
+  // Check if current user is an instructor for this workshop
+  const isWorkshopInstructor = () => {
+    if (!user || !workshop || !isInstructor) return false;
+    
+    // Check if user is in the instructorIds array
+    return workshop.instructorIds?.some(id => id === user._id);
+  };
+
   if (isLoading) {
     return (
       <div className="pt-16 min-h-screen flex items-center justify-center">
@@ -310,12 +355,36 @@ const WorkshopDetailPage = () => {
             
             {/* Workshop Info */}
             <div className="md:w-2/3 p-6">
-              <div className="flex flex-wrap gap-2 mb-4">
-                {workshop.categories.map((category, index) => (
-                  <span key={index} className="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-800">
-                    {category}
-                  </span>
-                ))}
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex flex-wrap gap-2">
+                  {workshop.categories.map((category, index) => (
+                    <span key={index} className="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-800">
+                      {category}
+                    </span>
+                  ))}
+                </div>
+                
+                {/* Instructor Action Buttons - Positioned at the very top right */}
+                {isInstructor && isWorkshopInstructor() && (
+                  <div className="flex flex-row gap-2">
+                    <Link href={`/${locale}/workshops/edit/${workshop._id}`}>
+                      <button 
+                        className="bg-[#4CAF50] text-white p-2 rounded-full shadow-md hover:bg-[#3d8b40] transition-colors"
+                        title={t('editWorkshop') || "Edit Workshop"}
+                      >
+                        <Icon icon="heroicons:pencil-square" className="w-5 h-5" />
+                      </button>
+                    </Link>
+                    
+                    <button 
+                      onClick={() => setShowDeleteConfirm(true)}
+                      className="bg-[#F44336] text-white p-2 rounded-full shadow-md hover:bg-[#d32f2f] transition-colors"
+                      title={t('deleteWorkshop') || "Delete Workshop"}
+                    >
+                      <Icon icon="heroicons:trash" className="w-5 h-5" />
+                    </button>
+                  </div>
+                )}
               </div>
               
               <h1 className="text-2xl md:text-3xl font-bold mb-4 text-black">{workshop.name}</h1>
@@ -375,6 +444,9 @@ const WorkshopDetailPage = () => {
                   />
                 </Link>
               )}
+
+              {/* Instructor Action Buttons */}
+              
 
               {getWorkshopStatus(workshop.startDate, workshop.endDate) !== 'past' && !isInstructor && (
                 isRegistered ? (
@@ -535,6 +607,19 @@ const WorkshopDetailPage = () => {
           </div>
         )}
       </div>
+      
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal 
+        isOpen={showDeleteConfirm}
+        title={t('confirmDelete') || "Confirm Delete"}
+        message={t('deleteWorkshopConfirmation') || `Are you sure you want to delete "${workshop?.name}"? This action cannot be undone and will remove all registrations.`}
+        confirmText={t('delete') || "Delete"}
+        cancelText={t('cancel') || "Cancel"}
+        onConfirm={handleDeleteWorkshop}
+        onCancel={() => setShowDeleteConfirm(false)}
+        isProcessing={isDeleting}
+        processingText={t('deleting') || "Deleting..."}
+      />
     </div>
   );
 };
