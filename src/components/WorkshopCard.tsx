@@ -56,6 +56,7 @@ const WorkshopCard = ({
 
   const status = getWorkshopStatus(startDate, endDate);
   const statusColor = getStatusColor(status);
+  const isPast = status === 'past';
 
   return (
     <div className={`rounded-lg overflow-hidden shadow-md h-full flex flex-col relative`} style={{ backgroundColor: bgColor }}>
@@ -69,9 +70,9 @@ const WorkshopCard = ({
       )}
       {isInstructing && (
         <div className={`absolute ${isRegistered ? 'top-11' : 'top-2'} right-4 z-10`}>
-          <span className="bg-[#7471f9] text-white px-3 py-1 rounded-full text-sm font-medium shadow-md flex items-center">
+          <span className={`${isPast ? 'bg-amber-500' : 'bg-[#7471f9]'} text-white px-3 py-1 rounded-full text-sm font-medium shadow-md flex items-center`}>
             <Icon icon="heroicons:academic-cap" className="w-4 h-4 mr-1" />
-            {t('instructing', 'Instructing')}
+            {isPast ? t('instructed', 'Instructed') : t('instructing', 'Instructing')}
           </span>
         </div>
       )}

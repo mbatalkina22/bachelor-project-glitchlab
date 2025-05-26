@@ -21,8 +21,8 @@ export async function GET(
       );
     }
     
-    // Find workshops created by this instructor using instructorId
-    const workshops = await Workshop.find({ instructorId: instructorId });
+    // Find workshops where this instructor is included in the instructorIds array
+    const workshops = await Workshop.find({ instructorIds: instructorId });
     
     return NextResponse.json({ workshops }, { status: 200 });
   } catch (error: any) {

@@ -177,7 +177,7 @@ const InstructorProfilePage = () => {
                     : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
-                {t('attendedWorkshops')}
+                {t('pastWorkshops')}
               </button>
             </nav>
           </div>
@@ -280,7 +280,7 @@ const InstructorProfilePage = () => {
           {/* Past Workshops Tab */}
           {activeTab === 'past' && (
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4 text-[#2f2f2f]">{t('attendedWorkshops')}</h2>
+              <h2 className="text-xl font-semibold mb-4 text-[#2f2f2f]">{t('pastWorkshops')}</h2>
               {isLoading ? (
                 <div className="flex justify-center items-center h-32">
                   <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7471f9]"></div>
