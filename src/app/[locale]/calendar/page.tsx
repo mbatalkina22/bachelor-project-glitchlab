@@ -104,8 +104,52 @@ export default function CalendarPage() {
       }
     };
 
+    // New function to fetch workshops where the user is an instructor
+    const fetchInstructingWorkshops = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.log('No token found, skipping instructing workshops fetch');
+          setInstructingWorkshops([]);
+          return;
+        }
+
+        const response = await fetch('/api/workshops/instructor', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          console.error('Failed to fetch instructing workshops:', response.status);
+          setInstructingWorkshops([]);
+          return;
+        }
+        
+        const data = await response.json();
+        console.log('Instructing workshops response:', data);
+        
+        // Extract workshop IDs
+        let workshopIds: string[] = [];
+        if (Array.isArray(data)) {
+          workshopIds = data.map(workshop => workshop._id || workshop.id).filter(Boolean);
+        } else if (data && typeof data === 'object') {
+          workshopIds = Object.values(data)
+            .map(workshop => (workshop as any)._id || (workshop as any).id)
+            .filter(Boolean);
+        }
+        
+        console.log('Processed instructing workshop IDs:', workshopIds);
+        setInstructingWorkshops(workshopIds);
+      } catch (error) {
+        console.error('Error fetching instructing workshops:', error);
+        setInstructingWorkshops([]);
+      }
+    };
+
     fetchWorkshops();
     fetchRegisteredWorkshops();
+    fetchInstructingWorkshops(); // Add this call to fetch instructing workshops
   }, []);
 
   useEffect(() => {
@@ -146,7 +190,8 @@ export default function CalendarPage() {
 
   const events = filteredWorkshops.map((workshop, index) => {
     const isRegistered = registeredWorkshops.includes(workshop._id);
-    const isInstructing = userId && workshop.instructorIds?.includes(userId);
+    // Instead of checking instructorIds, use the instructingWorkshops state
+    const isInstructing = instructingWorkshops.includes(workshop._id);
     
     // Use the stored bgColor from the database, or default to a standard color if not present
     const backgroundColor = workshop.bgColor || "#c3c2fc";
