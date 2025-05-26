@@ -35,11 +35,15 @@ const CreateWorkshopPage = () => {
   // Add time options state for dropdowns
   const [timeOptions, setTimeOptions] = useState<string[]>([]);
 
-  // Generate time options for dropdowns (24h format)
+  // Generate time options for dropdowns (restricted to 10:00-19:00)
   useEffect(() => {
     const options: string[] = [];
-    for (let hour = 0; hour < 24; hour++) {
+    // Start from 10:00 (10 AM) and end at exactly 19:00 (7 PM)
+    for (let hour = 10; hour <= 19; hour++) {
       for (let minute = 0; minute < 60; minute += 15) {
+        // Skip times after 19:00
+        if (hour === 19 && minute > 0) continue;
+        
         const formattedHour = hour.toString().padStart(2, '0');
         const formattedMinute = minute.toString().padStart(2, '0');
         options.push(`${formattedHour}:${formattedMinute}`);
@@ -84,8 +88,8 @@ const CreateWorkshopPage = () => {
     imageSrc: "/images/workshop.jpg",
     badgeName: "",
     startDate: "",
-    startTime: "09:00",
-    endTime: "10:00",
+    startTime: "10:00",
+    endTime: "11:00",
     level: "beginner",
     location: "",
     capacity: 10,
