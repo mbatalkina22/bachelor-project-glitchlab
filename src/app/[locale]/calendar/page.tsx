@@ -258,22 +258,30 @@ export default function CalendarPage() {
               day: t('day')
             }}
             eventTimeFormat={{
-              hour: 'numeric',
+              hour: '2-digit',
               minute: '2-digit',
-              meridiem: 'short'
+              hour12: false
             }}
             eventDisplay="block"
             displayEventTime={true}
             eventMinHeight={24}
             eventShortHeight={24}
-            slotMinTime="08:00:00"
+            slotMinTime="10:00:00"
             slotMaxTime="20:00:00"
             slotDuration="00:30:00"
             allDaySlot={false}
             slotLabelFormat={{
-              hour: 'numeric',
+              hour: '2-digit',
               minute: '2-digit',
-              meridiem: 'short'
+              hour12: false
+            }}
+            views={{
+              timeGridWeek: {
+                dayHeaderFormat: { weekday: 'short', month: 'numeric', day: 'numeric' }
+              },
+              timeGridDay: {
+                dayHeaderFormat: { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }
+              }
             }}
             eventDidMount={(info) => {
               info.el.style.backgroundColor = info.event.backgroundColor;
