@@ -72,6 +72,23 @@ export async function POST(request: Request) {
       const decoded = verify(token, process.env.JWT_SECRET!) as { userId: string };
       await dbConnect();
       
+      // Find the user to check if they're an instructor
+      const user = await User.findById(decoded.userId);
+      if (!user) {
+        return NextResponse.json(
+          { error: 'User not found' },
+          { status: 404 }
+        );
+      }
+      
+      // Prevent instructors from submitting reviews
+      if (user.role === 'instructor') {
+        return NextResponse.json(
+          { error: 'Instructors cannot submit reviews' },
+          { status: 403 }
+        );
+      }
+      
       const body = await request.json();
       const { workshop: workshopId } = body;
       
@@ -106,19 +123,11 @@ export async function POST(request: Request) {
         );
       }
       
-      const userInfo = await User.findById(decoded.userId, 'name');
-      if (!userInfo) {
-        return NextResponse.json(
-          { error: 'User not found' },
-          { status: 404 }
-        );
-      }
-      
       // Create the review
       const review = await Review.create({
         ...body,
         user: decoded.userId,
-        userName: userInfo.name,
+        userName: user.name,
         workshop: workshopId
       });
       
@@ -139,4 +148,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-} 
+}

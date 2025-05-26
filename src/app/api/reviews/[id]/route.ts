@@ -5,6 +5,7 @@ import Review from '../../lib/models/review';
 import mongoose from 'mongoose';
 import { getWorkshopStatus } from '@/utils/workshopStatus';
 import Workshop from '../../lib/models/workshop';
+import User from '../../lib/models/user';
 
 if (!process.env.JWT_SECRET) {
   throw new Error('Please define the JWT_SECRET environment variable inside .env');
@@ -175,8 +176,20 @@ export async function DELETE(request: Request, { params }: Params) {
         );
       }
       
-      // Check if the user is the owner of the review
-      if (review.user.toString() !== decoded.userId) {
+      // Find the user to check their role
+      const user = await User.findById(decoded.userId);
+      if (!user) {
+        return NextResponse.json(
+          { error: 'User not found' },
+          { status: 404 }
+        );
+      }
+      
+      // Allow instructors to delete any review, but regular users can only delete their own
+      const isInstructor = user.role === 'instructor';
+      const isOwner = review.user.toString() === decoded.userId;
+      
+      if (!isInstructor && !isOwner) {
         return NextResponse.json(
           { error: 'Unauthorized to delete this review' },
           { status: 403 }
@@ -221,4 +234,4 @@ export async function DELETE(request: Request, { params }: Params) {
       { status: 500 }
     );
   }
-} 
+}

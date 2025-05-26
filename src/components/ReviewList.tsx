@@ -558,13 +558,15 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
           </div>
         </div>
       ) : (
-        <HeroButton
-          text={t("leaveReview")}
-          onClick={openReviewModal}
-          backgroundColor="#7471f9"
-          textColor="white"
-          className="mb-6"
-        />
+        user?.role !== 'instructor' && (
+          <HeroButton
+            text={t("leaveReview")}
+            onClick={openReviewModal}
+            backgroundColor="#7471f9"
+            textColor="white"
+            className="mb-6"
+          />
+        )
       )}
 
       {/* Review Modal */}
@@ -795,15 +797,17 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
               </div>
               
               {/* Edit/Delete buttons inside the review card */}
-              {review.user === user?._id && review._id && (
+              {(review.user === user?._id || user?.role === 'instructor') && review._id && (
                 <div className="flex space-x-2 mt-3 border-t pt-3 justify-end">
-                  <button
-                    onClick={() => openEditReviewModal(review)}
-                    className="flex items-center text-sm text-indigo-600 hover:text-indigo-800 px-2 py-1 rounded-md hover:bg-indigo-50 transition-colors"
-                  >
-                    <Icon icon="heroicons:pencil-square" className="w-4 h-4 mr-1" />
-                    {t("editReview")}
-                  </button>
+                  {review.user === user?._id && (
+                    <button
+                      onClick={() => openEditReviewModal(review)}
+                      className="flex items-center text-sm text-indigo-600 hover:text-indigo-800 px-2 py-1 rounded-md hover:bg-indigo-50 transition-colors"
+                    >
+                      <Icon icon="heroicons:pencil-square" className="w-4 h-4 mr-1" />
+                      {t("editReview")}
+                    </button>
+                  )}
                   <button
                     onClick={() => openDeleteModal(review._id as string)}
                     className="flex items-center text-sm text-red-600 hover:text-red-800 px-2 py-1 rounded-md hover:bg-red-50 transition-colors"
