@@ -12,6 +12,9 @@ import { Icon } from '@iconify/react';
 interface Workshop {
   _id: string;  // MongoDB uses _id
   name: string;
+  nameTranslations?: {
+    [key: string]: string;
+  };
   description: string;
   startDate: Date;
   endDate: Date;
@@ -196,8 +199,13 @@ export default function CalendarPage() {
     // Use the stored bgColor from the database, or default to a standard color if not present
     const backgroundColor = workshop.bgColor || "#c3c2fc";
     
+    // Get localized title if available
+    const localizedTitle = workshop.nameTranslations && workshop.nameTranslations[locale]
+      ? workshop.nameTranslations[locale]
+      : workshop.name;
+    
     return {
-      title: workshop.name,
+      title: localizedTitle,
       start: workshop.startDate,
       end: workshop.endDate,
       backgroundColor: backgroundColor,
