@@ -227,7 +227,8 @@
     "editWorkshop": "Edit Workshop",
     "deleteWorkshop": "Delete Workshop",
     "confirmDelete": "Confirm Delete",
-    "deleteWorkshopConfirmation": "Are you sure you want to delete this workshop? This action cannot be undone and will remove all registrations."
+    "deleteWorkshopConfirmation": "Are you sure you want to delete this workshop? This action cannot be undone and will remove all registrations.",
+    "learnMore": "Learn More"
   },
   "Profile": {
     "editProfile": "Edit Profile",

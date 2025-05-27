@@ -84,9 +84,21 @@ const CreateWorkshopPage = () => {
   // Workshop data state - update to include instructorIds array instead of single instructorId
   const [workshopData, setWorkshopData] = useState({
     name: "",
+    nameTranslations: {
+      en: "",
+      it: ""
+    },
     description: "",
+    descriptionTranslations: {
+      en: "",
+      it: ""
+    },
     imageSrc: "/images/workshop.jpg",
     badgeName: "",
+    badgeNameTranslations: {
+      en: "",
+      it: ""
+    },
     startDate: "",
     startTime: "10:00",
     endTime: "11:00",
@@ -264,13 +276,13 @@ const CreateWorkshopPage = () => {
     setSuccessMessage("");
 
     // Validate form
-    if (!workshopData.name) {
-      setError("Please provide a workshop name");
+    if (!workshopData.nameTranslations.en || !workshopData.nameTranslations.it) {
+      setError("Please provide a workshop name in both English and Italian");
       return;
     }
 
-    if (!workshopData.description) {
-      setError("Please provide a workshop description");
+    if (!workshopData.descriptionTranslations.en || !workshopData.descriptionTranslations.it) {
+      setError("Please provide a workshop description in both English and Italian");
       return;
     }
 
@@ -279,8 +291,8 @@ const CreateWorkshopPage = () => {
       return;
     }
 
-    if (!workshopData.badgeName) {
-      setError("Please provide a badge name");
+    if (!workshopData.badgeNameTranslations.en || !workshopData.badgeNameTranslations.it) {
+      setError("Please provide a badge name in both English and Italian");
       return;
     }
 
@@ -320,12 +332,25 @@ const CreateWorkshopPage = () => {
 
       // Prepare workshop data
       const workshopPayload = {
-        name: workshopData.name,
-        description: workshopData.description,
+        // Set base name and description from English translations as fallbacks
+        name: workshopData.nameTranslations.en,
+        nameTranslations: {
+          en: workshopData.nameTranslations.en,
+          it: workshopData.nameTranslations.it
+        },
+        description: workshopData.descriptionTranslations.en,
+        descriptionTranslations: {
+          en: workshopData.descriptionTranslations.en,
+          it: workshopData.descriptionTranslations.it
+        },
         startDate: startDateTime.toISOString(),
         endDate: endDateTime.toISOString(),
         imageSrc: workshopData.imageSrc,
-        badgeName: workshopData.badgeName,
+        badgeName: workshopData.badgeNameTranslations.en,
+        badgeNameTranslations: {
+          en: workshopData.badgeNameTranslations.en,
+          it: workshopData.badgeNameTranslations.it
+        },
         categories: [...workshopData.categories, ...workshopData.ageRanges],
         level: workshopData.level,
         location: workshopData.location,
@@ -370,6 +395,21 @@ const CreateWorkshopPage = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Helper function to handle translation field changes
+  const handleTranslationChange = (
+    field: 'nameTranslations' | 'descriptionTranslations' | 'badgeNameTranslations',
+    language: 'en' | 'it',
+    value: string
+  ) => {
+    setWorkshopData({
+      ...workshopData,
+      [field]: {
+        ...workshopData[field],
+        [language]: value
+      }
+    });
   };
 
   if (!user || !isInstructor) {
@@ -487,16 +527,42 @@ const CreateWorkshopPage = () => {
               >
                 {t("badgeName") || "Badge Name"}
               </label>
-              <input
-                type="text"
-                id="badgeName"
-                name="badgeName"
-                value={workshopData.badgeName}
-                onChange={handleInputChange}
-                className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
-                required
-              />
-              <p className="mt-1 text-xs text-gray-500">
+              
+              {/* Badge Name Translations - Only language fields */}
+              <div className="space-y-3">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
+                    <Icon icon="emojione:flag-for-united-kingdom" className="w-5 h-5" />
+                  </div>
+                  <div className="ml-2 flex-grow">
+                    <input
+                      type="text"
+                      value={workshopData.badgeNameTranslations.en}
+                      onChange={(e) => handleTranslationChange('badgeNameTranslations', 'en', e.target.value)}
+                      className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
+                      placeholder="English badge name"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
+                    <Icon icon="emojione:flag-for-italy" className="w-5 h-5" />
+                  </div>
+                  <div className="ml-2 flex-grow">
+                    <input
+                      type="text"
+                      value={workshopData.badgeNameTranslations.it}
+                      onChange={(e) => handleTranslationChange('badgeNameTranslations', 'it', e.target.value)}
+                      className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
+                      placeholder="Italian badge name"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <p className="mt-2 text-xs text-gray-500">
                 {t("badgeNameDesc") ||
                   "Give a name to the badge that participants will earn."}
               </p>
@@ -511,15 +577,41 @@ const CreateWorkshopPage = () => {
                 >
                   {t("workshopName") || "Workshop Name"}
                 </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={workshopData.name}
-                  onChange={handleInputChange}
-                  className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
-                  required
-                />
+                
+                {/* Workshop Name Translations - Only language fields */}
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
+                      <Icon icon="emojione:flag-for-united-kingdom" className="w-5 h-5" />
+                    </div>
+                    <div className="ml-2 flex-grow">
+                      <input
+                        type="text"
+                        id="name"
+                        value={workshopData.nameTranslations.en}
+                        onChange={(e) => handleTranslationChange('nameTranslations', 'en', e.target.value)}
+                        className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
+                        placeholder="English workshop name"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
+                      <Icon icon="emojione:flag-for-italy" className="w-5 h-5" />
+                    </div>
+                    <div className="ml-2 flex-grow">
+                      <input
+                        type="text"
+                        value={workshopData.nameTranslations.it}
+                        onChange={(e) => handleTranslationChange('nameTranslations', 'it', e.target.value)}
+                        className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
+                        placeholder="Italian workshop name"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div>
@@ -551,15 +643,41 @@ const CreateWorkshopPage = () => {
               >
                 {t("workshopDescription") || "Workshop Description"}
               </label>
-              <textarea
-                id="description"
-                name="description"
-                value={workshopData.description}
-                onChange={handleInputChange}
-                rows={4}
-                className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
-                required
-              ></textarea>
+              
+              {/* Description Translations - Only language fields */}
+              <div className="space-y-3">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
+                    <Icon icon="emojione:flag-for-united-kingdom" className="w-5 h-5" />
+                  </div>
+                  <div className="ml-2 flex-grow">
+                    <textarea
+                      id="description"
+                      value={workshopData.descriptionTranslations.en}
+                      onChange={(e) => handleTranslationChange('descriptionTranslations', 'en', e.target.value)}
+                      rows={3}
+                      className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
+                      placeholder="English description"
+                      required
+                    ></textarea>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
+                    <Icon icon="emojione:flag-for-italy" className="w-5 h-5" />
+                  </div>
+                  <div className="ml-2 flex-grow">
+                    <textarea
+                      value={workshopData.descriptionTranslations.it}
+                      onChange={(e) => handleTranslationChange('descriptionTranslations', 'it', e.target.value)}
+                      rows={3}
+                      className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
+                      placeholder="Italian description"
+                      required
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Date and Time */}

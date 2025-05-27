@@ -7,10 +7,18 @@ import HeroButton from "./HeroButton";
 import { getWorkshopStatus, getStatusColor } from '@/utils/workshopStatus';
 import { useTranslations } from 'next-intl';
 
+interface LocalizedContent {
+  en: string;
+  it: string;
+  [key: string]: string;
+}
+
 interface WorkshopCardProps {
   id?: string;
   title: string;
+  nameTranslations?: LocalizedContent;
   description: string;
+  descriptionTranslations?: LocalizedContent;
   startDate: Date;
   endDate: Date;
   imageSrc: string;
@@ -25,7 +33,9 @@ interface WorkshopCardProps {
 const WorkshopCard = ({ 
   id = "1", 
   title, 
+  nameTranslations,
   description, 
+  descriptionTranslations,
   startDate, 
   endDate, 
   imageSrc, 
@@ -37,6 +47,15 @@ const WorkshopCard = ({
   const params = useParams();
   const locale = params.locale as string;
   const t = useTranslations('WorkshopDetail');
+
+  // Get localized content if available, otherwise fall back to default
+  const localizedTitle = nameTranslations && nameTranslations[locale] 
+    ? nameTranslations[locale] 
+    : title;
+    
+  const localizedDescription = descriptionTranslations && descriptionTranslations[locale]
+    ? descriptionTranslations[locale]
+    : description;
 
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString('en-US', {
@@ -79,7 +98,7 @@ const WorkshopCard = ({
       <div className="relative h-48 w-full bg-gray-200">
         <Image 
           src={imageSrc} 
-          alt={`${title} workshop`} 
+          alt={`${localizedTitle} workshop`} 
           fill
           className="object-cover"
           onError={(e) => {
@@ -94,8 +113,8 @@ const WorkshopCard = ({
         </div>
       </div>
       <div className="p-6 flex flex-col flex-grow">
-        <h3 className="text-xl font-secularone mb-2 line-clamp-1 text-black">{title}</h3>
-        <p className="text-gray-600 mb-4 h-24 overflow-hidden line-clamp-4">{description}</p>
+        <h3 className="text-xl font-secularone mb-2 line-clamp-1 text-black">{localizedTitle}</h3>
+        <p className="text-gray-600 mb-4 h-24 overflow-hidden line-clamp-4">{localizedDescription}</p>
         {status !== 'past' && (
           <div className="flex items-center text-sm text-gray-500 mb-4">
             <Icon icon="heroicons:calendar" className="w-4 h-4 mr-1" />
@@ -106,7 +125,7 @@ const WorkshopCard = ({
         )}
         <div className="mt-auto">
           <HeroButton 
-            text="Learn More"
+            text={t('learnMore')}
             href={`/${locale}/workshops/${id}`}
             backgroundColor="white"
             textColor="black"

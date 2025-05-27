@@ -263,7 +263,9 @@ const WorkshopsPage = () => {
                                         <WorkshopCard 
                                             id={workshop._id}
                                             title={workshop.name}
+                                            nameTranslations={workshop.nameTranslations}
                                             description={workshop.description}
+                                            descriptionTranslations={workshop.descriptionTranslations}
                                             startDate={new Date(workshop.startDate)}
                                             endDate={new Date(workshop.endDate)}
                                             imageSrc={workshop.imageSrc}

@@ -1,14 +1,30 @@
 import mongoose, { Schema } from 'mongoose';
 
+// Schema for localized content
+const LocalizedContentSchema = new Schema({
+  en: { type: String, required: false },
+  it: { type: String, required: false }
+}, { _id: false });
+
 const WorkshopSchema = new Schema({
+  // Keeping name as a fallback but making it not required
   name: {
     type: String,
-    required: [true, 'Please provide a name for the workshop'],
+    required: false,
     trim: true,
   },
+  nameTranslations: {
+    type: LocalizedContentSchema,
+    required: [true, 'Please provide workshop name translations']
+  },
+  // Keeping description as a fallback but making it not required
   description: {
     type: String,
-    required: [true, 'Please provide a description for the workshop'],
+    required: false,
+  },
+  descriptionTranslations: {
+    type: LocalizedContentSchema,
+    required: [true, 'Please provide workshop description translations']
   },
   startDate: {
     type: Date,
@@ -25,7 +41,11 @@ const WorkshopSchema = new Schema({
 
   badgeName: {
     type: String,
-    required: [true, 'Please provide a name for the workshop badge'],
+    required: false,
+  },
+  badgeNameTranslations: {
+    type: LocalizedContentSchema,
+    required: [true, 'Please provide a name for the workshop badge in both languages']
   },
   categories: {
     type: [String],

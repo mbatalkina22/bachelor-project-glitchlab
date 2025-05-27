@@ -23,10 +23,19 @@ interface InstructorDetails {
   description?: string;
 }
 
+// Interface for localized content
+interface LocalizedContent {
+  en: string;
+  it: string;
+  [key: string]: string; // Allow for other languages in the future
+}
+
 interface Workshop {
   _id: string;
   name: string;
+  nameTranslations?: LocalizedContent; // Translations for the name
   description: string;
+  descriptionTranslations?: LocalizedContent; // Translations for the description
   startDate: Date;
   endDate: Date;
   imageSrc: string;
@@ -39,6 +48,7 @@ interface Workshop {
   capacity: number;
   registeredCount: number;
   badgeName?: string; // Optional property for badge name
+  badgeNameTranslations?: LocalizedContent; // Translations for the badge name
 }
 
 const WorkshopDetailPage = () => {
@@ -119,10 +129,32 @@ const WorkshopDetailPage = () => {
     }
   }, [id]);
   
-  // Force refresh on navigation - no longer needed as we have the user effect
-  // useEffect(() => {
-  //   checkUserRegistration();
-  // }, [pathname]);
+  // Effect to refetch workshop data when locale changes
+  useEffect(() => {
+    if (id) {
+      fetchWorkshopData();
+    }
+  }, [locale, id]); // Added locale as a dependency to refresh data when language changes
+
+  const fetchWorkshopData = async () => {
+    try {
+      setIsLoading(true);
+      // Fetch workshop details
+      const response = await fetch(`/api/workshops/${id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch workshop details');
+      }
+      const data = await response.json();
+      
+      setWorkshop(data);
+      
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error fetching workshop:', error);
+      setError('Failed to load workshop details. Please try again later.');
+      setIsLoading(false);
+    }
+  };
 
   const handleRegister = async () => {
     try {
@@ -282,6 +314,19 @@ const WorkshopDetailPage = () => {
     );
   }
 
+  // Get localized content if available, otherwise fall back to default
+  const localizedName = workshop.nameTranslations && workshop.nameTranslations[locale]
+    ? workshop.nameTranslations[locale]
+    : workshop.name;
+
+  const localizedDescription = workshop.descriptionTranslations && workshop.descriptionTranslations[locale]
+    ? workshop.descriptionTranslations[locale]
+    : workshop.description;
+
+  const localizedBadgeName = workshop.badgeNameTranslations && workshop.badgeNameTranslations[locale]
+    ? workshop.badgeNameTranslations[locale]
+    : (workshop.badgeName || `${localizedName} Badge`);
+
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString('en-US', {
       month: 'long',
@@ -387,7 +432,7 @@ const WorkshopDetailPage = () => {
                 )}
               </div>
               
-              <h1 className="text-2xl md:text-3xl font-bold mb-4 text-black">{workshop.name}</h1>
+              <h1 className="text-2xl md:text-3xl font-bold mb-4 text-black">{localizedName}</h1>
               
               {getWorkshopStatus(workshop.startDate, workshop.endDate) !== 'past' && (
                 <div className="flex items-center mb-6">
@@ -484,7 +529,7 @@ const WorkshopDetailPage = () => {
           {/* Description */}
           <div className="p-6 border-t border-gray-200">
             <h2 className="text-xl font-semibold mb-4 text-black">{t('description')}</h2>
-            <p className="text-gray-700 whitespace-pre-line">{workshop.description}</p>
+            <p className="text-gray-700 whitespace-pre-line">{localizedDescription}</p>
           </div>
           
           {/* Badge Section */}
@@ -515,7 +560,7 @@ const WorkshopDetailPage = () => {
                 <div className={`${getWorkshopStatus(workshop.startDate, workshop.endDate) === 'past' ? 'text-left' : 'text-center md:text-left'} max-w-lg`}>
                   <h3 className="text-lg font-bold text-indigo-700 mb-2">
                     {/* Use badgeName if it exists, otherwise fallback to workshop name + Badge */}
-                    {workshop.badgeName || `${workshop.name} Badge`}
+                    {localizedBadgeName}
                   </h3>
                   <p className="text-gray-700 mb-4">
                     {getWorkshopStatus(workshop.startDate, workshop.endDate) === 'past' 
