@@ -122,18 +122,6 @@ export async function DELETE(request: Request, { params }: Params) {
       );
     }
     
-    // Check if the instructor is associated with this workshop
-    const isInstructor = workshop.instructorIds && 
-                          Array.isArray(workshop.instructorIds) && 
-                          workshop.instructorIds.some(id => id.toString() === decoded.userId);
-    
-    if (!isInstructor) {
-      return NextResponse.json(
-        { error: 'You are not authorized to delete this workshop' },
-        { status: 403 }
-      );
-    }
-
     // Remove workshop from users who registered for it
     await User.updateMany(
       { registeredWorkshops: params.id },
@@ -211,17 +199,8 @@ export async function PUT(request: Request, { params }: Params) {
       );
     }
     
-    // Check if the instructor is associated with this workshop
-    const isInstructor = workshop.instructorIds && 
-                          Array.isArray(workshop.instructorIds) && 
-                          workshop.instructorIds.some(id => id.toString() === decoded.userId);
-    
-    if (!isInstructor) {
-      return NextResponse.json(
-        { error: 'You are not authorized to update this workshop' },
-        { status: 403 }
-      );
-    }
+    // Remove the instructor check - allow any instructor to update any workshop
+    // We no longer check if the instructor is associated with this workshop
 
     // Get updated workshop data from request body
     const updatedData = await request.json();

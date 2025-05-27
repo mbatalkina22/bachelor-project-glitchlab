@@ -133,15 +133,8 @@ const EditWorkshopPage = () => {
           ageOptions.includes(cat)
         );
         
-        // Check if the current user is an instructor for this workshop
-        if (user && data.instructorIds) {
-          const isUserInstructor = data.instructorIds.includes(user._id);
-          setIsWorkshopInstructor(isUserInstructor);
-          
-          if (!isUserInstructor) {
-            setError("You are not authorized to edit this workshop");
-          }
-        }
+        // Always set to true - allow any instructor to edit any workshop
+        setIsWorkshopInstructor(true);
         
         // Set workshop data
         setWorkshopData({

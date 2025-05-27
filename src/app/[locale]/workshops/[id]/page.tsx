@@ -364,8 +364,8 @@ const WorkshopDetailPage = () => {
                   ))}
                 </div>
                 
-                {/* Instructor Action Buttons - Positioned at the very top right */}
-                {isInstructor && isWorkshopInstructor() && (
+                {/* Instructor Action Buttons - Now shown for all instructors, not just workshop instructors */}
+                {isInstructor && (
                   <div className="flex flex-row gap-2">
                     <Link href={`/${locale}/workshops/edit/${workshop._id}`}>
                       <button 
@@ -513,7 +513,10 @@ const WorkshopDetailPage = () => {
                   )}
                 </div>
                 <div className={`${getWorkshopStatus(workshop.startDate, workshop.endDate) === 'past' ? 'text-left' : 'text-center md:text-left'} max-w-lg`}>
-                  <h3 className="text-lg font-bold text-indigo-700 mb-2">{workshop.name} Badge</h3>
+                  <h3 className="text-lg font-bold text-indigo-700 mb-2">
+                    {/* Use badgeName if it exists, otherwise fallback to workshop name + Badge */}
+                    {workshop.badgeName || `${workshop.name} Badge`}
+                  </h3>
                   <p className="text-gray-700 mb-4">
                     {getWorkshopStatus(workshop.startDate, workshop.endDate) === 'past' 
                       ? t('unlockBadge') 
