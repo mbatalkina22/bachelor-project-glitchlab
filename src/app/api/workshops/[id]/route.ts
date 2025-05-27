@@ -24,7 +24,7 @@ export async function GET(request: Request, { params }: Params) {
     
     if (workshop.instructorIds && Array.isArray(workshop.instructorIds) && workshop.instructorIds.length > 0) {
       // Use Promise.all to fetch all instructors in parallel
-      const instructorPromises = workshop.instructorIds.map(id => 
+      const instructorPromises = workshop.instructorIds.map((id: string) => 
         User.findById(id).select('name surname avatar description')
       );
       

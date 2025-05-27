@@ -33,12 +33,12 @@ interface Workshop {
   categories: string[];
   level: string;
   location: string;
-  instructorId?: string;
   instructorIds?: string[];
   instructorDetails?: InstructorDetails;
   instructorDetailsList?: InstructorDetails[];
   capacity: number;
   registeredCount: number;
+  badgeName?: string; // Optional property for badge name
 }
 
 const WorkshopDetailPage = () => {
