@@ -48,6 +48,7 @@ interface Workshop {
   registeredCount: number;
   badgeName?: string; // Optional property for badge name
   badgeNameTranslations?: LocalizedContent; // Translations for the badge name
+  canceled?: boolean; // Added property for canceled workshops
 }
 
 const WorkshopDetailPage = () => {
@@ -348,15 +349,15 @@ const WorkshopDetailPage = () => {
                 src={workshop.imageSrc} 
                 alt={workshop.name} 
                 fill
-                className="object-cover"
+                className={`object-cover ${workshop.canceled ? 'grayscale opacity-70' : ''}`}
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.src = "https://via.placeholder.com/400x200?text=Workshop+Image";
                 }}
               />
               <div className="absolute top-4 left-6">
-                <span className={`${getStatusColor(getWorkshopStatus(workshop.startDate, workshop.endDate))} text-white px-4 py-2 rounded-full text-sm font-medium capitalize shadow-md`}>
-                  {getWorkshopStatus(workshop.startDate, workshop.endDate)}
+                <span className={`${getStatusColor(getWorkshopStatus(workshop.startDate, workshop.endDate, workshop.canceled))} text-white px-4 py-2 rounded-full text-sm font-medium capitalize shadow-md`}>
+                  {getWorkshopStatus(workshop.startDate, workshop.endDate, workshop.canceled)}
                 </span>
               </div>
             </div>
@@ -388,6 +389,22 @@ const WorkshopDetailPage = () => {
               </div>
               
               <h1 className="text-2xl md:text-3xl font-bold mb-4 text-black">{localizedName}</h1>
+              
+              {/* Show cancellation notice */}
+              {workshop.canceled && (
+                <div className="mb-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-700">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <Icon icon="heroicons:exclamation-triangle" className="h-5 w-5 text-red-400" />
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm font-medium">
+                        {t('workshopCanceled') || "This workshop has been canceled"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
               
               {getWorkshopStatus(workshop.startDate, workshop.endDate) !== 'past' && (
                 <div className="flex items-center mb-6">
@@ -434,7 +451,7 @@ const WorkshopDetailPage = () => {
                 </div>
               </div>
 
-              {isInstructor && (
+              {isInstructor && !workshop.canceled && (
                 <Link href={`/${locale}/workshops/${workshop._id}/registered-users`}>
                   <HeroButton 
                     text={t('viewRegisteredUsers') || "View Registered Users"}
@@ -445,36 +462,43 @@ const WorkshopDetailPage = () => {
                 </Link>
               )}
 
-              {/* Instructor Action Buttons */}
-              
-
-              {getWorkshopStatus(workshop.startDate, workshop.endDate) !== 'past' && !isInstructor && (
-                isRegistered ? (
-                  <HeroButton 
-                    text={t('unregister')}
-                    onClick={handleUnregister}
-                    backgroundColor="#FF0000"
-                    textColor="white"
-                    className="w-full md:w-auto"
-                  />
-                ) : (
-                  workshop.registeredCount >= workshop.capacity ? (
+              {/* Show appropriate action buttons */}
+              {workshop.canceled ? (
+                // For canceled workshops, show a message that registration is not available
+                <div className="bg-gray-100 p-3 rounded-md text-gray-700 inline-block">
+                  <Icon icon="heroicons:no-symbol" className="w-5 h-5 inline mr-2 text-red-500" />
+                  {t('registrationClosed') || "Registration is closed"}
+                </div>
+              ) : (
+                // For active workshops, show registration/unregistration buttons
+                getWorkshopStatus(workshop.startDate, workshop.endDate) !== 'past' && !isInstructor && (
+                  isRegistered ? (
                     <HeroButton 
-                      text={t('fullWorkshop')}
-                      onClick={() => {}}
-                      backgroundColor="#9CA3AF"
-                      textColor="white"
-                      className="w-full md:w-auto cursor-not-allowed opacity-75"
-                      disabled={true}
-                    />
-                  ) : (
-                    <HeroButton 
-                      text={t('register')}
-                      onClick={handleRegister}
-                      backgroundColor="#4f46e5"
+                      text={t('unregister')}
+                      onClick={handleUnregister}
+                      backgroundColor="#FF0000"
                       textColor="white"
                       className="w-full md:w-auto"
                     />
+                  ) : (
+                    workshop.registeredCount >= workshop.capacity ? (
+                      <HeroButton 
+                        text={t('fullWorkshop')}
+                        onClick={() => {}}
+                        backgroundColor="#9CA3AF"
+                        textColor="white"
+                        className="w-full md:w-auto cursor-not-allowed opacity-75"
+                        disabled={true}
+                      />
+                    ) : (
+                      <HeroButton 
+                        text={t('register')}
+                        onClick={handleRegister}
+                        backgroundColor="#4f46e5"
+                        textColor="white"
+                        className="w-full md:w-auto"
+                      />
+                    )
                   )
                 )
               )}

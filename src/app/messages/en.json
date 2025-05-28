@@ -137,7 +137,17 @@
     "selectedAgeRanges": "Selected age ranges",
     "multipleAgeRangesNote": "You can select multiple age ranges for the workshop",
     "selectedCategories": "Selected categories",
-    "multipleCategoriesNote": "You can select multiple categories for the workshop"
+    "multipleCategoriesNote": "You can select multiple categories for the workshop",
+    "editWorkshop": "Edit Workshop",
+    "editWorkshopDesc": "Update the workshop details below.",
+    "updateWorkshop": "Update Workshop",
+    "updating": "Updating...",
+    "workshopUpdated": "Workshop updated successfully!",
+    "cancelWorkshop": "Cancel Workshop",
+    "cancelWorkshopDesc": "If you need to cancel this workshop, you can do it here. This will remove all registrations and mark the workshop as canceled.",
+    "confirmCancelWorkshop": "Are you sure you want to cancel this workshop? All registered participants will be automatically unregistered.",
+    "cancelling": "Canceling...",
+    "workshopCanceled": "Workshop canceled successfully!"
   },
   "WorkshopDetail": {
     "home": "Home",
@@ -228,7 +238,10 @@
     "deleteWorkshop": "Delete Workshop",
     "confirmDelete": "Confirm Delete",
     "deleteWorkshopConfirmation": "Are you sure you want to delete this workshop? This action cannot be undone and will remove all registrations.",
-    "learnMore": "Learn More"
+    "learnMore": "Learn More",
+    "workshopCanceled": "This workshop has been canceled",
+    "registrationClosed": "Registration is closed",
+    "canceled": "Canceled"
   },
   "Profile": {
     "editProfile": "Edit Profile",
@@ -335,7 +348,7 @@
     "dangerZone": "Danger Zone",
     "deleteAccountWarning": "Once you delete your account, there is no going back. Please be certain.",
     "deleteAccount": "Delete Account",
-    "deleteAccountDescription": "This action cannot be undone. All your data, including profile information, workshops, and instructor status will be permanently deleted.",
+    "deleteAccountDescription": "This action cannot be undone. All your data will be permanently deleted.",
     "notificationsDesc": "Manage your email notification preferences",
     "emailNotifications": "Email Notifications",
     "workshopNotifications": "Workshop Notifications",

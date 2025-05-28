@@ -1,6 +1,10 @@
-export type WorkshopStatus = 'future' | 'ongoing' | 'past';
+export type WorkshopStatus = 'future' | 'ongoing' | 'past' | 'canceled';
 
-export const getWorkshopStatus = (startDate: Date, endDate: Date): WorkshopStatus => {
+export const getWorkshopStatus = (startDate: Date, endDate: Date, canceled: boolean = false): WorkshopStatus => {
+  if (canceled) {
+    return 'canceled';
+  }
+
   const now = new Date();
   const start = new Date(startDate);
   const end = new Date(endDate);
@@ -22,7 +26,9 @@ export const getStatusColor = (status: WorkshopStatus): string => {
       return 'bg-green-500';
     case 'past':
       return 'bg-gray-500';
+    case 'canceled':
+      return 'bg-red-500';
     default:
       return 'bg-gray-500';
   }
-}; 
+};

@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import HeroButton from "@/components/HeroButton";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import ConfirmationModal from "@/components/modals/ConfirmationModal";
 
 // Add instructor interface
 interface Instructor {
@@ -45,6 +46,7 @@ interface Workshop {
   capacity: number;
   registeredCount: number;
   bgColor?: string;
+  canceled?: boolean;
 }
 
 const EditWorkshopPage = () => {
@@ -94,6 +96,7 @@ const EditWorkshopPage = () => {
     ageRanges: [] as string[],
     instructorIds: [] as string[],
     bgColor: "#c3c2fc",
+    canceled: false, // Initialize canceled state
   });
 
   // Age options
@@ -188,6 +191,7 @@ const EditWorkshopPage = () => {
           ageRanges: ageRanges || [],
           instructorIds: data.instructorIds || [],
           bgColor: data.bgColor || "#c3c2fc",
+          canceled: data.canceled || false,  // Explicitly add the canceled property
         });
       } catch (error: any) {
         console.error('Error fetching workshop:', error);
@@ -504,6 +508,52 @@ const EditWorkshopPage = () => {
       }
     });
   };
+
+  const handleCancelWorkshop = async () => {
+    if (!confirm(t("confirmCancelWorkshop") || "Are you sure you want to cancel this workshop?")) {
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+    setSuccessMessage("");
+
+    try {
+      // Send request to cancel workshop
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("You must be logged in to cancel a workshop");
+      }
+
+      const response = await fetch(`/api/workshops/${id}/cancel`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to cancel workshop");
+      }
+
+      setSuccessMessage(t("workshopCanceled") || "Workshop canceled successfully!");
+
+      // Redirect to the workshop page after a short delay
+      setTimeout(() => {
+        router.push(`/${locale}/workshops/${id}`);
+      }, 2000);
+    } catch (err: any) {
+      console.error("Error canceling workshop:", err);
+      setError(err.message || "Failed to cancel workshop");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Modal states
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
   if (!user || !isInstructor) {
     return (
@@ -1160,6 +1210,143 @@ const EditWorkshopPage = () => {
               />
             </div>
           </form>
+
+          {/* Cancel/Uncancel Workshop Button */}
+          {workshopData.canceled ? (
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+              <h3 className="text-sm font-medium text-gray-900 mb-2">
+                {t("uncancelWorkshop") || "Uncancel Workshop"}
+              </h3>
+              <p className="text-gray-500 text-sm mb-4">
+                {t("uncancelWorkshopDesc") || "If you need to uncancel this workshop, you can do it here."}
+              </p>
+              <div className="flex justify-end">
+                <HeroButton
+                  text={isLoading ? t("processing") || "Processing..." : t("uncancelWorkshop") || "Uncancel Workshop"}
+                  backgroundColor="#4CAF50"
+                  textColor="white"
+                  onClick={async () => {
+                    try {
+                      setIsLoading(true);
+                      setError("");
+                      setSuccessMessage("");
+                      
+                      const token = localStorage.getItem("token");
+                      if (!token) {
+                        throw new Error("You must be logged in to uncancel a workshop");
+                      }
+
+                      // Calculate dates from the form fields
+                      const startDateTime = new Date(`${workshopData.startDate}T${workshopData.startTime}`);
+                      const endDateTime = new Date(`${workshopData.startDate}T${workshopData.endTime}`);
+
+                      const response = await fetch(`/api/workshops/uncancel`, {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                          Authorization: `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({
+                          workshopId: id,
+                          newStartDate: startDateTime.toISOString(),
+                          newEndDate: endDateTime.toISOString(),
+                        }),
+                      });
+
+                      if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || "Failed to uncancel workshop");
+                      }
+
+                      setSuccessMessage(t("workshopUncanceledSuccessfully") || "Workshop uncanceled successfully!");
+                      
+                      // Redirect to the workshop page after a short delay
+                      setTimeout(() => {
+                        router.push(`/${locale}/workshops/${id}`);
+                      }, 2000);
+                    } catch (err) {
+                      console.error("Error uncanceling workshop:", err);
+                      setError(err.message || t("failedToUncancelWorkshop") || "Failed to uncancel workshop");
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }}
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+              <h3 className="text-sm font-medium text-gray-900 mb-2">
+                {t("cancelWorkshop") || "Cancel Workshop"}
+              </h3>
+              <p className="text-gray-500 text-sm mb-4">
+                {t("cancelWorkshopDesc") || "If you need to cancel this workshop, you can do it here."}
+              </p>
+              <div className="flex justify-end">
+                <HeroButton
+                  text={t("cancelWorkshop") || "Cancel Workshop"}
+                  backgroundColor="#FF0000"
+                  textColor="white"
+                  onClick={() => setIsCancelModalOpen(true)}
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Custom confirmation modals */}
+          <ConfirmationModal
+            isOpen={isCancelModalOpen}
+            title={t("cancelWorkshop") || "Cancel Workshop"}
+            message={t("confirmCancelWorkshop") || "Are you sure you want to cancel this workshop? This action cannot be undone, and all registered users will be notified."}
+            confirmText={t("cancelWorkshop") || "Cancel Workshop"}
+            cancelText={t("goBack") || "Go Back"}
+            onConfirm={async () => {
+              setIsLoading(true);
+              setError("");
+              setSuccessMessage("");
+              setIsCancelModalOpen(false);
+
+              try {
+                // Send request to cancel workshop
+                const token = localStorage.getItem("token");
+                if (!token) {
+                  throw new Error("You must be logged in to cancel a workshop");
+                }
+
+                const response = await fetch(`/api/workshops/${id}/cancel`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                  },
+                });
+
+                if (!response.ok) {
+                  const errorData = await response.json();
+                  throw new Error(errorData.error || "Failed to cancel workshop");
+                }
+
+                setSuccessMessage(t("workshopCanceled") || "Workshop canceled successfully!");
+
+                // Redirect to the workshop page after a short delay
+                setTimeout(() => {
+                  router.push(`/${locale}/workshops/${id}`);
+                }, 2000);
+              } catch (err) {
+                console.error("Error canceling workshop:", err);
+                setError(err.message || "Failed to cancel workshop");
+              } finally {
+                setIsLoading(false);
+              }
+            }}
+            onCancel={() => setIsCancelModalOpen(false)}
+            isProcessing={isLoading}
+            processingText={t("cancelling") || "Cancelling..."}
+            iconName="heroicons:exclamation-triangle"
+            iconColor="text-red-500"
+          />
         </div>
       </div>
     </div>

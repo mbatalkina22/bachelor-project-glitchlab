@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import HeroButton from '@/components/HeroButton';
 import { useRouter } from 'next/navigation';
+import ConfirmationModal from '@/components/modals/ConfirmationModal';
 
 const ProfileSettingsPage = () => {
   const t = useTranslations('Settings');
@@ -615,64 +616,21 @@ const ProfileSettingsPage = () => {
       </div>
 
       {/* Delete Account Modal */}
-      {showDeleteModal && (
-        <>
-          <style jsx global>{keyframes}</style>
-          <div 
-            className="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50 p-4"
-            style={modalAnimation}
-          >
-            <div 
-              className="bg-white rounded-lg shadow-xl max-w-md w-full p-6"
-              style={modalContentAnimation}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">{t('deleteAccount')}</h3>
-                <button 
-                  onClick={() => setShowDeleteModal(false)}
-                  className="text-gray-400 hover:text-gray-500"
-                >
-                  <Icon icon="heroicons:x-mark" className="h-5 w-5" />
-                </button>
-              </div>
-              <div className="mb-6">
-                <div className="flex items-center text-red-600 mb-4">
-                  <Icon icon="heroicons:exclamation-triangle" className="h-6 w-6 mr-2" />
-                  <p className="font-medium">{t('deleteAccountWarning')}</p>
-                </div>
-                <p className="text-gray-600 text-sm">
-                  This action cannot be undone. All your data, including profile information, reviews, and workshop registrations will be permanently deleted.
-                </p>
-              </div>
-              <div className="flex justify-end space-x-3">
-                <button
-                  onClick={() => setShowDeleteModal(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                  disabled={isLoading}
-                >
-                  {t('cancel')}
-                </button>
-                <button
-                  onClick={handleDeleteAccount}
-                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 flex items-center"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <Icon icon="heroicons:arrow-path" className="h-4 w-4 mr-2 animate-spin" />
-                      {t('deleting')}
-                    </>
-                  ) : (
-                    t('deleteAccount')
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        title={t('deleteAccount')}
+        message={t('deleteAccountWarning') + " This action cannot be undone. All your data, including profile information, reviews, and workshop registrations will be permanently deleted."}
+        confirmText={t('deleteAccount')}
+        cancelText={t('cancel')}
+        onConfirm={handleDeleteAccount}
+        onCancel={() => setShowDeleteModal(false)}
+        isProcessing={isLoading}
+        processingText={t('deleting')}
+        iconName="heroicons:exclamation-triangle"
+        iconColor="text-red-600"
+      />
     </div>
   );
 };
 
-export default ProfileSettingsPage; 
+export default ProfileSettingsPage;

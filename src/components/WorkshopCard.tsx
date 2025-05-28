@@ -28,6 +28,7 @@ interface WorkshopCardProps {
   buttonColor?: string;
   isRegistered?: boolean;
   isInstructing?: boolean;
+  canceled?: boolean;
 }
 
 const WorkshopCard = ({ 
@@ -42,7 +43,8 @@ const WorkshopCard = ({
   delay, 
   bgColor = "#ffffff",
   isRegistered = false,
-  isInstructing = false
+  isInstructing = false,
+  canceled = false
 }: WorkshopCardProps) => {
   const params = useParams();
   const locale = params.locale as string;
@@ -56,6 +58,9 @@ const WorkshopCard = ({
   const localizedDescription = descriptionTranslations && descriptionTranslations[locale]
     ? descriptionTranslations[locale]
     : description;
+
+  // Determine background color - if canceled, use darker grey regardless of original color
+  const cardBgColor = canceled ? "#e5e7eb" : bgColor;
 
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString('en-US', {
@@ -73,12 +78,12 @@ const WorkshopCard = ({
     });
   };
 
-  const status = getWorkshopStatus(startDate, endDate);
+  const status = getWorkshopStatus(startDate, endDate, canceled);
   const statusColor = getStatusColor(status);
   const isPast = status === 'past';
 
   return (
-    <div className={`rounded-lg overflow-hidden shadow-md h-full flex flex-col relative`} style={{ backgroundColor: bgColor }}>
+    <div className={`rounded-lg overflow-hidden shadow-md h-full flex flex-col relative`} style={{ backgroundColor: cardBgColor }}>
       {isRegistered && (
         <div className="absolute top-2 right-4 z-10">
           <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-md flex items-center">
@@ -100,7 +105,7 @@ const WorkshopCard = ({
           src={imageSrc} 
           alt={`${localizedTitle} workshop`} 
           fill
-          className="object-cover"
+          className={`object-cover ${canceled ? 'grayscale opacity-70' : ''}`}
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.src = "https://via.placeholder.com/400x200?text=Workshop+Image";

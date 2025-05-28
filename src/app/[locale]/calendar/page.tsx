@@ -183,12 +183,12 @@ export default function CalendarPage() {
     fetchUserData();
   }, []);
 
-  // Filter workshops to show only future and ongoing ones
+  // Filter workshops to show only future and ongoing ones, excluding canceled workshops
   const filteredWorkshops = workshops.filter(workshop => {
     const now = new Date();
     const startDate = new Date(workshop.startDate);
     const endDate = new Date(workshop.endDate);
-    return startDate >= now || (startDate <= now && endDate >= now);
+    return !workshop.canceled && (startDate >= now || (startDate <= now && endDate >= now));
   });
 
   const events = filteredWorkshops.map((workshop, index) => {

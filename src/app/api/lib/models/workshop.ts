@@ -77,6 +77,10 @@ const WorkshopSchema = new Schema({
     type: String,
     default: '#ffffff',
   },
+  canceled: {
+    type: Boolean,
+    default: false,
+  },
 }, {
   collection: 'workshops'
 });

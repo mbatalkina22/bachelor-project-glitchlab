@@ -22,6 +22,8 @@ interface Workshop {
   level: string;
   location: string;
   instructor: string;
+  bgColor?: string;
+  canceled?: boolean;
 }
 
 const InstructorProfilePage = () => {
@@ -56,12 +58,18 @@ const InstructorProfilePage = () => {
       }
       const data = await response.json();
       
-      // Convert string dates to Date objects
-      const workshopsWithDates = data.workshops.map((workshop: any) => ({
-        ...workshop,
-        startDate: new Date(workshop.startDate),
-        endDate: new Date(workshop.endDate)
-      }));
+      // Convert string dates to Date objects and ensure bgColor and canceled are included
+      const workshopsWithDates = data.workshops.map((workshop: any) => {
+        console.log('Instructor workshop data:', workshop); // Log workshop data for debugging
+        return {
+          ...workshop,
+          startDate: new Date(workshop.startDate),
+          endDate: new Date(workshop.endDate),
+          // Explicitly handle bgColor and canceled properties
+          bgColor: workshop.bgColor || null,
+          canceled: workshop.canceled || false
+        };
+      });
       
       // Split workshops into upcoming and past
       const now = new Date();
@@ -261,8 +269,9 @@ const InstructorProfilePage = () => {
                         endDate={new Date(workshop.endDate)}
                         imageSrc={workshop.imageSrc}
                         delay={`delay-${(index % 3 + 1) * 100}`}
-                        bgColor={["#c3c2fc", "#f8c5f4", "#fee487"][index % 3]}
+                        bgColor={workshop.bgColor || ["#c3c2fc", "#f8c5f4", "#fee487"][index % 3]}
                         isInstructing={true}
+                        canceled={workshop.canceled || false}
                       />
                     </ScrollReveal>
                   ))}
@@ -297,8 +306,9 @@ const InstructorProfilePage = () => {
                         endDate={new Date(workshop.endDate)}
                         imageSrc={workshop.imageSrc}
                         delay={`delay-${(index % 3 + 1) * 100}`}
-                        bgColor={["#c3c2fc", "#f8c5f4", "#fee487"][index % 3]}
+                        bgColor={workshop.bgColor}
                         isInstructing={true}
+                        canceled={workshop.canceled || false}
                       />
                     </ScrollReveal>
                   ))}

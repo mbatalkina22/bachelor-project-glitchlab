@@ -30,6 +30,8 @@ interface Workshop {
   level: string;
   location: string;
   instructor: string;
+  bgColor?: string;
+  canceled?: boolean;
 }
 
 interface UserReview {
@@ -87,12 +89,20 @@ const ProfilePage = () => {
         throw new Error('Failed to fetch registered workshops');
       }
       const data = await response.json();
-      // Convert string dates to Date objects
-      const workshopsWithDates = data.workshops.map((workshop: any) => ({
-        ...workshop,
-        startDate: new Date(workshop.startDate),
-        endDate: new Date(workshop.endDate)
-      }));
+      
+      // Convert string dates to Date objects and log the workshop data
+      const workshopsWithDates = data.workshops.map((workshop: any) => {
+        console.log('Workshop data:', workshop); // Log each workshop to check bgColor and canceled
+        return {
+          ...workshop,
+          startDate: new Date(workshop.startDate),
+          endDate: new Date(workshop.endDate),
+          // Make sure bgColor and canceled are explicitly included
+          bgColor: workshop.bgColor || null,
+          canceled: workshop.canceled || false
+        };
+      });
+      
       setRegisteredWorkshops(workshopsWithDates);
     } catch (error) {
       console.error('Error fetching registered workshops:', error);
@@ -324,8 +334,9 @@ const ProfilePage = () => {
                         endDate={new Date(workshop.endDate)}
                         imageSrc={workshop.imageSrc}
                         delay={`delay-${(index % 3 + 1) * 100}`}
-                        bgColor={["#c3c2fc", "#f8c5f4", "#fee487"][index % 3]}
+                        bgColor={workshop.bgColor || ["#c3c2fc", "#f8c5f4", "#fee487"][index % 3]}
                         isRegistered={true}
+                        canceled={workshop.canceled || false}
                       />
                     </ScrollReveal>
                   ))}

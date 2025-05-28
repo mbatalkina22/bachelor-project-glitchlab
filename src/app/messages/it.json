@@ -142,7 +142,17 @@
     "selectedAgeRanges": "Fasce d'età selezionate",
     "multipleAgeRangesNote": "Puoi selezionare più fasce d'età per il workshop",
     "selectedCategories": "Categorie selezionate",
-    "multipleCategoriesNote": "Puoi selezionare più categorie per il workshop"
+    "multipleCategoriesNote": "Puoi selezionare più categorie per il workshop",
+    "editWorkshop": "Modifica Workshop",
+    "editWorkshopDesc": "Aggiorna i dettagli del workshop qui sotto.",
+    "updateWorkshop": "Aggiorna Workshop",
+    "updating": "Aggiornamento in corso...",
+    "workshopUpdated": "Workshop aggiornato con successo!",
+    "cancelWorkshop": "Annulla Workshop",
+    "cancelWorkshopDesc": "Se hai bisogno di annullare questo workshop, puoi farlo qui. Questo rimuoverà tutte le registrazioni e contrassegnerà il workshop come annullato.",
+    "confirmCancelWorkshop": "Sei sicuro di voler annullare questo workshop? Tutti i partecipanti registrati saranno automaticamente cancellati.",
+    "cancelling": "Annullamento in corso...",
+    "workshopCanceled": "Workshop annullato con successo!"
   },
   "WorkshopDetail": {
     "home": "Home",
@@ -241,7 +251,10 @@
     "deleteWorkshop": "Elimina Workshop",
     "confirmDelete": "Conferma Eliminazione",
     "deleteWorkshopConfirmation": "Sei sicuro di voler eliminare questo workshop? Questa azione non può essere annullata e rimuoverà tutte le registrazioni.",
-    "learnMore": "Scopri di più"
+    "learnMore": "Scopri di più",
+    "workshopCanceled": "Questo workshop è stato annullato",
+    "registrationClosed": "La registrazione è chiusa",
+    "canceled": "Annullato"
   },
   "Profile": {
     "editProfile": "Modifica Profilo",

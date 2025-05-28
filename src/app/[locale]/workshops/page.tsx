@@ -273,6 +273,7 @@ const WorkshopsPage = () => {
                                             bgColor={workshop.bgColor}
                                             isRegistered={user?.registeredWorkshops?.includes(workshop._id) || false}
                                             isInstructing={workshop.instructorIds?.includes(user?._id) || false}
+                                            canceled={workshop.canceled || false}
                                         />
                                     </ScrollReveal>
                                 ))
