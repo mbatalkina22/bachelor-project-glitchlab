@@ -58,6 +58,7 @@ const WorkshopDetailPage = () => {
   const id = params.id as string;
   const locale = params.locale as string;
   const t = useTranslations('WorkshopDetail');
+  const tWorkshops = useTranslations('WorkshopsPage');
   const { user, isAuthenticated, isInstructor, refreshUser } = useAuth();
   const [workshop, setWorkshop] = useState<Workshop | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -357,7 +358,7 @@ const WorkshopDetailPage = () => {
               />
               <div className="absolute top-4 left-6">
                 <span className={`${getStatusColor(getWorkshopStatus(workshop.startDate, workshop.endDate, workshop.canceled))} text-white px-4 py-2 rounded-full text-sm font-medium capitalize shadow-md`}>
-                  {getWorkshopStatus(workshop.startDate, workshop.endDate, workshop.canceled)}
+                  {tWorkshops(getWorkshopStatus(workshop.startDate, workshop.endDate, workshop.canceled)) || getWorkshopStatus(workshop.startDate, workshop.endDate, workshop.canceled)}
                 </span>
               </div>
             </div>
@@ -368,7 +369,18 @@ const WorkshopDetailPage = () => {
                 <div className="flex flex-wrap gap-2">
                   {workshop.categories.map((category, index) => (
                     <span key={index} className="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-800">
-                      {category}
+                      {category === 'in-class' ? tWorkshops('inClass') : 
+                       category === 'out-of-class' ? tWorkshops('outClass') : 
+                       category === 'beginner' ? tWorkshops('beginner') :
+                       category === 'intermediate' ? tWorkshops('intermediate') :
+                       category === 'advanced' ? tWorkshops('advanced') :
+                       category === 'design' ? tWorkshops('design') :
+                       category === 'test' ? tWorkshops('test') :
+                       category === 'prototype' ? tWorkshops('prototype') :
+                       category === 'plug' ? tWorkshops('plug') :
+                       category === 'unplug' ? tWorkshops('unplug') :
+                       // Age ranges can remain as they are
+                       category}
                     </span>
                   ))}
                 </div>
@@ -446,7 +458,7 @@ const WorkshopDetailPage = () => {
                 <div className="flex items-center">
                   <Icon icon="heroicons:academic-cap" className="w-5 h-5 mr-2 text-gray-500" />
                   <span className="text-gray-700">
-                    {t('requiredLevel')}: {workshop.level}
+                    {t('requiredLevel')}: {tWorkshops(workshop.level) || workshop.level.charAt(0).toUpperCase() + workshop.level.slice(1)}
                   </span>
                 </div>
               </div>

@@ -49,6 +49,7 @@ const WorkshopCard = ({
   const params = useParams();
   const locale = params.locale as string;
   const t = useTranslations('WorkshopDetail');
+  const tWorkshops = useTranslations('WorkshopsPage');
 
   // Get localized content if available, otherwise fall back to default
   const localizedTitle = nameTranslations && nameTranslations[locale] 
@@ -113,7 +114,7 @@ const WorkshopCard = ({
         />
         <div className="absolute top-2 left-4">
           <span className={`${statusColor} text-white px-3 py-1 rounded-full text-sm font-medium capitalize shadow-md`}>
-            {status}
+            {tWorkshops(status) || status}
           </span>
         </div>
       </div>

@@ -101,17 +101,44 @@ const WorkshopsPage = () => {
         const matchesSearch = workshop.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                               workshop.description.toLowerCase().includes(searchTerm.toLowerCase());
         
-        // Category filter with multiple selections
+        // Category filter with multiple selections (design, test, prototype)
         const matchesCategory = isFilterSetToAll(categoryFilter) || 
-                              (workshop.categories && workshop.categories.some(cat => categoryFilter.includes(cat)));
+                              (workshop.categories && workshop.categories.some(cat => 
+                                categoryFilter.includes(cat) && ["design", "test", "prototype"].includes(cat)));
         
-        // Location filter with multiple selections
-        const matchesLocation = isFilterSetToAll(locationFilter) || locationFilter.includes(workshop.location);
+        // Location filter with multiple selections (in-class, out-of-class)
+        const matchesLocation = isFilterSetToAll(locationFilter) || 
+                              (workshop.categories && workshop.categories.some(loc => 
+                                locationFilter.includes(loc) && ["in-class", "out-of-class"].includes(loc)));
+        
+        // Tech type filter with multiple selections (plug, unplug)
+        const matchesTech = isFilterSetToAll(techFilter) || 
+                          (workshop.categories && workshop.categories.some(tech => 
+                            techFilter.includes(tech) && ["plug", "unplug"].includes(tech)));
+        
+        // Age filter with multiple selections
+        const matchesAge = isFilterSetToAll(ageFilter) || 
+                          (workshop.categories && workshop.categories.some(age => 
+                            ageFilter.includes(age) && ["6-8", "9-11", "12-13", "14-16", "16+"].includes(age)));
         
         // Skill level filter with multiple selections
         const matchesLevel = isFilterSetToAll(skillFilter) || skillFilter.includes(workshop.level);
         
-        return matchesSearch && matchesCategory && matchesLocation && matchesLevel;
+        // Status filter (future, ongoing, past)
+        const now = new Date();
+        const startDate = new Date(workshop.startDate);
+        const endDate = new Date(workshop.endDate);
+        
+        let status = 'past';
+        if (startDate > now) {
+            status = 'future';
+        } else if (startDate <= now && endDate >= now) {
+            status = 'ongoing';
+        }
+        
+        const matchesStatus = isFilterSetToAll(statusFilter) || statusFilter.includes(status);
+        
+        return matchesSearch && matchesCategory && matchesLocation && matchesTech && matchesAge && matchesLevel && matchesStatus;
     });
 
     // Empty filter handlers

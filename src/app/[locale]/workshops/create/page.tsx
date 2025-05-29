@@ -941,7 +941,9 @@ const CreateWorkshopPage = () => {
                     }`}
                     onClick={() => handleTechChange(classType)}
                   >
-                    {classType.charAt(0).toUpperCase() + classType.slice(1)}
+                    {classType === "in-class" ? 
+                      t("inClass") || "In Class" : 
+                      t("outClass") || "Out Class"}
                   </button>
                 ))}
               </div>
@@ -964,7 +966,7 @@ const CreateWorkshopPage = () => {
                     }`}
                     onClick={() => handleCategoryChange(category)}
                   >
-                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                    {t(category) || category.charAt(0).toUpperCase() + category.slice(1)}
                   </button>
                 ))}
               </div>
@@ -1001,7 +1003,7 @@ const CreateWorkshopPage = () => {
                     }`}
                     onClick={() => handleTechChange(tech)}
                   >
-                    {tech.charAt(0).toUpperCase() + tech.slice(1)}
+                    {t(tech) || tech.charAt(0).toUpperCase() + tech.slice(1)}
                   </button>
                 ))}
               </div>
