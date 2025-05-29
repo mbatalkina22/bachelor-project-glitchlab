@@ -25,6 +25,7 @@
     "next": "15.2.2",
     "next-cloudinary": "^6.16.0",
     "next-intl": "^4.0.2",
+    "nodemailer": "^7.0.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -33,6 +34,7 @@
     "@tailwindcss/postcss": "^4",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^20",
+    "@types/nodemailer": "^6.4.17",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

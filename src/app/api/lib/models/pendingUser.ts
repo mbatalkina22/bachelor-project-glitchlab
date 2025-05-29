@@ -1,24 +1,22 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-// Define the badge schema
-const BadgeSchema = new Schema({
-  id: String,
-  workshopId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Workshop'
-  },
-  name: String,
-  image: String,
-  date: Date,
-  description: String,
-  awardedBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }
-});
+export interface IPendingUser extends Document {
+  name: string;
+  email: string;
+  password: string;
+  avatar?: string;
+  role?: string;
+  surname?: string;
+  description?: string;
+  website?: string;
+  linkedin?: string;
+  verificationCode: string;
+  verificationCodeExpires: Date;
+  createdAt: Date;
+}
 
-const UserSchema = new Schema({
+const PendingUserSchema = new Schema<IPendingUser>({
   name: {
     type: String,
     required: [true, 'Please provide a name'],
@@ -47,13 +45,7 @@ const UserSchema = new Schema({
     enum: ['user', 'instructor'],
     default: 'user',
   },
-  registeredWorkshops: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Workshop'
-  }],
-  // Added badges array to store user's earned badges
-  badges: [BadgeSchema],
-  // Instructor specific fields
+  // Instructor specific fields (if registering as instructor)
   surname: {
     type: String,
     trim: true,
@@ -70,23 +62,26 @@ const UserSchema = new Schema({
     trim: true,
   },
   // Email verification fields
-  isVerified: {
-    type: Boolean,
-    default: false,
-  },
   verificationCode: {
     type: String,
+    required: true,
   },
   verificationCodeExpires: {
     type: Date,
+    required: true,
   },
+  // When the pending user was created
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    expires: '24h' // Automatically delete pending users after 24 hours if not verified
+  }
 }, {
-  timestamps: true,
-  collection: 'users'
+  collection: 'pendingUsers'
 });
 
 // Hash password before saving
-UserSchema.pre('save', async function(next) {
+PendingUserSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   
   try {
@@ -99,8 +94,11 @@ UserSchema.pre('save', async function(next) {
 });
 
 // Method to compare passwords
-UserSchema.methods.comparePassword = async function(candidatePassword: string) {
+PendingUserSchema.methods.comparePassword = async function(candidatePassword: string) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-export default mongoose.models.User || mongoose.model('User', UserSchema);
+// Create or get model
+const PendingUser = mongoose.models.PendingUser || mongoose.model<IPendingUser>('PendingUser', PendingUserSchema);
+
+export default PendingUser;

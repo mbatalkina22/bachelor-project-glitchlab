@@ -9,6 +9,7 @@ import HeroButton from '@/components/HeroButton';
 import WorkshopCard from '@/components/WorkshopCard';
 import ScrollReveal from '@/components/ScrollReveal';
 import { useAuth } from '@/context/AuthContext';
+import withEmailVerification from '@/components/withEmailVerification';
 import { useParams, useRouter } from 'next/navigation';
 
 interface Workshop {
@@ -328,4 +329,5 @@ const InstructorProfilePage = () => {
   );
 };
 
-export default InstructorProfilePage;
+// Export the component wrapped with email verification protection
+export default withEmailVerification(InstructorProfilePage);

@@ -9,6 +9,7 @@ import HeroButton from '@/components/HeroButton';
 import WorkshopCard from '@/components/WorkshopCard';
 import ScrollReveal from '@/components/ScrollReveal';
 import { useAuth } from '@/context/AuthContext';
+import withEmailVerification from '@/components/withEmailVerification';
 import { Arvo, Bebas_Neue, Dancing_Script, Lobster } from "next/font/google";
 import { getWorkshopReviewsUrl } from '@/utils/navigation';
 import { useParams, useRouter } from 'next/navigation';
@@ -485,4 +486,5 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+// Export the component wrapped with email verification protection
+export default withEmailVerification(ProfilePage);

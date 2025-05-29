@@ -17,10 +17,15 @@ const Navbar = () => {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
-  const { user, loading, logout } = useAuth();
+  const { user, loading, logout, needsVerification } = useAuth();
 
   // Check if the current page is the main page
   const isMainPage = pathname === `/${locale}` || pathname === `/${locale}/`;
+
+  // Define if user is verified and should be shown profile options
+  const showUserProfile = user && !needsVerification;
+  // Only show login/register if no user or user needs verification
+  const showAuthButtons = !user || (user && needsVerification);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -124,7 +129,7 @@ const Navbar = () => {
             {/* Authentication buttons or User Avatar */}
             {!loading && (
               <div className="relative ml-3">
-                {user ? (
+                {showUserProfile ? (
                   <>
                     <button 
                       className="user-avatar flex text-sm rounded-full focus:outline-none"
@@ -164,12 +169,14 @@ const Navbar = () => {
                               <Link 
                                 href={`/${locale}/profile/instructor`} 
                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                onClick={() => setIsUserMenuOpen(false)}
                               >
                                 {t('yourProfile')}
                               </Link>
                               <Link 
                                 href={`/${locale}/profile/instructor/settings`} 
                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                onClick={() => setIsUserMenuOpen(false)}
                               >
                                 {t('settings')}
                               </Link>
@@ -180,12 +187,14 @@ const Navbar = () => {
                               <Link 
                                 href={`/${locale}/profile`} 
                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                onClick={() => setIsUserMenuOpen(false)}
                               >
                                 {t('yourProfile')}
                               </Link>
                               <Link 
                                 href={`/${locale}/profile/settings`} 
                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                onClick={() => setIsUserMenuOpen(false)}
                               >
                                 {t('settings')}
                               </Link>
@@ -202,22 +211,22 @@ const Navbar = () => {
                       </div>
                     )}
                   </>
-                ) : (
+                ) : showAuthButtons && (
                   <div className="flex space-x-2">
-                   <HeroButton
-                    href={`/${locale}/login`}
-                    text={t('login')}
-                    backgroundColor={isScrolled ? "transparent" : "white"}
-                    textColor="#7471f9"
-                    className={`${isScrolled ? "border border-[#7471f9]" : "border-none"} text-sm`}
-                  />
-                  <HeroButton
-                    href={`/${locale}/register`}
-                    text={t('register')}
-                    backgroundColor="#7471f9"
-                    textColor="white"
-                    className={`${isScrolled ? "border border-[#7471f9]" : "border-none"} text-sm`}
-                  />
+                    <HeroButton
+                      href={`/${locale}/login`}
+                      text={t('login')}
+                      backgroundColor={isScrolled ? "transparent" : "white"}
+                      textColor="#7471f9"
+                      className={`${isScrolled ? "border border-[#7471f9]" : "border-none"} text-sm`}
+                    />
+                    <HeroButton
+                      href={`/${locale}/register`}
+                      text={t('register')}
+                      backgroundColor="#7471f9"
+                      textColor="white"
+                      className={`${isScrolled ? "border border-[#7471f9]" : "border-none"} text-sm`}
+                    />
                   </div>
                 )}
               </div>
@@ -228,7 +237,7 @@ const Navbar = () => {
           <div className="md:hidden flex items-center">
             {/* User avatar or auth buttons for mobile */}
             {!loading && (
-              user ? (
+              showUserProfile ? (
                 <button
                   className="mr-2 flex text-sm rounded-full focus:outline-none"
                   onClick={() => router.push(user.role === 'instructor' ? `/${locale}/profile/instructor` : `/${locale}/profile`)}
@@ -247,7 +256,7 @@ const Navbar = () => {
                     />
                   </div>
                 </button>
-              ) : (
+              ) : showAuthButtons && (
                 <div className="flex space-x-2 mr-2">
                   <HeroButton
                     href={`/${locale}/login`}
@@ -307,7 +316,9 @@ const Navbar = () => {
           <Link href={`/${locale}/our-team`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
             {t('ourTeam')}
           </Link>
-          {user && (
+          
+          {/* Only show profile links for verified users */}
+          {showUserProfile && (
             user.role === 'instructor' ? (
               <>
                 <Link href={`/${locale}/profile/instructor`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
@@ -329,7 +340,7 @@ const Navbar = () => {
             )
           )}
           
-          {user && (
+          {showUserProfile && (
             <button
               className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}
               onClick={handleLogout}

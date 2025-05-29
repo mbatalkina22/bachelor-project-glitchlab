@@ -21,6 +21,7 @@ export default function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -31,11 +32,25 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      setError(t('passwordsDoNotMatch') || 'Passwords do not match');
+      return;
+    }
+    
     setLoading(true);
 
     try {
-      await register(name, email, password, selectedAvatar);
-      router.push('/');
+      const result = await register(name, email, password, selectedAvatar);
+      
+      if (result.needsVerification) {
+        // Redirect to verification page if email verification is required
+        router.push('/verify-email');
+      } else {
+        // Otherwise go to home page
+        router.push('/');
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to register');
     } finally {
@@ -99,10 +114,26 @@ export default function RegisterPage() {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-[#7471f9] focus:border-[#7471f9] focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-[#7471f9] focus:border-[#7471f9] focus:z-10 sm:text-sm"
                 placeholder={t('password')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="confirm-password" className="sr-only">
+                {t('confirmPassword') || 'Confirm Password'}
+              </label>
+              <input
+                id="confirm-password"
+                name="confirm-password"
+                type="password"
+                autoComplete="new-password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-[#7471f9] focus:border-[#7471f9] focus:z-10 sm:text-sm"
+                placeholder={t('confirmPassword') || 'Confirm Password'}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>
           </div>
@@ -153,4 +184,4 @@ export default function RegisterPage() {
       </div>
     </div>
   );
-} 
+}

@@ -31,7 +31,9 @@ export async function GET(request: Request) {
         );
       }
 
-      return NextResponse.json({ user }, { status: 200 });
+      return NextResponse.json({ 
+        user
+      }, { status: 200 });
     } catch (error) {
       return NextResponse.json(
         { error: 'Invalid token' },
@@ -45,4 +47,4 @@ export async function GET(request: Request) {
       { status: 500 }
     );
   }
-} 
+}

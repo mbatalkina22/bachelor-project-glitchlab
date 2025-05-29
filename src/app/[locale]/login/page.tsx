@@ -14,7 +14,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const t = useTranslations('Auth');
-  const { login } = useAuth();
+  const { login, needsVerification } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +23,13 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      router.push('/');
+      
+      // If auth context has needsVerification flag set, redirect to verification page
+      if (needsVerification || localStorage.getItem('needsVerification') === 'true') {
+        router.push('/verify-email');
+      } else {
+        router.push('/');
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to login');
     } finally {
@@ -101,4 +107,4 @@ export default function LoginPage() {
       </div>
     </div>
   );
-} 
+}

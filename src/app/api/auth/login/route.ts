@@ -40,6 +40,16 @@ export async function POST(request: Request) {
       );
     }
 
+    // All users in the User collection should now be verified
+    // as unverified users are kept in the PendingUser collection
+    // But we'll double-check just in case
+    if (user.isVerified === false) {
+      return NextResponse.json(
+        { error: 'Email not verified. Please verify your email before logging in.' },
+        { status: 403 }
+      );
+    }
+
     // Create JWT token
     const token = sign(
       { userId: user._id },
@@ -61,4 +71,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-} 
+}
