@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import HeroButton from "@/components/HeroButton";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { uploadImage } from "@/utils/cloudinaryClient";
 
 // Add instructor interface
 interface Instructor {
@@ -250,17 +251,33 @@ const CreateWorkshopPage = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      
+      // Validate file type
+      if (!file.type.includes('image/')) {
+        setError("Please upload an image file");
+        return;
+      }
 
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setWorkshopData({
-            ...workshopData,
-            imageSrc: event.target.result as string,
-          });
-        }
-      };
-      reader.readAsDataURL(file);
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError("Image size should be less than 5MB");
+        return;
+      }
+      
+      setError("");
+      
+      // Create a preview URL for the selected file
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewImageUrl(objectUrl);
+      
+      // Store the file reference but don't upload yet
+      setSelectedImageFile(file);
+      
+      // Update the UI to show the preview
+      setWorkshopData({
+        ...workshopData,
+        imageSrc: objectUrl
+      });
     }
   };
 
@@ -314,6 +331,19 @@ const CreateWorkshopPage = () => {
     try {
       setIsLoading(true);
 
+      // If there's a selected image file, upload it to Cloudinary now
+      let imageSrcUrl = workshopData.imageSrc;
+      
+      if (selectedImageFile) {
+        try {
+          // Upload the image to Cloudinary using direct upload (no Base64)
+          imageSrcUrl = await uploadImage(selectedImageFile, 'workshops');
+        } catch (imageError) {
+          console.error("Error uploading image:", imageError);
+          throw new Error("Failed to upload workshop image. Please try again.");
+        }
+      }
+
       // Calculate start and end dates from date and time fields
       const startDateTime = new Date(
         `${workshopData.startDate}T${workshopData.startTime}`
@@ -345,7 +375,7 @@ const CreateWorkshopPage = () => {
         },
         startDate: startDateTime.toISOString(),
         endDate: endDateTime.toISOString(),
-        imageSrc: workshopData.imageSrc,
+        imageSrc: imageSrcUrl, // Use the Cloudinary URL if a new image was uploaded
         badgeName: workshopData.badgeNameTranslations.en,
         badgeNameTranslations: {
           en: workshopData.badgeNameTranslations.en,
@@ -359,9 +389,6 @@ const CreateWorkshopPage = () => {
         bgColor: workshopData.bgColor,
       };
       
-      console.log("Sending workshop payload:", JSON.stringify(workshopPayload));
-      console.log("Instructors selected:", workshopData.instructorIds);
-
       // Send request to create workshop
       const token = localStorage.getItem("token");
       if (!token) {
@@ -384,6 +411,10 @@ const CreateWorkshopPage = () => {
 
       const data = await response.json();
       setSuccessMessage("Workshop created successfully!");
+
+      // Reset selected image file state
+      setSelectedImageFile(null);
+      setPreviewImageUrl(null);
 
       // Redirect to the workshop page after a short delay
       setTimeout(() => {
@@ -411,6 +442,9 @@ const CreateWorkshopPage = () => {
       }
     });
   };
+
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
 
   if (!user || !isInstructor) {
     return (

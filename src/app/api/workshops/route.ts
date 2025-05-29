@@ -86,6 +86,29 @@ export async function POST(request: Request) {
         );
       }
       
+      // Check if imageSrc is a Base64 string and convert it to a Cloudinary URL if needed
+      if (body.imageSrc && body.imageSrc.startsWith('data:image')) {
+        try {
+          // Import cloudinary configuration
+          const cloudinary = (await import('@/utils/cloudinary')).default;
+          
+          // Upload the Base64 image to Cloudinary
+          const uploadResult = await cloudinary.uploader.upload(body.imageSrc, {
+            folder: 'workshops',
+            public_id: `workshop_${Date.now()}`,
+            overwrite: true,
+            resource_type: 'auto',
+          });
+          
+          // Update the imageSrc with the Cloudinary URL
+          body.imageSrc = uploadResult.secure_url;
+          console.log('Converted Base64 image to Cloudinary URL:', uploadResult.secure_url);
+        } catch (cloudinaryError) {
+          console.error('Error uploading image to Cloudinary:', cloudinaryError);
+          // Continue with the create even if Cloudinary upload fails
+        }
+      }
+      
       // Create the workshop
       const workshop = await Workshop.create(body);
       console.log("Workshop created successfully with ID:", workshop._id);

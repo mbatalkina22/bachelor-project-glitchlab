@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import HeroButton from '@/components/HeroButton';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { uploadImage } from '@/utils/cloudinaryClient';
 
 const InstructorSettingsPage = () => {
   const t = useTranslations('Settings');
@@ -21,6 +22,10 @@ const InstructorSettingsPage = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Add state for temporary image file storage
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
 
   // Redirect to regular profile if not an instructor
   useEffect(() => {
@@ -122,17 +127,32 @@ const InstructorSettingsPage = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       
-      // Remove file size restriction
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setUserData({
-            ...userData,
-            avatar: event.target.result as string
-          });
-        }
-      };
-      reader.readAsDataURL(file);
+      // Validate file type
+      if (!file.type.includes('image/')) {
+        setError(t('invalidFileType'));
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError(t('fileTooLarge'));
+        return;
+      }
+      
+      setError('');
+      
+      // Store the file reference but don't upload yet
+      setSelectedImageFile(file);
+      
+      // Display preview
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewImageUrl(objectUrl);
+      
+      // Update UI to show the preview
+      setUserData({
+        ...userData,
+        avatar: objectUrl
+      });
     }
   };
 
@@ -155,6 +175,19 @@ const InstructorSettingsPage = () => {
         return;
       }
 
+      // If there's a selected image file, upload it to Cloudinary now
+      let avatarUrl = userData.avatar;
+      
+      if (selectedImageFile) {
+        try {
+          // Upload the image to Cloudinary using direct upload (no Base64)
+          avatarUrl = await uploadImage(selectedImageFile, 'instructors');
+        } catch (imageError) {
+          console.error("Error uploading image:", imageError);
+          throw new Error(t('failedToUploadImage'));
+        }
+      }
+
       const response = await fetch('/api/users/update', {
         method: 'PUT',
         headers: {
@@ -165,7 +198,10 @@ const InstructorSettingsPage = () => {
           name: userData.name,
           surname: userData.surname,
           email: userData.email,
-          avatar: userData.avatar
+          avatar: avatarUrl, // Use the Cloudinary URL if a new image was uploaded
+          description: userData.description,
+          website: userData.website,
+          linkedin: userData.linkedin
         })
       });
 
@@ -173,6 +209,15 @@ const InstructorSettingsPage = () => {
         const errorData = await response.json();
         throw new Error(errorData.error || t('failedToUpdateProfile'));
       }
+
+      // Reset selected image file state
+      setSelectedImageFile(null);
+      
+      // Update user data with the Cloudinary URL
+      setUserData({
+        ...userData,
+        avatar: avatarUrl
+      });
 
       setSuccessMessage(t('profileUpdatedSuccess'));
     } catch (err: any) {
@@ -308,6 +353,21 @@ const InstructorSettingsPage = () => {
       setShowDeleteModal(false);
     }
   };
+
+  // Preview image before upload
+  useEffect(() => {
+    if (selectedImageFile) {
+      const objectUrl = URL.createObjectURL(selectedImageFile);
+      setPreviewImageUrl(objectUrl);
+
+      // Clean up the URL object after component unmount
+      return () => {
+        URL.revokeObjectURL(objectUrl);
+      };
+    } else {
+      setPreviewImageUrl(null);
+    }
+  }, [selectedImageFile]);
 
   if (!user || !isInstructor) {
     return (
@@ -709,4 +769,4 @@ const InstructorSettingsPage = () => {
   );
 };
 
-export default InstructorSettingsPage; 
+export default InstructorSettingsPage;

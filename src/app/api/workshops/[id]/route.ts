@@ -122,9 +122,6 @@ export async function PUT(request: Request, { params }: Params) {
       );
     }
     
-    // Remove the instructor check - allow any instructor to update any workshop
-    // We no longer check if the instructor is associated with this workshop
-
     // Get updated workshop data from request body
     const updatedData = await request.json();
     
