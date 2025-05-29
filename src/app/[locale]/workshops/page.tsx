@@ -31,7 +31,6 @@ const WorkshopsPage = () => {
     const t = useTranslations('WorkshopsPage');
     const { user } = useAuth();
     const params = useParams();
-    const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('all');
     const [workshops, setWorkshops] = useState<Workshop[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -96,11 +95,8 @@ const WorkshopsPage = () => {
         return filterArray.length === 1 && filterArray[0] === 'all';
     };
 
-    // Filter workshops based on search term and multiple selected filters
+    // Filter workshops based on multiple selected filters
     const filteredWorkshops = workshops.filter(workshop => {
-        const matchesSearch = workshop.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                              workshop.description.toLowerCase().includes(searchTerm.toLowerCase());
-        
         // Category filter with multiple selections (design, test, prototype)
         const matchesCategory = isFilterSetToAll(categoryFilter) || 
                               (workshop.categories && workshop.categories.some(cat => 
@@ -138,13 +134,8 @@ const WorkshopsPage = () => {
         
         const matchesStatus = isFilterSetToAll(statusFilter) || statusFilter.includes(status);
         
-        return matchesSearch && matchesCategory && matchesLocation && matchesTech && matchesAge && matchesLevel && matchesStatus;
+        return matchesCategory && matchesLocation && matchesTech && matchesAge && matchesLevel && matchesStatus;
     });
-
-    // Empty filter handlers
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(e.target.value);
-    };
 
     const handleFilterChange = (filterType: string, value: string) => {
         switch(filterType) {
@@ -205,6 +196,16 @@ const WorkshopsPage = () => {
         });
     };
 
+    // Function to reset all filters to their default values
+    const resetFilters = () => {
+        setAgeFilter(['all']);
+        setSkillFilter(['all']);
+        setLocationFilter(['all']);
+        setCategoryFilter(['all']);
+        setTechFilter(['all']);
+        setStatusFilter(['all']);
+    };
+
     if (isLoading) {
         return (
             <div className="pt-16 min-h-screen bg-gray-50 flex items-center justify-center">
@@ -235,83 +236,73 @@ const WorkshopsPage = () => {
         <div className="pt-16 min-h-screen bg-gray-50">
             {/* Main Content Container */}
             <div className="mx-auto px-2 sm:px-4 lg:px-8 py-8">
-                <div className="flex flex-col lg:flex-row gap-1 min-h-screen">
-                    {/* Filters component */}
-                    <WorkshopFilters 
-                        ageFilter={ageFilter}
-                        skillFilter={skillFilter}
-                        locationFilter={locationFilter}
-                        categoryFilter={categoryFilter}
-                        techFilter={techFilter}
-                        statusFilter={statusFilter}
-                        handleFilterChange={handleFilterChange}
-                    />
-
-                    {/* Content area - right side */}
-                    <div className="lg:w-[88%] pl-0 lg:pl-3 lg:border-l border-gray-200">
-                        {/* Search bar and refresh button at the top */}
-                        <div className="flex justify-center mb-6">
-                            <div className="relative w-full max-w-4xl flex items-center">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Icon icon="heroicons:magnifying-glass" className="h-5 w-5 text-gray-600" />
-                                </div>
-                                <input
-                                    type="text"
-                                    placeholder={t('searchPlaceholder') || "Search workshops..."}
-                                    className="block w-full pl-10 pr-5 py-2 border border-gray-300 rounded-full leading-5 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#7471f9] focus:border-[#7471f9]"
-                                    value={searchTerm}
-                                    onChange={handleSearch}
-                                />
-                                {user && user.role === 'instructor' && (
-                                    <Link 
-                                        href={`/${params.locale}/workshops/create`}
-                                        className="ml-4 flex items-center"
-                                    >
-                                        <HeroButton className="flex items-center">
-                                            <Icon icon="heroicons:plus" className="h-5 w-5" /> 
-                                        </HeroButton>
-                                    </Link>
-                                )}
-                            </div>
+                {/* Content area - full width */}
+                <div className="w-full">
+                    {/* Header with filters, results count and create button */}
+                    <div className="flex flex-wrap justify-between items-center mb-6 px-4">
+                        {/* Left side with filters */}
+                        <div className="w-auto relative">
+                            <WorkshopFilters 
+                                ageFilter={ageFilter}
+                                skillFilter={skillFilter}
+                                locationFilter={locationFilter}
+                                categoryFilter={categoryFilter}
+                                techFilter={techFilter}
+                                statusFilter={statusFilter}
+                                handleFilterChange={handleFilterChange}
+                                resetFilters={resetFilters}
+                            />
                         </div>
-
-                        {/* Results Count */}
-                        <div className="mb-6 text-center">
-                            <p className="text-gray-600">
+                        
+                        <div className="flex items-center">
+                            {/* Results Count */}
+                            <p className="text-gray-600 mr-4">
                                 {t('showing')} {filteredWorkshops.length} {t('of')} {workshops.length} {t('workshops')}
                             </p>
-                        </div>
-
-                        {/* Workshop Cards Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 mx-2 mb-10">
-                            {filteredWorkshops.length > 0 ? (
-                                filteredWorkshops.map((workshop, index) => (
-                                    <ScrollReveal key={workshop._id} className={workshop.delay}>
-                                        <WorkshopCard 
-                                            id={workshop._id}
-                                            title={workshop.name}
-                                            nameTranslations={workshop.nameTranslations}
-                                            description={workshop.description}
-                                            descriptionTranslations={workshop.descriptionTranslations}
-                                            startDate={new Date(workshop.startDate)}
-                                            endDate={new Date(workshop.endDate)}
-                                            imageSrc={workshop.imageSrc}
-                                            delay={workshop.delay || ""}
-                                            bgColor={workshop.bgColor}
-                                            isRegistered={user?.registeredWorkshops?.includes(workshop._id) || false}
-                                            isInstructing={workshop.instructorIds?.includes(user?._id) || false}
-                                            canceled={workshop.canceled || false}
-                                        />
-                                    </ScrollReveal>
-                                ))
-                            ) : (
-                                <div className="col-span-full py-12 text-center">
-                                    <Icon icon="heroicons:face-frown" className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                                    <h3 className="text-xl font-medium text-gray-900 mb-2">{t('noWorkshopsFound')}</h3>
-                                    <p className="text-gray-500">{t('tryAdjusting')}</p>
-                                </div>
+                            
+                            {/* Create button for instructors */}
+                            {user && user.role === 'instructor' && (
+                                <Link 
+                                    href={`/${params.locale}/workshops/create`}
+                                    className="flex items-center mt-2 sm:mt-0"
+                                >
+                                    <HeroButton className="flex items-center">
+                                        <Icon icon="heroicons:plus" className="h-5 w-5" /> 
+                                    </HeroButton>
+                                </Link>
                             )}
                         </div>
+                    </div>
+
+                    {/* Workshop Cards Grid - Larger cards with fewer columns */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 mx-2 mb-10">
+                        {filteredWorkshops.length > 0 ? (
+                            filteredWorkshops.map((workshop, index) => (
+                                <ScrollReveal key={workshop._id} className={workshop.delay}>
+                                    <WorkshopCard 
+                                        id={workshop._id}
+                                        title={workshop.name}
+                                        nameTranslations={workshop.nameTranslations}
+                                        description={workshop.description}
+                                        descriptionTranslations={workshop.descriptionTranslations}
+                                        startDate={new Date(workshop.startDate)}
+                                        endDate={new Date(workshop.endDate)}
+                                        imageSrc={workshop.imageSrc}
+                                        delay={workshop.delay || ""}
+                                        bgColor={workshop.bgColor}
+                                        isRegistered={user?.registeredWorkshops?.includes(workshop._id) || false}
+                                        isInstructing={workshop.instructorIds?.includes(user?._id) || false}
+                                        canceled={workshop.canceled || false}
+                                    />
+                                </ScrollReveal>
+                            ))
+                        ) : (
+                            <div className="col-span-full py-12 text-center">
+                                <Icon icon="heroicons:face-frown" className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+                                <h3 className="text-xl font-medium text-gray-900 mb-2">{t('noWorkshopsFound')}</h3>
+                                <p className="text-gray-500">{t('tryAdjusting')}</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
