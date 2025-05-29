@@ -39,6 +39,12 @@ export default function RegisterPage() {
       return;
     }
     
+    // Check password length
+    if (password.length < 8) {
+      setError(t('passwordTooShort') || 'Password must be at least 8 characters long');
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -98,7 +104,7 @@ export default function RegisterPage() {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-[#7471f9] focus:border-[#7471f9] focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-black focus:outline-none focus:ring-[#7471f9] focus:border-[#7471f9] focus:z-10 sm:text-sm"
                 placeholder={t('emailAddress')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -114,6 +120,7 @@ export default function RegisterPage() {
                 type="password"
                 autoComplete="new-password"
                 required
+                minLength={8}
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-[#7471f9] focus:border-[#7471f9] focus:z-10 sm:text-sm"
                 placeholder={t('password')}
                 value={password}
@@ -130,6 +137,7 @@ export default function RegisterPage() {
                 type="password"
                 autoComplete="new-password"
                 required
+                minLength={8}
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-[#7471f9] focus:border-[#7471f9] focus:z-10 sm:text-sm"
                 placeholder={t('confirmPassword') || 'Confirm Password'}
                 value={confirmPassword}

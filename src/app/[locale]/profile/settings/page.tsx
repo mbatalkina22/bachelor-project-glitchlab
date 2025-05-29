@@ -6,12 +6,14 @@ import { Icon } from '@iconify/react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import HeroButton from '@/components/HeroButton';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import ConfirmationModal from '@/components/modals/ConfirmationModal';
 
 const ProfileSettingsPage = () => {
   const t = useTranslations('Settings');
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string;
   const [activeTab, setActiveTab] = useState('profile');
   const [showAvatarSelector, setShowAvatarSelector] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -199,12 +201,12 @@ const ProfileSettingsPage = () => {
     
     // Validate passwords
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setError('New passwords do not match');
+      setError(t('passwordsDoNotMatch'));
       return;
     }
 
-    if (passwordData.newPassword.length < 6) {
-      setError('Password must be at least 6 characters long');
+    if (passwordData.newPassword.length < 8) {
+      setError(t('passwordTooShort'));
       return;
     }
 
@@ -552,6 +554,11 @@ const ProfileSettingsPage = () => {
                         className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
                         required
                       />
+                      <div className="text-right mt-1">
+                        <Link href={`/${locale}/forgot-password${userData.email ? `?email=${encodeURIComponent(userData.email)}` : ''}`} className="text-sm text-[#7471f9] hover:underline">
+                          {t('forgotPassword') || 'Forgot password?'}
+                        </Link>
+                      </div>
                     </div>
                     
                     <div>
@@ -566,6 +573,7 @@ const ProfileSettingsPage = () => {
                         onChange={handlePasswordChange}
                         className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
                         required
+                        minLength={8}
                       />
                     </div>
                     
@@ -581,6 +589,7 @@ const ProfileSettingsPage = () => {
                         onChange={handlePasswordChange}
                         className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
                         required
+                        minLength={8}
                       />
                     </div>
                     

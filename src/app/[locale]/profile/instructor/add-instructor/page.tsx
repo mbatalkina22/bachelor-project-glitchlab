@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Icon } from '@iconify/react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import HeroButton from '@/components/HeroButton';
@@ -18,7 +17,6 @@ const AddInstructorPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [activeTab, setActiveTab] = useState('basic');
 
   // Redirect to regular profile if not an instructor
   useEffect(() => {
@@ -33,10 +31,7 @@ const AddInstructorPage = () => {
     surname: '',
     email: '',
     password: '',
-    confirmPassword: '',
-    description: '',
-    website: '',
-    linkedin: ''
+    confirmPassword: ''
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -58,7 +53,7 @@ const AddInstructorPage = () => {
       return;
     }
 
-    if (instructorData.password.length < 6) {
+    if (instructorData.password.length < 8) {
       setError(t('passwordTooShort'));
       return;
     }
@@ -82,9 +77,9 @@ const AddInstructorPage = () => {
           surname: instructorData.surname,
           email: instructorData.email,
           password: instructorData.password,
-          description: instructorData.description,
-          website: instructorData.website,
-          linkedin: instructorData.linkedin
+          description: '',
+          website: '',
+          linkedin: ''
         })
       });
 
@@ -94,17 +89,12 @@ const AddInstructorPage = () => {
       }
 
       setSuccessMessage(t('instructorRegistered'));
-      // Clear form
-      setInstructorData({
-        name: '',
-        surname: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        description: '',
-        website: '',
-        linkedin: ''
-      });
+      
+      // Redirect to profile page after successful registration
+      setTimeout(() => {
+        router.push(`/${locale}/profile/instructor`);
+      }, 1500);
+      
     } catch (err: any) {
       console.error('Error registering instructor:', err);
       setError(err.message || t('failedToRegister'));
@@ -144,212 +134,107 @@ const AddInstructorPage = () => {
             </div>
           )}
           
-          {/* Tabs */}
-          <div className="border-b border-gray-200">
-            <nav className="flex -mb-px px-6">
-              <button
-                onClick={() => setActiveTab('basic')}
-                className={`py-4 px-6 text-sm font-medium ${
-                  activeTab === 'basic'
-                    ? 'border-b-2 border-[#7471f9] text-[#7471f9]'
-                    : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                {t('basicInformation')}
-              </button>
-              <button
-                onClick={() => setActiveTab('about')}
-                className={`py-4 px-6 text-sm font-medium ${
-                  activeTab === 'about'
-                    ? 'border-b-2 border-[#7471f9] text-[#7471f9]'
-                    : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                {t('aboutInformation')}
-              </button>
-            </nav>
-          </div>
-          
           <form onSubmit={handleSubmit} className="p-6">
-            {activeTab === 'basic' && (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="name">
-                      {t('firstName')}
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={instructorData.name}
-                      onChange={handleInputChange}
-                      className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="surname">
-                      {t('lastName')}
-                    </label>
-                    <input
-                      type="text"
-                      id="surname"
-                      name="surname"
-                      value={instructorData.surname}
-                      onChange={handleInputChange}
-                      className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
-                    />
-                  </div>
-                </div>
-                
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="email">
-                    {t('emailAddress')}
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={instructorData.email}
-                    onChange={handleInputChange}
-                    className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
-                    required
-                  />
-                  <p className="mt-1 text-xs text-gray-500">
-                    {t('emailForLogin')}
-                  </p>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="password">
-                      {t('password')}
-                    </label>
-                    <input
-                      type="password"
-                      id="password"
-                      name="password"
-                      value={instructorData.password}
-                      onChange={handleInputChange}
-                      className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="confirmPassword">
-                      {t('confirmPassword')}
-                    </label>
-                    <input
-                      type="password"
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      value={instructorData.confirmPassword}
-                      onChange={handleInputChange}
-                      className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
-                      required
-                    />
-                  </div>
-                </div>
-                
-                <div className="flex justify-between">
-                  <Link href={`/${locale}/profile/instructor`}>
-                    <button
-                      type="button"
-                      className="px-4 py-2 text-sm font-medium text-[#7471f9] bg-white border border-[#7471f9] rounded-full hover:bg-gray-50"
-                    >
-                      {t('cancel')}
-                    </button>
-                  </Link>
-                  
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('about')}
-                    className="px-4 py-2 text-sm font-medium text-white bg-[#7471f9] rounded-full hover:bg-[#5a57c7]"
-                  >
-                    {t('nextAboutInfo')}
-                  </button>
-                </div>
-              </>
-            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="name">
+                  {t('firstName')}
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={instructorData.name}
+                  onChange={handleInputChange}
+                  className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="surname">
+                  {t('lastName')}
+                </label>
+                <input
+                  type="text"
+                  id="surname"
+                  name="surname"
+                  value={instructorData.surname}
+                  onChange={handleInputChange}
+                  className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
+                />
+              </div>
+            </div>
             
-            {activeTab === 'about' && (
-              <>
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="description">
-                    {t('bioDescription')}
-                  </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    rows={4}
-                    value={instructorData.description}
-                    onChange={handleInputChange}
-                    className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
-                  />
-                  <p className="mt-1 text-xs text-gray-500">
-                    {t('optionalAddLater')}
-                  </p>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="website">
-                      {t('personalWebsite')}
-                    </label>
-                    <input
-                      type="url"
-                      id="website"
-                      name="website"
-                      value={instructorData.website}
-                      onChange={handleInputChange}
-                      placeholder="https://yourwebsite.com"
-                      className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
-                    />
-                    <p className="mt-1 text-xs text-gray-500">
-                      {t('optionalAddLater')}
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="linkedin">
-                      {t('linkedinProfile')}
-                    </label>
-                    <input
-                      type="url"
-                      id="linkedin"
-                      name="linkedin"
-                      value={instructorData.linkedin}
-                      onChange={handleInputChange}
-                      placeholder="https://linkedin.com/in/yourname"
-                      className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
-                    />
-                    <p className="mt-1 text-xs text-gray-500">
-                      {t('optionalAddLater')}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex justify-between">
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('basic')}
-                    className="px-4 py-2 text-sm font-medium text-[#7471f9] bg-white border border-[#7471f9] rounded-full hover:bg-gray-50"
-                  >
-                    {t('backToBasic')}
-                  </button>
-                  
-                  <HeroButton
-                    text={t('registerInstructor')}
-                    backgroundColor="#7471f9"
-                    textColor="white"
-                    disabled={isLoading}
-                  />
-                </div>
-              </>
-            )}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="email">
+                {t('emailAddress')}
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={instructorData.email}
+                onChange={handleInputChange}
+                className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
+                required
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                {t('emailForLogin')}
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="password">
+                  {t('password')}
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={instructorData.password}
+                  onChange={handleInputChange}
+                  className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
+                  required
+                  minLength={8}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="confirmPassword">
+                  {t('confirmPassword')}
+                </label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={instructorData.confirmPassword}
+                  onChange={handleInputChange}
+                  className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
+                  required
+                  minLength={8}
+                />
+              </div>
+            </div>
+            
+            <div className="flex justify-between">
+              <Link href={`/${locale}/profile/instructor`}>
+                <button
+                  type="button"
+                  className="px-4 py-2 text-sm font-medium text-[#7471f9] bg-white border border-[#7471f9] rounded-full hover:bg-gray-50"
+                >
+                  {t('cancel')}
+                </button>
+              </Link>
+              
+              <HeroButton
+                text={t('registerInstructor')}
+                backgroundColor="#7471f9"
+                textColor="white"
+                disabled={isLoading}
+              />
+            </div>
           </form>
         </div>
       </div>
@@ -357,4 +242,4 @@ const AddInstructorPage = () => {
   );
 };
 
-export default AddInstructorPage; 
+export default AddInstructorPage;

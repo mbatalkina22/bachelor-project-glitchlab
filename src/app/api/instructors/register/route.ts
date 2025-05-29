@@ -72,7 +72,8 @@ export async function POST(request: Request) {
         description: description || '',
         website: website || '',
         linkedin: linkedin || '',
-        avatar: avatar || '/images/avatar.jpg'
+        avatar: avatar || '/images/avatar.jpg',
+        isVerified: true // Automatically set instructors as verified
       });
 
       // Return instructor without password
@@ -95,4 +96,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-} 
+}
