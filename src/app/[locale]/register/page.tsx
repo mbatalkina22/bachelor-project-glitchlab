@@ -25,6 +25,7 @@ export default function RegisterPage() {
   const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [emailLanguage, setEmailLanguage] = useState('en');
   const router = useRouter();
   const t = useTranslations('Auth');
   const { register } = useAuth();
@@ -48,7 +49,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const result = await register(name, email, password, selectedAvatar);
+      const result = await register(name, email, password, selectedAvatar, emailLanguage);
       
       if (result.needsVerification) {
         // Redirect to verification page if email verification is required
@@ -169,6 +170,23 @@ export default function RegisterPage() {
                 </button>
               ))}
             </div>
+          </div>
+
+          <div>
+            <label htmlFor="email-language" className="block text-sm font-medium text-gray-700 mb-2">
+              {t('emailLanguage') || 'Preferred Email Language'}
+            </label>
+            <select
+              id="email-language"
+              name="email-language"
+              required
+              className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-[#7471f9] focus:border-[#7471f9] focus:z-10 sm:text-sm"
+              value={emailLanguage}
+              onChange={(e) => setEmailLanguage(e.target.value)}
+            >
+              <option value="en">English</option>
+              <option value="it">Italian</option>
+            </select>
           </div>
 
           <div>

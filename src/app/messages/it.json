@@ -381,10 +381,6 @@
     "emailNotifications": "Notifiche Email",
     "workshopNotifications": "Notifiche Workshop",
     "workshopNotificationsDesc": "Ricevi notifiche sui workshops imminenti e conferme di registrazione",
-    "reviewNotifications": "Notifiche Recensioni",
-    "reviewNotificationsDesc": "Ricevi notifiche quando qualcuno risponde alle tue recensioni",
-    "updateNotifications": "Aggiornamenti Piattaforma",
-    "updateNotificationsDesc": "Ricevi notifiche sugli aggiornamenti della piattaforma e nuove funzionalità",
     "savePreferences": "Salva Preferenze",
     "securityDesc": "Aggiorna la tua password e gestisci le tue sessioni",
     "changePassword": "Cambia Password",
@@ -403,7 +399,10 @@
     "failedToDeleteAccount": "Impossibile eliminare l'account",
     "loading": "Caricamento...",
     "failedToFetchUserData": "Impossibile recuperare i dati dell'utente",
-    "failedToLoadUserData": "Impossibile caricare i dati dell'utente"
+    "failedToLoadUserData": "Impossibile caricare i dati dell'utente",
+    "emailLanguage": "Lingua delle Email",
+    "emailLanguageDesc": "Scegli la lingua per tutte le email che ricevi da noi",
+    "preferencesUpdated": "Preferenze aggiornate con successo"
   },
   "Auth": {
     "signInToAccount": "Accedi al tuo account",

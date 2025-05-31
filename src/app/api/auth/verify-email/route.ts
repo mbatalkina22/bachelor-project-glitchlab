@@ -80,6 +80,7 @@ export async function POST(request: Request) {
         password: pendingUser.password, // Already hashed in the PendingUser model
         avatar: pendingUser.avatar,
         role: pendingUser.role || 'user',
+        emailLanguage: pendingUser.emailLanguage || 'en',
         isVerified: true // User is created already verified
       };
       

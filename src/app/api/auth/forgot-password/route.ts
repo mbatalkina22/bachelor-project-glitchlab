@@ -35,8 +35,11 @@ export async function POST(request: NextRequest) {
       { upsert: true, new: true }
     );
 
+    // Use the user's preferred email language if available, otherwise fall back to the locale from the request
+    const emailLanguage = user.emailLanguage || locale || 'en';
+
     // Send verification email
-    await sendPasswordResetEmail(email.toLowerCase(), code, locale || 'en');
+    await sendPasswordResetEmail(email.toLowerCase(), code, emailLanguage);
 
     return NextResponse.json({
       success: true,

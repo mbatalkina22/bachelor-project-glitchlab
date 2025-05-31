@@ -57,6 +57,7 @@ const ProfileSettingsPage = () => {
     name: "",
     email: "",
     avatar: "/images/avatar.jpg",
+    emailLanguage: "en",
     emailNotifications: {
       workshops: true,
       changes: true
@@ -103,6 +104,7 @@ const ProfileSettingsPage = () => {
           name: data.user.name,
           email: data.user.email,
           avatar: data.user.avatar || "/images/avatar.jpg",
+          emailLanguage: data.user.emailLanguage || "en",
           emailNotifications: {
             workshops: true,
             changes: true
@@ -277,6 +279,47 @@ const ProfileSettingsPage = () => {
       setError(err.message || 'Failed to delete account');
       setIsLoading(false);
       setShowDeleteModal(false);
+    }
+  };
+
+  const handleNotificationsSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccessMessage('');
+    
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+
+      // Update email language preference
+      const emailLanguageResponse = await fetch('/api/users/email-language', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          emailLanguage: userData.emailLanguage
+        })
+      });
+
+      if (!emailLanguageResponse.ok) {
+        const errorData = await emailLanguageResponse.json();
+        throw new Error(errorData.error || 'Failed to update email language');
+      }
+
+      // Update other notification settings here if needed
+      
+      setSuccessMessage(t('preferencesUpdated') || 'Preferences updated successfully!');
+    } catch (err: any) {
+      console.error('Error updating preferences:', err);
+      setError(err.message || 'Failed to update preferences');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -474,59 +517,94 @@ const ProfileSettingsPage = () => {
                   <p className="text-gray-500 text-sm">{t('notificationsDesc')}</p>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-sm font-medium text-gray-900 mb-3">{t('emailNotifications')}</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-start">
-                      <div className="flex items-center h-5">
-                        <input
-                          id="workshops"
-                          name="workshops"
-                          type="checkbox"
-                          checked={userData.emailNotifications.workshops}
-                          onChange={handleNotificationChange}
-                          className="focus:ring-[#7471f9] h-4 w-4 text-[#7471f9] border-gray-300 rounded"
-                        />
-                      </div>
-                      <div className="ml-3">
-                        <label htmlFor="workshops" className="text-sm font-medium text-gray-900">
-                          {t('workshopNotifications')}
+                  <form onSubmit={handleNotificationsSubmit}>
+                    <div className="space-y-8">
+                      <div className="mb-6">
+                        <label className="block text-sm font-medium text-gray-900 mb-1" htmlFor="email-language">
+                          {t('emailLanguage')}
                         </label>
-                        <p className="text-gray-500 text-xs">
-                          {t('workshopNotificationsDesc')}
+                        <p className="text-gray-500 text-xs mb-2">
+                          {t('emailLanguageDesc')}
                         </p>
+                        <div className="relative">
+                          <select
+                            id="email-language"
+                            name="email-language"
+                            value={userData.emailLanguage || 'en'}
+                            onChange={(e) => setUserData({
+                              ...userData,
+                              emailLanguage: e.target.value
+                            })}
+                            className="appearance-none w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base bg-white pr-10"
+                          >
+                            <option value="en">English</option>
+                            <option value="it">Italian</option>
+                          </select>
+                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <Icon icon="heroicons:chevron-down" className="h-5 w-5" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-900 mb-1">
+                          {t('emailNotifications')}
+                        </label>
+                        <div className="space-y-4 mt-2">
+                          <div className="flex items-start">
+                            <div className="flex items-center h-5">
+                              <input
+                                id="workshops"
+                                name="workshops"
+                                type="checkbox"
+                                checked={userData.emailNotifications.workshops}
+                                onChange={handleNotificationChange}
+                                className="focus:ring-[#7471f9] h-4 w-4 text-[#7471f9] border-gray-300 rounded"
+                              />
+                            </div>
+                            <div className="ml-3">
+                              <label htmlFor="workshops" className="text-sm font-medium text-gray-900">
+                                {t('workshopNotifications')}
+                              </label>
+                              <p className="text-gray-500 text-xs">
+                                {t('workshopNotificationsDesc')}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-start">
+                            <div className="flex items-center h-5">
+                              <input
+                                id="changes"
+                                name="changes"
+                                type="checkbox"
+                                checked={userData.emailNotifications.changes}
+                                onChange={handleNotificationChange}
+                                className="focus:ring-[#7471f9] h-4 w-4 text-[#7471f9] border-gray-300 rounded"
+                              />
+                            </div>
+                            <div className="ml-3">
+                              <label htmlFor="changes" className="text-sm font-medium text-gray-900">
+                                {t('changeNotifications')}
+                              </label>
+                              <p className="text-gray-500 text-xs">
+                                {t('changeNotificationsDesc')}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-6 flex justify-end">
+                          <HeroButton
+                            text={t('savePreferences')}
+                            backgroundColor="#7471f9"
+                            textColor="white"
+                            disabled={isLoading}
+                          />
+                        </div>
                       </div>
                     </div>
-                    
-                    <div className="flex items-start">
-                      <div className="flex items-center h-5">
-                        <input
-                          id="changes"
-                          name="changes"
-                          type="checkbox"
-                          checked={userData.emailNotifications.changes}
-                          onChange={handleNotificationChange}
-                          className="focus:ring-[#7471f9] h-4 w-4 text-[#7471f9] border-gray-300 rounded"
-                        />
-                      </div>
-                      <div className="ml-3">
-                        <label htmlFor="changes" className="text-sm font-medium text-gray-900">
-                          {t('changeNotifications')}
-                        </label>
-                        <p className="text-gray-500 text-xs">
-                          {t('changeNotificationsDesc')}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-6 flex justify-end">
-                    <HeroButton
-                      text={t('savePreferences')}
-                      backgroundColor="#7471f9" // Updated purple color
-                      textColor="white"
-                      disabled={isLoading}
-                    />
-                  </div>
+                  </form>
                 </div>
               </div>
             )}

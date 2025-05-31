@@ -38,6 +38,11 @@ const UserSchema = new Schema({
     minlength: [8, 'Password must be at least 8 characters long'],
     select: false, // Don't return password in queries by default
   },
+  emailLanguage: {
+    type: String,
+    enum: ['en', 'it'],
+    default: 'en',
+  },
   avatar: {
     type: String,
     default: '/images/default-avatar.png',

@@ -11,7 +11,7 @@ if (!process.env.JWT_SECRET) {
 
 export async function POST(request: Request) {
   try {
-    const { name, email, password, avatar, role, surname, description, website, linkedin, locale } = await request.json();
+    const { name, email, password, avatar, role, surname, description, website, linkedin, emailLanguage } = await request.json();
 
     // Validate input
     if (!name || !email || !password) {
@@ -49,6 +49,7 @@ export async function POST(request: Request) {
       email,
       password,
       avatar: avatar || '/images/default-avatar.png',
+      emailLanguage: emailLanguage || 'en',
       verificationCode,
       verificationCodeExpires
     };
@@ -65,8 +66,8 @@ export async function POST(request: Request) {
     // Create new pending user instead of regular user
     const pendingUser = await PendingUser.create(pendingUserData);
 
-    // Send verification email with user's locale
-    await sendVerificationEmail(email, verificationCode, locale || 'en');
+    // Send verification email using the user's preferred email language
+    await sendVerificationEmail(email, verificationCode, emailLanguage);
 
     // Create JWT token with pending flag and short expiry
     // We'll use the PendingUser ID rather than a User ID

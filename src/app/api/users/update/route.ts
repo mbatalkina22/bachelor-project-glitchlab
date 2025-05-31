@@ -40,6 +40,9 @@ export async function PUT(request: Request) {
       if (body.name) user.name = body.name;
       if (body.email) user.email = body.email;
       if (body.avatar) user.avatar = body.avatar;
+      if (body.emailLanguage && (body.emailLanguage === 'en' || body.emailLanguage === 'it')) {
+        user.emailLanguage = body.emailLanguage;
+      }
       
       // Update instructor fields if user is an instructor
       if (user.role === 'instructor') {

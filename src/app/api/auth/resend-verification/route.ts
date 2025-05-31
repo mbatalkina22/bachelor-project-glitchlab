@@ -50,8 +50,8 @@ export async function POST(request: Request) {
       pendingUser.verificationCodeExpires = verificationCodeExpires;
       await pendingUser.save();
 
-      // Send verification email with user's locale
-      await sendVerificationEmail(pendingUser.email, verificationCode, locale || 'en');
+      // Send verification email using the pending user's preferred language
+      await sendVerificationEmail(pendingUser.email, verificationCode, pendingUser.emailLanguage);
 
       return NextResponse.json({
         message: 'Verification code sent successfully',

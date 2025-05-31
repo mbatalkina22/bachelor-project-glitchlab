@@ -7,6 +7,7 @@ export interface IPendingUser extends Document {
   password: string;
   avatar?: string;
   role?: string;
+  emailLanguage?: string;
   surname?: string;
   description?: string;
   website?: string;
@@ -44,6 +45,11 @@ const PendingUserSchema = new Schema<IPendingUser>({
     type: String,
     enum: ['user', 'instructor'],
     default: 'user',
+  },
+  emailLanguage: {
+    type: String,
+    enum: ['en', 'it'],
+    default: 'en',
   },
   // Instructor specific fields (if registering as instructor)
   surname: {

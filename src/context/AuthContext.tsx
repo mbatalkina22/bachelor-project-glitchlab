@@ -15,6 +15,7 @@ interface User {
   website?: string;
   linkedin?: string;
   isVerified?: boolean;
+  emailLanguage?: string;
 }
 
 interface PendingUser {
@@ -22,6 +23,7 @@ interface PendingUser {
   name: string;
   email: string;
   avatar?: string;
+  emailLanguage?: string;
 }
 
 interface AuthContextType {
@@ -30,7 +32,7 @@ interface AuthContextType {
   loading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string, avatar?: string) => Promise<{ needsVerification: boolean }>;
+  register: (name: string, email: string, password: string, avatar?: string, emailLanguage?: string) => Promise<{ needsVerification: boolean }>;
   registerInstructor: (instructorData: {
     name: string;
     email: string;
@@ -40,6 +42,7 @@ interface AuthContextType {
     website?: string;
     linkedin?: string;
     avatar?: string;
+    emailLanguage?: string;
   }) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -140,15 +143,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('needsVerification');
   };
 
-  const register = async (name: string, email: string, password: string, avatar?: string) => {
-    const locale = getCurrentLocale();
-    
+  const register = async (
+    name: string,
+    email: string,
+    password: string,
+    avatar?: string,
+    emailLanguage?: string
+  ) => {    
     const response = await fetch('/api/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name, email, password, avatar, locale }),
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+        avatar,
+        emailLanguage
+      }),
     });
 
     const data = await response.json();
@@ -178,15 +191,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     website?: string;
     linkedin?: string;
     avatar?: string;
+    emailLanguage?: string;
   }) => {
-    const locale = getCurrentLocale();
-    
     const response = await fetch('/api/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...instructorData, role: 'instructor', locale }),
+      body: JSON.stringify({ 
+        ...instructorData, 
+        role: 'instructor'
+      }),
     });
 
     const data = await response.json();

@@ -41,13 +41,13 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendVerificationEmail = async (to: string, code: string, locale: string = 'en') => {
+export const sendVerificationEmail = async (to: string, code: string, language: string = 'en') => {
   try {
-    // Get translations for the requested locale or fallback to English
-    const localeKey = locale.startsWith('it') ? 'it' : 'en';
+    // Get translations for the requested language or fallback to English
+    const localeKey = language === 'it' ? 'it' : 'en';
     const t = translations[localeKey];
 
-    console.log(`Sending verification email in ${localeKey} locale to ${to}`);
+    console.log(`Sending verification email in ${localeKey} language to ${to}`);
 
     const info = await transporter.sendMail({
       from: `"GlitchLab" <${process.env.EMAIL_USER}>`,
@@ -76,13 +76,13 @@ export const sendVerificationEmail = async (to: string, code: string, locale: st
   }
 };
 
-export const sendPasswordResetEmail = async (to: string, code: string, locale: string = 'en') => {
+export const sendPasswordResetEmail = async (to: string, code: string, language: string = 'en') => {
   try {
-    // Get translations for the requested locale or fallback to English
-    const localeKey = locale.startsWith('it') ? 'it' : 'en';
+    // Get translations for the requested language or fallback to English
+    const localeKey = language === 'it' ? 'it' : 'en';
     const t = translations[localeKey];
 
-    console.log(`Sending password reset email in ${localeKey} locale to ${to}`);
+    console.log(`Sending password reset email in ${localeKey} language to ${to}`);
 
     const info = await transporter.sendMail({
       from: `"GlitchLab" <${process.env.EMAIL_USER}>`,
