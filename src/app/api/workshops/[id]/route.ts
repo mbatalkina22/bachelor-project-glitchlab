@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
+import { verify } from 'jsonwebtoken';
 import dbConnect from '../../lib/mongodb';
 import Workshop from '../../lib/models/workshop';
 import User from '../../lib/models/user';
+import { sendWorkshopUpdateEmail } from '@/utils/email/verification';
 
 interface Params {
   params: {
@@ -89,7 +91,6 @@ export async function PUT(request: Request, { params }: Params) {
     const token = authHeader.split(' ')[1];
     
     // Verify JWT
-    const { verify } = await import('jsonwebtoken');
     const decoded = verify(token, process.env.JWT_SECRET!) as { userId: string };
     
     await dbConnect();
@@ -124,6 +125,34 @@ export async function PUT(request: Request, { params }: Params) {
     
     // Get updated workshop data from request body
     const updatedData = await request.json();
+    
+    // Check if date/time or location has changed
+    const hasDateChanged = updatedData.startDate !== workshop.startDate?.toISOString() || 
+                         updatedData.endDate !== workshop.endDate?.toISOString();
+    const hasLocationChanged = updatedData.location !== workshop.location;
+
+    if (hasDateChanged || hasLocationChanged) {
+      // Find all registered users
+      const registeredUsers = await User.find({
+        registeredWorkshops: { $in: [params.id] }
+      });
+
+      // Send update emails to all registered users
+      for (const user of registeredUsers) {
+        await sendWorkshopUpdateEmail(
+          user.email,
+          {
+            workshopName: updatedData.nameTranslations?.[user.emailLanguage || 'en'] || updatedData.name,
+            previousDateTime: hasDateChanged ? workshop.startDate : undefined,
+            previousLocation: hasLocationChanged ? workshop.location : undefined,
+            newDateTime: hasDateChanged ? new Date(updatedData.startDate) : undefined,
+            newLocation: hasLocationChanged ? updatedData.location : undefined,
+            currentLocation: workshop.location // Always pass current location for consistent display
+          },
+          user.emailLanguage || 'en'
+        );
+      }
+    }
     
     // Update the workshop
     const updatedWorkshop = await Workshop.findByIdAndUpdate(

@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
-import { verify } from 'jsonwebtoken';
+import { verify, JsonWebTokenError } from 'jsonwebtoken';
+import mongoose from 'mongoose';
 import dbConnect from '../../../lib/mongodb';
 import User from '../../../lib/models/user';
 import Workshop from '../../../lib/models/workshop';
+import { sendWorkshopCancellationEmail } from '@/utils/email/verification';
 
 interface Params {
   params: {
@@ -76,10 +78,19 @@ export async function POST(request: Request, { params }: Params) {
         registeredWorkshops: { $in: [workshopId] }
       });
       
-      // Unregister all users from the workshop
+      // Send cancellation emails and unregister all users from the workshop
       for (const user of registeredUsers) {
+        // Send cancellation email in user's preferred language
+        await sendWorkshopCancellationEmail(
+          user.email,
+          workshop.nameTranslations?.[user.emailLanguage || 'en'] || workshop.name,
+          workshop.startDate,
+          user.emailLanguage || 'en'
+        );
+        
+        // Unregister user from workshop
         user.registeredWorkshops = user.registeredWorkshops.filter(
-          id => id.toString() !== workshopId.toString()
+          (id: mongoose.Types.ObjectId) => id.toString() !== workshopId.toString()
         );
         await user.save();
       }
@@ -94,7 +105,7 @@ export async function POST(request: Request, { params }: Params) {
       }, { status: 200 });
 
     } catch (error) {
-      if (error.name === 'JsonWebTokenError') {
+      if (error instanceof JsonWebTokenError) {
         return NextResponse.json(
           { error: 'Invalid token' },
           { status: 401 }
