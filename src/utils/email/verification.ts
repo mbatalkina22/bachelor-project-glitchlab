@@ -218,6 +218,10 @@ export const sendWorkshopUpdateEmail = async (
       });
     };
 
+    // Ensure both dates are valid Date objects
+    const previousDateTime = changes.previousDateTime instanceof Date ? changes.previousDateTime : new Date();
+    const newDateTime = changes.newDateTime instanceof Date ? changes.newDateTime : new Date();
+
     const info = await transporter.sendMail({
       from: `"GlitchLab" <${process.env.EMAIL_USER}>`,
       to,
@@ -228,48 +232,38 @@ export const sendWorkshopUpdateEmail = async (
           <p>${t.workshopUpdatedBody}</p>
           
           <div style="background-color: #f9f9f9; padding: 20px; margin: 20px 0; border-radius: 5px;">
-            <h3 style="margin-top: 0; color: #333;">${changes.workshopName}</h3>
+            <h3 style="margin-top: 0; color: #333; margin-bottom: 15px;">${changes.workshopName}</h3>
             
-            ${(changes.previousDateTime || changes.previousLocation) ? `
-              <div style="border-left: 3px solid #dc3545; padding-left: 15px; margin: 15px 0;">
-                ${changes.previousDateTime ? `
-                  <div style="margin: 10px 0; color: #333;">
-                    <strong>${t.previouslyScheduledFor}:</strong><br>
-                    ${formatDate(changes.previousDateTime)}
-                  </div>
-                ` : ''}
-                ${changes.previousDateTime || changes.previousLocation ? `
-                  <div style="margin: 10px 0; color: #333;">
-                    <strong>${t.previousLocation}:</strong><br>
-                    ${changes.previousLocation || changes.currentLocation}
-                  </div>
-                ` : ''}
+            <!-- Previous section -->
+            <div style="border-left: 3px solid #dc3545; padding-left: 15px; margin: 15px 0;">
+              <div style="margin: 10px 0; color: #333; font-size: 14px;">
+                <strong style="font-size: 14px;">${t.previouslyScheduledFor}:</strong><br>
+                <span style="font-size: 14px;">${formatDate(previousDateTime)}</span>
               </div>
-            ` : ''}
+              <div style="margin: 10px 0; color: #333; font-size: 14px;">
+                <strong style="font-size: 14px;">${t.previousLocation}:</strong><br>
+                <span style="font-size: 14px;">${changes.previousLocation || ''}</span>
+              </div>
+            </div>
             
-            ${(changes.newDateTime || changes.newLocation) ? `
-              <div style="border-left: 3px solid #28a745; padding-left: 15px; margin: 15px 0;">
-                ${changes.newDateTime ? `
-                  <div style="margin: 10px 0; color: #333;">
-                    <strong>${t.newDateAndTime}:</strong><br>
-                    ${formatDate(changes.newDateTime)}
-                  </div>
-                ` : ''}
-                ${changes.newDateTime || changes.newLocation ? `
-                  <div style="margin: 10px 0; color: #333;">
-                    <strong>${t.newLocation}:</strong><br>
-                    ${changes.newLocation || changes.currentLocation}
-                  </div>
-                ` : ''}
+            <!-- New section -->
+            <div style="border-left: 3px solid #28a745; padding-left: 15px; margin: 15px 0;">
+              <div style="margin: 10px 0; color: #333; font-size: 14px;">
+                <strong style="font-size: 14px;">${t.newDateAndTime}:</strong><br>
+                <span style="font-size: 14px;">${formatDate(newDateTime)}</span>
               </div>
-            ` : ''}
+              <div style="margin: 10px 0; color: #333; font-size: 14px;">
+                <strong style="font-size: 14px;">${t.newLocation}:</strong><br>
+                <span style="font-size: 14px;">${changes.newLocation || ''}</span>
+              </div>
+            </div>
           </div>
           
           <p>${t.workshopUpdatedNote}</p>
           <p>${t.workshopUpdatedQuestions}</p>
           <p>${t.workshopUpdatedThankYou}</p>
         </div>
-      `,
+      `
     });
     
     console.log('Workshop update email sent:', info.messageId);

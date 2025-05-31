@@ -125,13 +125,38 @@ export async function PUT(request: Request, { params }: Params) {
     
     // Get updated workshop data from request body
     const updatedData = await request.json();
+
+    // Convert dates to Date objects for proper comparison
+    const oldStartDate = new Date(workshop.startDate);
+    const oldEndDate = new Date(workshop.endDate);
+    const newStartDate = new Date(updatedData.startDate);
+    const newEndDate = new Date(updatedData.endDate);
     
-    // Check if date/time or location has changed
-    const hasDateChanged = updatedData.startDate !== workshop.startDate?.toISOString() || 
-                         updatedData.endDate !== workshop.endDate?.toISOString();
+    // Compare full date and time values
+    const hasDateChanged = 
+      oldStartDate.getTime() !== newStartDate.getTime() || 
+      oldEndDate.getTime() !== newEndDate.getTime();
+      
+    // Compare locations
     const hasLocationChanged = updatedData.location !== workshop.location;
 
+    // If either date/time or location changed, send email
     if (hasDateChanged || hasLocationChanged) {
+      console.log('Changes detected:', {
+        hasDateChanged,
+        hasLocationChanged,
+        oldDates: { 
+          start: oldStartDate.toISOString(),
+          end: oldEndDate.toISOString()
+        },
+        newDates: { 
+          start: newStartDate.toISOString(),
+          end: newEndDate.toISOString()
+        },
+        oldLocation: workshop.location,
+        newLocation: updatedData.location
+      });
+
       // Find all registered users
       const registeredUsers = await User.find({
         registeredWorkshops: { $in: [params.id] }
@@ -139,18 +164,23 @@ export async function PUT(request: Request, { params }: Params) {
 
       // Send update emails to all registered users
       for (const user of registeredUsers) {
-        await sendWorkshopUpdateEmail(
-          user.email,
-          {
-            workshopName: updatedData.nameTranslations?.[user.emailLanguage || 'en'] || updatedData.name,
-            previousDateTime: hasDateChanged ? workshop.startDate : undefined,
-            previousLocation: hasLocationChanged ? workshop.location : undefined,
-            newDateTime: hasDateChanged ? new Date(updatedData.startDate) : undefined,
-            newLocation: hasLocationChanged ? updatedData.location : undefined,
-            currentLocation: workshop.location // Always pass current location for consistent display
-          },
-          user.emailLanguage || 'en'
-        );
+        try {
+          await sendWorkshopUpdateEmail(
+            user.email,
+            {
+              workshopName: updatedData.nameTranslations?.[user.emailLanguage || 'en'] || updatedData.name,
+              previousDateTime: oldStartDate,
+              newDateTime: newStartDate,
+              previousLocation: workshop.location,
+              newLocation: updatedData.location
+            },
+            user.emailLanguage || 'en'
+          );
+          console.log('Update email sent to:', user.email);
+        } catch (emailError) {
+          console.error('Error sending update email to', user.email, emailError);
+          // Continue with other users even if one email fails
+        }
       }
     }
     
@@ -158,7 +188,7 @@ export async function PUT(request: Request, { params }: Params) {
     const updatedWorkshop = await Workshop.findByIdAndUpdate(
       params.id, 
       { $set: updatedData },
-      { new: true } // Return the updated document
+      { new: true }
     );
     
     return NextResponse.json(updatedWorkshop, { status: 200 });
