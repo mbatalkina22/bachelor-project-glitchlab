@@ -15,9 +15,6 @@ const Footer = () => {
             <h3 className="text-lg font-secularone text-gray-900 mb-4">
               {t('companyName')}
             </h3>
-            <p className="text-gray-600 mb-4">
-              {t('description')}
-            </p>
           </div>
 
           {/* Quick Links */}

@@ -14,27 +14,27 @@
   },
   "Hero": {
     "title": "Glitch Lab",
-    "subtitle": "Organizza e gestisci i tuoi workshop con facilità",
     "exploreButton": "Esplora"
   },
   "Services": {
-    "title": "I Nostri Servizi",
-    "workshopSchedule": {
-      "title": "Calendario Workshop",
-      "description": "Scopri il nostro calendario completo dei workshop, con tutte le sessioni ed eventi imminenti. Rimani aggiornato con le ultime offerte e trova il workshop perfetto per te."
+    "howItWorks": {
+      "title": "Come funziona?",
+      "description": "Ogni due settimane organizziamo workshop di 2 ore, gratuiti e flessibili, dove le partecipanti collaborano con il team di ricerca attraverso attività di design, prototipazione e valutazione. Si può partecipare liberamente, scegliendo gli incontri che interessano, senza obbligo di frequenza."
     },
-    "participantEngagement": {
-      "title": "Coinvolgimento dei Partecipanti",
-      "description": "Guadagna badge di risultato mentre partecipi ai workshop, aiutandoti a rimanere motivato e coinvolto durante il tuo percorso di apprendimento. Tieni traccia dei tuoi progressi e mostra i tuoi successi."
+    "themes": {
+      "title": "I temi",
+      "items": [
+        "Uso creativo e consapevole della tecnologia per l'apprendimento",
+        "Progettazione etica e inclusiva, attenta ai valori e alla diversità"
+      ]
     },
-    "diverseLearningPaths": {
-      "title": "Percorsi di Apprendimento Diversificati",
-      "description": "Esplora workshop che coprono design, testing e coding, attentamente realizzati per tutti i livelli di abilità. Che tu sia un principiante o un esperto, trova il percorso di apprendimento perfetto su misura per la tua esperienza."
+    "whyParticipate": {
+      "title": "Perché partecipare?",
+      "description": "GlitchLab offre mentoring diretto con ricercatrici, valorizza il punto di vista giovane e promuove creatività, pensiero critico e inclusione."
     }
   },
   "Footer": {
     "companyName": "Glitch Lab",
-    "description": "Potenziare l'apprendimento attraverso workshop interattivi ed esperienze pratiche.",
     "quickLinks": "Link Rapidi",
     "home": "Home",
     "calendar": "Calendario",
@@ -50,24 +50,40 @@
     "title": "Domande Frequenti",
     "items": [
       {
-        "question": "Come mi registro per un workshop?",
-        "answer": "Puoi registrarti ai workshop attraverso la nostra piattaforma navigando alla pagina Workshop, selezionando il workshop che ti interessa e cliccando sul pulsante 'Registrati'. Dovrai creare un account se non ne hai già uno."
+        "question": "Che cos’è GlitchLab?",
+        "answer": "GlitchLab è un living lab dedicato alla progettazione partecipativa di tecnologie con e per ragazze e ragazzi. Nasce in collaborazione con il Servizio Pari Opportunità dell’Università e si svolge all’interno di LUXIA, il laboratorio di User Experience, Interaction and Accessibility coordinato dalla Prof.ssa Monica Landoni."
       },
       {
-        "question": "Posso annullare la mia registrazione?",
-        "answer": "Sì, puoi annullare la tua registrazione fino a 48 ore prima dell'inizio del workshop. Naviga nel tuo profilo, trova il workshop sotto 'Le mie registrazioni' e clicca su 'Annulla registrazione'. Si prega di notare che alcuni workshop potrebbero avere politiche di cancellazione specifiche."
+        "question": "Chi può partecipare a GlitchLab??",
+        "answer": "Il progetto è rivolto in particolare a studentesse della scuola secondaria di primo grado, con l’obiettivo di coinvolgerle attivamente nella creazione e nella riflessione sulle tecnologie."
       },
       {
-        "question": "I workshop sono disponibili online?",
-        "answer": "Sì, molti dei nostri workshop sono disponibili sia in formato in presenza che online. I dettagli sulla località e sul formato sono chiaramente indicati nella pagina informativa di ciascun workshop."
+        "question": "Cos’è un living lab?",
+        "answer": "Un living lab è un laboratorio aperto e sperimentale dove la ricerca e l’innovazione si sviluppano attraverso il coinvolgimento diretto delle persone per cui le tecnologie sono pensate. GlitchLab segue questo modello per creare un ambiente di collaborazione e scambio."
       },
       {
-        "question": "Come posso diventare un presentatore di workshop?",
-        "answer": "Siamo sempre alla ricerca di presentatori qualificati! Per candidarti, vai alla sezione 'Diventa un presentatore' nel tuo profilo e compila il modulo di candidatura. Il nostro team esaminerà la tua candidatura e ti risponderà entro 5 giorni lavorativi."
+        "question": "Come funziona GlitchLab?",
+        "answer": "Ogni due settimane, presso uno spazio dedicato all’Università, si tengono workshop di circa due ore. Durante gli incontri, le partecipanti collaborano con il team di ricerca in attività di design critico, prototipazione, ideazione collettiva e valutazione di tecnologie esistenti."
       },
       {
-        "question": "Vengono forniti certificati dopo aver completato un workshop?",
-        "answer": "Sì, i certificati di completamento vengono generati automaticamente e sono disponibili per il download dal tuo profilo dopo aver completato un workshop. Per alcuni workshop specializzati, potrebbe essere disponibile una certificazione aggiuntiva."
+        "question": "Devo partecipare a tutti i workshop?",
+        "answer": "No, la partecipazione è gratuita, libera e flessibile. Non è previsto un percorso obbligatorio: puoi scegliere liberamente a quali workshop partecipare, anche in modo saltuario, prenotandoti tramite un calendario online."
+      },
+      {
+        "question": "In che modo le partecipanti sono coinvolte?",
+        "answer": "Le partecipanti sono coinvolte attivamente in tutte le fasi del processo creativo e di ricerca: prenderanno parte a sessioni di ideazione, prototipazione e testing di nuove tecnologie. In questo modo, diventano vere e proprie designer e ricercatrici, contribuendo con le loro idee, feedback e competenze allo sviluppo di strumenti innovativi e inclusivi."
+      },
+      {
+        "question": "Che ruolo ha il mentoring in GlitchLab?",
+        "answer": "Il mentoring è centrale: le partecipanti lavorano a stretto contatto con il team di ricerca, che le guida e supporta nel percorso creativo, favorendo uno scambio reciproco di idee e conoscenze."
+      },
+      {
+        "question": "Quali sono gli obiettivi principali di GlitchLab?",
+        "answer": "• Promuovere la partecipazione giovanile nella progettazione tecnologica.\n\n• Valorizzare il punto di vista di ragazze e ragazzi nella ricerca accademica.\n\n• Sostenere l'equità di genere e la diversità nei contesti scientifici e tecnologici.\n\n• Offrire esperienze di mentoring tra giovani e ricercatrici.\n\n• Stimolare pensiero critico, creatività, collaborazione e consapevolezza."
+      },
+      {
+        "question": "GlitchLab si ispira ad altre esperienze?",
+        "answer": "Sì, il progetto si ispira a modelli internazionali di successo come KidsTeam, un network di università americane che coinvolge bambini e bambine nella progettazione di strumenti digitali."
       }
     ]
   },
@@ -467,5 +483,9 @@
   "OurTeam": {
     "title": "Conosci il Nostro Team",
     "noInstructors": "Nessun istruttore trovato."
+  },
+  "About": {
+    "title": "Cos'è GlitchLab?",
+    "description": "GlitchLab è un living lab dedicato alla progettazione partecipativa di tecnologie nato in collaborazione con il Servizio Pari Opportunità dell'Università della Svizzera italiana (USI) e ospitato da LUXIA – laboratorio di User Experience, Interaction and Accessibility.\n\nQui, studentesse della scuola media diventano protagoniste attive nella creazione e riflessione sulle tecnologie, imparando a usarle in modo consapevole e critico."
   }
 }

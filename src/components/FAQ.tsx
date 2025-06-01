@@ -46,7 +46,7 @@ const FAQ = () => {
                     openFaq === index ? "max-h-96 py-4" : "max-h-0 py-0"
                   }`}
                 >
-                  <p className="text-black">{faq.answer}</p>
+                  <p className="text-black whitespace-pre-line">{faq.answer}</p>
                 </div>
               </div>
             </ScrollReveal>
@@ -57,4 +57,4 @@ const FAQ = () => {
   );
 };
 
-export default FAQ; 
+export default FAQ;
