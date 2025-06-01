@@ -30,6 +30,8 @@ export interface Review {
   comment?: string;
   createdAt?: string;
   date?: string; // For backward compatibility
+  featured?: boolean;
+  workshopName?: string;
 }
 
 interface ReviewListProps {
@@ -414,6 +416,55 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
     }
   };
 
+  // Toggle review featured status
+  const toggleFeatureReview = async (reviewId: string, currentStatus: boolean) => {
+    if (!reviewId || !isAuthenticated) return;
+    
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+      
+      const response = await fetch('/api/reviews/feature', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          reviewId,
+          featured: !currentStatus
+        })
+      });
+      
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to update review status');
+      }
+      
+      const responseData = await response.json();
+      
+      // Update the review in the list
+      setReviews(prevReviews => 
+        prevReviews.map(review => 
+          review._id === reviewId ? { ...review, featured: !currentStatus } : review
+        )
+      );
+      
+      setMessage({
+        text: !currentStatus ? t('reviewFeatured') : t('reviewUnfeatured'),
+        type: 'success'
+      });
+    } catch (error: any) {
+      console.error("Toggle feature review error:", error);
+      setMessage({
+        text: error.message || 'Failed to update review status',
+        type: 'error'
+      });
+    }
+  };
+
   // Helper to get the font family based on the selection
   const getFontFamily = (fontName: string) => {
     switch (fontName) {
@@ -774,6 +825,22 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
                     >
                       <Icon icon="heroicons:pencil-square" className="w-4 h-4 mr-1" />
                       {t("editReview")}
+                    </button>
+                  )}
+                  {user?.role === 'instructor' && (
+                    <button
+                      onClick={() => toggleFeatureReview(review._id as string, review.featured)}
+                      className={`flex items-center text-sm px-2 py-1 rounded-md transition-colors ${
+                        review.featured 
+                          ? 'text-yellow-600 hover:text-yellow-800 hover:bg-yellow-50' 
+                          : 'text-green-600 hover:text-green-800 hover:bg-green-50'
+                      }`}
+                    >
+                      <Icon 
+                        icon={review.featured ? "heroicons:star-solid" : "heroicons:star"} 
+                        className="w-4 h-4 mr-1" 
+                      />
+                      {review.featured ? t("removeFromFeatured") : t("featureReview")}
                     </button>
                   )}
                   <button

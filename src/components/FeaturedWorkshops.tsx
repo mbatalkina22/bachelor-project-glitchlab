@@ -233,7 +233,7 @@ const FeaturedWorkshops = () => {
           </button>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           {visibleWorkshops.map((workshop, index) => (
             <ScrollReveal key={`${currentPage}-${index}`} className={workshop.delay}>
               <WorkshopCard

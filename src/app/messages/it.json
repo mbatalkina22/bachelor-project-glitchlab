@@ -77,7 +77,12 @@
     "button": "Sfoglia i Workshop"
   },
   "Testimonials": {
-    "title": "Cosa dicono i nostri partecipanti"
+    "title": "Cosa dicono i nostri partecipanti",
+    "subtitle": "Scopri cosa dicono i nostri partecipanti riguardo alla loro esperienza nei workshop",
+    "viewWorkshop": "Visualizza Workshop",
+    "exploreAllWorkshops": "Esplora Tutti i Workshop",
+    "noFeaturedReviews": "Nessuna recensione in evidenza disponibile al momento.",
+    "noFeaturedReviewsInstructor": "Nessuna recensione in evidenza ancora. Aggiungi recensioni per metterle in evidenza nella homepage."
   },
   "FeaturedWorkshops": {
     "title": "Prossimi Workshop",
@@ -275,7 +280,11 @@
     "beginnerRequirement": "Non richiede workshop precedenti",
     "intermediateRequirement": "Richiede almeno 1 workshop nella stessa categoria (Design, Test, o Prototype)",
     "advancedRequirement": "Richiede almeno 2 workshop nella stessa categoria (Design, Test, o Prototype)",
-    "skillEmailInfo": "Se hai competenze rilevanti ma non hai partecipato a workshop precedenti, contattaci via email."
+    "skillEmailInfo": "Se hai competenze rilevanti ma non hai partecipato a workshop precedenti, contattaci via email.",
+    "featureReview": "Metti in Evidenza",
+    "removeFromFeatured": "Rimuovi da Evidenza",
+    "reviewFeatured": "Recensione messa in evidenza con successo!",
+    "reviewUnfeatured": "Recensione rimossa dall'evidenza con successo!"
   },
   "Profile": {
     "editProfile": "Modifica Profilo",

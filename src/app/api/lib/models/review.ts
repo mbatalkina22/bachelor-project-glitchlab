@@ -31,6 +31,14 @@ const ReviewSchema = new Schema({
     type: String,
     required: false,
   },
+  featured: {
+    type: Boolean,
+    default: false,
+  },
+  workshopName: {
+    type: String,
+    required: false, // Only required for featured reviews
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -42,4 +50,4 @@ const ReviewSchema = new Schema({
 // Create a compound index to ensure one review per user per workshop
 ReviewSchema.index({ user: 1, workshop: 1 }, { unique: true });
 
-export default mongoose.models.Review || mongoose.model('Review', ReviewSchema); 
+export default mongoose.models.Review || mongoose.model('Review', ReviewSchema);

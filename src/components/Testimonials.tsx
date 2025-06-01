@@ -9,12 +9,78 @@ import { useTranslations } from 'next-intl';
 const Testimonials = () => {
   const t = useTranslations('Testimonials');
   const testimonials = [
-    { name: "Sarah Johnson", quote: "The workshops offered here have significantly improved my design skills.", rating: 5, avatarSrc: "/images/avatar.jpg", delay: "delay-100" },
-    { name: "Michael Chen", quote: "I've attended three JavaScript workshops so far, and each one has been excellent.", rating: 5, avatarSrc: "/images/avatar.jpg", delay: "delay-200" },
-    { name: "Emily Rodriguez", quote: "The product management workshop exceeded my expectations.", rating: 4, avatarSrc: "/images/avatar.jpg", delay: "delay-300" },
-    { name: "David Kim", quote: "The data visualization workshop was exactly what I needed.", rating: 5, avatarSrc: "/images/avatar.jpg", delay: "delay-100" },
-    { name: "Jessica Martinez", quote: "I was hesitant about taking an online workshop, but it exceeded my expectations.", rating: 4, avatarSrc: "/images/avatar.jpg", delay: "delay-200" },
-    { name: "Robert Wilson", quote: "The advanced JavaScript workshop helped me level up my skills significantly.", rating: 5, avatarSrc: "/images/avatar.jpg", delay: "delay-300" }
+    { 
+      name: "Sarah Johnson", 
+      quote: "The workshops offered here have significantly improved my design skills.", 
+      rating: 5, 
+      avatarSrc: "/images/avatar.jpg", 
+      delay: "delay-100",
+      circleText: "Inspiring",
+      circleColor: "#7471f9",
+      circleFont: "Dancing Script",
+      workshopId: "1",
+      workshopName: "UI/UX Design Workshop"
+    },
+    { 
+      name: "Michael Chen", 
+      quote: "I've attended three JavaScript workshops so far, and each one has been excellent.", 
+      rating: 5, 
+      avatarSrc: "/images/avatar2.jpg", 
+      delay: "delay-200",
+      circleText: "Amazing",
+      circleColor: "#f39aec",
+      circleFont: "Lobster",
+      workshopId: "2",
+      workshopName: "Advanced JavaScript"
+    },
+    { 
+      name: "Emily Rodriguez", 
+      quote: "The product management workshop exceeded my expectations.", 
+      rating: 4, 
+      avatarSrc: "/images/avatar3.jpg", 
+      delay: "delay-300",
+      circleText: "Creative",
+      circleColor: "#fdcb2a",
+      circleFont: "Arvo",
+      workshopId: "3",
+      workshopName: "Product Management Essentials"
+    },
+    { 
+      name: "David Kim", 
+      quote: "The data visualization workshop was exactly what I needed.", 
+      rating: 5, 
+      avatarSrc: "/images/avatar4.jpg", 
+      delay: "delay-100",
+      circleText: "Fun",
+      circleColor: "#5dfdcf",
+      circleFont: "Bebas Neue",
+      workshopId: "4",
+      workshopName: "Data Visualization Techniques"
+    },
+    { 
+      name: "Jessica Martinez", 
+      quote: "I was hesitant about taking an online workshop, but it exceeded my expectations.", 
+      rating: 4, 
+      avatarSrc: "/images/avatar5.jpg", 
+      delay: "delay-200",
+      circleText: "Practical",
+      circleColor: "#7471f9",
+      circleFont: "Dancing Script",
+      workshopId: "5",
+      workshopName: "Remote Team Collaboration"
+    },
+    { 
+      name: "Robert Wilson", 
+      quote: "The advanced JavaScript workshop helped me level up my skills significantly.", 
+      rating: 5, 
+      avatarSrc: "/images/avatar6.jpg", 
+      delay: "delay-300",
+      circleText: "Insightful",
+      circleColor: "#f39aec",
+      circleFont: "Lobster",
+      workshopId: "2",
+      workshopName: "Advanced JavaScript"
+    }
   ];
 
   const [currentPage, setCurrentPage] = useState(0);
@@ -58,8 +124,8 @@ const Testimonials = () => {
                     <div
                       className={`transition-all duration-300 ${
                         isCenter 
-                          ? "transform scale-110 z-10 md:mt-0" 
-                          : "transform scale-90 opacity-80 md:mt-6"
+                          ? "transform scale-105 z-10 md:mt-0" 
+                          : "transform scale-95 md:mt-4"
                       }`}
                     >
                       <TestimonialCard {...testimonial} />

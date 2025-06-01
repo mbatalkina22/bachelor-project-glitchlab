@@ -274,8 +274,8 @@ const WorkshopsPage = () => {
                         </div>
                     </div>
 
-                    {/* Workshop Cards Grid - Larger cards with fewer columns */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 mx-2 mb-10">
+                    {/* Workshop Cards Grid - Updated to show 3 cards per row with increased gap spacing */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mx-2 mb-10">
                         {filteredWorkshops.length > 0 ? (
                             filteredWorkshops.map((workshop, index) => (
                                 <ScrollReveal key={workshop._id} className={workshop.delay}>

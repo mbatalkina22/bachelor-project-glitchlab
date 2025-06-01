@@ -77,7 +77,12 @@
     "button": "Browse Workshops"
   },
   "Testimonials": {
-    "title": "What Our Participants Say"
+    "title": "What Our Participants Say",
+    "subtitle": "Discover what our participants have to say about their workshop experiences",
+    "viewWorkshop": "View Workshop",
+    "exploreAllWorkshops": "Explore All Workshops",
+    "noFeaturedReviews": "No featured reviews available yet.",
+    "noFeaturedReviewsInstructor": "No featured reviews yet. Add reviews to feature them on the homepage."
   },
   "FeaturedWorkshops": {
     "title": "Upcoming Workshops",
@@ -262,7 +267,11 @@
     "beginnerRequirement": "No previous workshops required",
     "intermediateRequirement": "Requires at least 1 workshop in the same category (Design, Test, or Prototype)",
     "advancedRequirement": "Requires at least 2 workshops in the same category (Design, Test, or Prototype)",
-    "skillEmailInfo": "If you have relevant skills but haven't taken workshops, please email us."
+    "skillEmailInfo": "If you have relevant skills but haven't taken workshops, please email us.",
+    "featureReview": "Feature Review",
+    "removeFromFeatured": "Remove from Featured",
+    "reviewFeatured": "Review featured successfully!",
+    "reviewUnfeatured": "Review removed from featured successfully!"
   },
   "Profile": {
     "editProfile": "Edit Profile",

@@ -7,7 +7,7 @@ import { Icon } from "@iconify/react";
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from "react";
 import FeaturedWorkshops from "@/components/FeaturedWorkshops";
-import Testimonials from "@/components/Testimonials";
+import FeaturedReviews from "@/components/FeaturedReviews";
 import FAQ from "@/components/FAQ";
 import CallToAction from "@/components/CallToAction";
 
@@ -86,8 +86,8 @@ export default function Home() {
       {/* Featured Workshops Section */}
       <FeaturedWorkshops />
 
-      {/* Testimonials Section */}
-      <Testimonials />
+      {/* Reviews Section */}
+      <FeaturedReviews />
 
       {/* FAQ Section */}
       <FAQ />
