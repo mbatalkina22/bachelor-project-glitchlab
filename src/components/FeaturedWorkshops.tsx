@@ -22,6 +22,7 @@ interface Workshop {
   instructorId: string;
   delay?: string;
   bgColor?: string;
+  canceled?: boolean;
 }
 
 const FeaturedWorkshops = () => {
@@ -34,23 +35,58 @@ const FeaturedWorkshops = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
+  const [mounted, setMounted] = useState(false);
   const itemsPerPage = 3;
+  const maxRetries = 3;
+  const [retryCount, setRetryCount] = useState(0);
 
   const fetchWorkshops = async () => {
     try {
       setIsLoading(true);
-      // Add cache-busting query parameter
-      const response = await fetch(`/api/workshops?t=${new Date().getTime()}`);
+      setError('');
+      
+      // Add cache-busting query parameter and explicit credentials
+      const response = await fetch(`/api/workshops?t=${new Date().getTime()}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache'
+        },
+        credentials: 'same-origin'
+      });
       
       if (!response.ok) {
-        throw new Error('Failed to fetch workshops');
+        throw new Error(`Failed to fetch workshops: ${response.status} ${response.statusText}`);
       }
       
       const data = await response.json();
-      console.log('Fetched featured workshops:', data.length);
+      console.log('Fetched all workshops:', data.length);
       
-      // Add UI specific properties and limit to 6 workshops for featured section
-      const featuredWorkshops = data.slice(0, 6).map((workshop: Workshop, index: number) => ({
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid data format received from API');
+      }
+      
+      // Get today's date
+      const today = new Date();
+      
+      // Filter out canceled workshops and workshops with past dates
+      const activeWorkshops = data.filter((workshop: Workshop) => {
+        // Ensure startDate is properly parsed
+        const startDate = workshop.startDate ? new Date(workshop.startDate) : null;
+        // Skip any workshops with invalid dates
+        if (!startDate || isNaN(startDate.getTime())) return false;
+        return !workshop.canceled && startDate >= today;
+      });
+      
+      // Sort the remaining workshops by date (closest to today first)
+      const sortedWorkshops = activeWorkshops.sort((a: Workshop, b: Workshop) => {
+        const dateA = new Date(a.startDate);
+        const dateB = new Date(b.startDate);
+        return dateA.getTime() - dateB.getTime();
+      });
+      
+      // Take the first 6 (closest upcoming workshops)
+      const upcomingWorkshops = sortedWorkshops.slice(0, 6).map((workshop: Workshop, index: number) => ({
         ...workshop,
         id: workshop._id,
         title: workshop.name,
@@ -58,18 +94,37 @@ const FeaturedWorkshops = () => {
         bgColor: getBgColor(index)
       }));
       
-      setWorkshops(featuredWorkshops);
+      setWorkshops(upcomingWorkshops);
+      console.log('Upcoming workshops:', upcomingWorkshops.length);
+      setRetryCount(0); // Reset retry counter on success
     } catch (err) {
       console.error('Error fetching workshops:', err);
       setError('Failed to load workshops');
+      
+      // Retry logic for fetch failures
+      if (retryCount < maxRetries) {
+        console.log(`Retrying fetch (${retryCount + 1}/${maxRetries})...`);
+        setRetryCount(prev => prev + 1);
+        setTimeout(() => {
+          fetchWorkshops();
+        }, 1000); // Wait 1 second before retrying
+      }
     } finally {
       setIsLoading(false);
     }
   };
   
+  // Set mounted state when component mounts
   useEffect(() => {
-    fetchWorkshops();
+    setMounted(true);
   }, []);
+  
+  // Fetch workshops when component mounts and is ready
+  useEffect(() => {
+    if (mounted) {
+      fetchWorkshops();
+    }
+  }, [mounted]);
   
   // Function to rotate through background colors
   const getBgColor = (index: number) => {
@@ -95,6 +150,16 @@ const FeaturedWorkshops = () => {
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   );
+
+  if (!mounted) {
+    return (
+      <div className="py-16">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7471f9]"></div>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -129,7 +194,7 @@ const FeaturedWorkshops = () => {
       <div className="py-16">
         <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-secularone mb-6 text-black">{t('title')}</h2>
-          <p className="text-gray-500 mb-8">No workshops available at the moment.</p>
+          <p className="text-gray-500 mb-8">No upcoming workshops available at the moment.</p>
           <div className="flex justify-center space-x-4">
             <HeroButton 
               text={t('viewAllButton')}
