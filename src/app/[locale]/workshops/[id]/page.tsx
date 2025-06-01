@@ -49,6 +49,7 @@ interface Workshop {
   badgeName?: string; // Optional property for badge name
   badgeNameTranslations?: LocalizedContent; // Translations for the badge name
   canceled?: boolean; // Added property for canceled workshops
+  reminderSent?: boolean; // Added property to track if reminder was sent
 }
 
 const WorkshopDetailPage = () => {
@@ -245,6 +246,52 @@ const WorkshopDetailPage = () => {
     }
   };
 
+  const handleSendReminder = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      if (!workshop) {
+        throw new Error('Workshop data not found');
+      }
+
+      const response = await fetch(`/api/workshops/${workshop._id}/send-reminder`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send reminder');
+      }
+
+      // Refresh workshop data from the server to get the latest state
+      if (!workshop._id) {
+        throw new Error('Workshop ID is missing');
+      }
+      
+      const workshopResponse = await fetch(`/api/workshops/${workshop._id}`);
+      if (!workshopResponse.ok) {
+        throw new Error('Failed to refresh workshop data');
+      }
+      const updatedWorkshop = await workshopResponse.json();
+      
+      // Update local state with fresh data from server
+      setWorkshop(updatedWorkshop);
+
+      alert(`Reminder sent successfully to ${data.sentTo} registered users!`);
+    } catch (error: any) {
+      console.error('Error sending reminder:', error);
+      alert(error.message || 'Failed to send reminder');
+    }
+  };
+
   // Check if current user is an instructor for this workshop
   const isWorkshopInstructor = () => {
     if (!user || !workshop || !isInstructor) return false;
@@ -396,6 +443,19 @@ const WorkshopDetailPage = () => {
                         <Icon icon="heroicons:pencil-square" className="w-5 h-5" />
                       </button>
                     </Link>
+                    
+                    {!workshop.canceled && getWorkshopStatus(workshop.startDate, workshop.endDate) === 'future' && (
+                      <button
+                        onClick={handleSendReminder}
+                        className={`bg-[#7471f9] text-white p-2 rounded-full shadow-md transition-colors ${
+                          workshop.reminderSent ? 'opacity-50 cursor-not-allowed hover:bg-[#7471f9]' : 'hover:bg-[#5f5dd6]'
+                        }`}
+                        title={workshop.reminderSent ? t('reminderAlreadySent') || 'Reminder already sent' : t('sendReminder') || 'Send reminder to registered users'}
+                        disabled={workshop.reminderSent}
+                      >
+                        <Icon icon="heroicons:bell" className="w-5 h-5" />
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
@@ -418,7 +478,8 @@ const WorkshopDetailPage = () => {
                 </div>
               )}
               
-              {getWorkshopStatus(workshop.startDate, workshop.endDate) !== 'past' && (
+              {/* Show date and time only if workshop is not canceled and not past */}
+              {!workshop.canceled && getWorkshopStatus(workshop.startDate, workshop.endDate) !== 'past' && (
                 <div className="flex items-center mb-6">
                   <div className="flex items-center mr-6">
                     <Icon icon="heroicons:calendar" className="w-5 h-5 mr-2 text-gray-500" />
@@ -435,8 +496,8 @@ const WorkshopDetailPage = () => {
                 </div>
               )}
               
-              {/* Always show location if not shown above */}
-              {getWorkshopStatus(workshop.startDate, workshop.endDate) === 'past' && (
+              {/* Show only location if workshop is canceled or past */}
+              {(workshop.canceled || getWorkshopStatus(workshop.startDate, workshop.endDate) === 'past') && (
                 <div className="flex items-center mb-6">
                   <div className="flex items-center">
                     <Icon icon="heroicons:map-pin" className="w-5 h-5 mr-2 text-gray-500" />

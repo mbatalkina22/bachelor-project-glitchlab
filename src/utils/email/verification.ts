@@ -30,7 +30,13 @@ const translations = {
     previouslyScheduledFor: 'Previously scheduled for',
     previousLocation: 'Previous location',
     newDateAndTime: 'New date and time',
-    newLocation: 'New location'
+    newLocation: 'New location',
+    // Workshop reminder translations
+    workshopReminderSubject: 'Workshop Reminder',
+    workshopReminderTitle: 'Upcoming Workshop Reminder',
+    workshopReminderBody: 'This is a reminder about your upcoming workshop:',
+    workshopReminderNote: 'We look forward to seeing you there!',
+    workshopReminderQuestions: 'If you have any questions, please contact us.',
   },
   it: {
     emailVerificationSubject: 'Verifica la tua email',
@@ -60,7 +66,13 @@ const translations = {
     previouslyScheduledFor: 'Precedentemente programmato per',
     previousLocation: 'Località precedente',
     newDateAndTime: 'Nuova data e ora',
-    newLocation: 'Nuova località'
+    newLocation: 'Nuova località',
+    // Workshop reminder translations in Italian
+    workshopReminderSubject: 'Promemoria Workshop',
+    workshopReminderTitle: 'Promemoria Workshop Imminente',
+    workshopReminderBody: 'Questo è un promemoria per il tuo prossimo workshop:',
+    workshopReminderNote: 'Non vediamo l\'ora di vederti!',
+    workshopReminderQuestions: 'Se hai domande, non esitare a contattarci.',
   }
 };
 
@@ -270,6 +282,48 @@ export const sendWorkshopUpdateEmail = async (
     return true;
   } catch (error) {
     console.error('Failed to send workshop update email:', error);
+    return false;
+  }
+};
+
+export const sendWorkshopReminderEmail = async (to: string, workshopName: string, workshopDate: Date, language: string = 'en') => {
+  try {
+    const localeKey = language === 'it' ? 'it' : 'en';
+    const t = translations[localeKey];
+
+    console.log(`Sending workshop reminder email in ${localeKey} language to ${to}`);
+
+    const formattedDate = workshopDate.toLocaleDateString(localeKey === 'it' ? 'it-IT' : 'en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    const info = await transporter.sendMail({
+      from: `"GlitchLab" <${process.env.EMAIL_USER}>`,
+      to,
+      subject: t.workshopReminderSubject,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 5px;">
+          <h2 style="font-family: 'Secular One', sans-serif; color: #333; text-align: center;">${t.workshopReminderTitle}</h2>
+          <p>${t.workshopReminderBody}</p>
+          <div style="background-color: #f9f9f9; padding: 15px; margin: 20px 0; border-radius: 5px;">
+            <strong>${workshopName}</strong><br>
+            ${formattedDate}
+          </div>
+          <p>${t.workshopReminderNote}</p>
+          <p>${t.workshopReminderQuestions}</p>
+        </div>
+      `,
+    });
+    
+    console.log('Workshop reminder email sent:', info.messageId);
+    return true;
+  } catch (error) {
+    console.error('Failed to send workshop reminder email:', error);
     return false;
   }
 };

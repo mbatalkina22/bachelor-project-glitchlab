@@ -72,7 +72,7 @@ export async function POST(request: Request) {
       workshop.startDate = new Date(newStartDate);
       workshop.endDate = new Date(newEndDate);
       workshop.canceled = false;
-      // No need to reset registeredCount as we're keeping the same workshop
+      workshop.reminderSent = false; // Reset reminder status when workshop is uncanceled
       
       await workshop.save();
 

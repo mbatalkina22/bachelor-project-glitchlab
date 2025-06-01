@@ -81,6 +81,10 @@ const WorkshopSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  reminderSent: {
+    type: Boolean,
+    default: false,
+  }
 }, {
   collection: 'workshops'
 });

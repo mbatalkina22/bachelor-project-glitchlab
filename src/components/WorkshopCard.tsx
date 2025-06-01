@@ -97,7 +97,7 @@ const WorkshopCard = ({
         <div className={`absolute ${isRegistered ? 'top-11' : 'top-2'} right-4 z-10`}>
           <span className={`${isPast ? 'bg-amber-500' : 'bg-[#7471f9]'} text-white px-3 py-1 rounded-full text-sm font-medium shadow-md flex items-center`}>
             <Icon icon="heroicons:academic-cap" className="w-4 h-4 mr-1" />
-            {isPast ? t('instructed', 'Instructed') : t('instructing', 'Instructing')}
+            {isPast ? t('instructed') : t('instructing')}
           </span>
         </div>
       )}
@@ -118,10 +118,15 @@ const WorkshopCard = ({
           </span>
         </div>
       </div>
-      <div className="p-6 flex flex-col flex-grow">
-        <h3 className="text-xl font-secularone mb-2 line-clamp-1 text-black">{localizedTitle}</h3>
+      <div className="p-6 flex flex-col h-full">
+        <div className="flex items-center justify-between mb-4">
+          <span className={`${getStatusColor(status)} text-white px-3 py-1 rounded-full text-xs font-medium uppercase`}>
+            {t(status)}
+          </span>
+        </div>
+        <h3 className="text-xl font-bold text-black mb-2 line-clamp-2">{localizedTitle}</h3>
         <p className="text-gray-600 mb-4 h-24 overflow-hidden line-clamp-4">{localizedDescription}</p>
-        {status !== 'past' && (
+        {!canceled && status !== 'past' && (
           <div className="flex items-center text-sm text-gray-500 mb-4">
             <Icon icon="heroicons:calendar" className="w-4 h-4 mr-1" />
             <span>{formatDate(startDate)}</span>
