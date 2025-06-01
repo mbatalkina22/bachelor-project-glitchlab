@@ -258,7 +258,11 @@
     "canceled": "Canceled",
     "future": "Future",
     "ongoing": "Ongoing", 
-    "past": "Past"
+    "past": "Past",
+    "beginnerRequirement": "No previous workshops required",
+    "intermediateRequirement": "Requires at least 1 workshop in the same category (Design, Test, or Prototype)",
+    "advancedRequirement": "Requires at least 2 workshops in the same category (Design, Test, or Prototype)",
+    "skillEmailInfo": "If you have relevant skills but haven't taken workshops, please email us."
   },
   "Profile": {
     "editProfile": "Edit Profile",

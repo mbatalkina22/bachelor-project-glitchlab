@@ -518,9 +518,31 @@ const WorkshopDetailPage = () => {
                 
                 <div className="flex items-center">
                   <Icon icon="heroicons:academic-cap" className="w-5 h-5 mr-2 text-gray-500" />
-                  <span className="text-gray-700">
-                    {t('requiredLevel')}: {tWorkshops(workshop.level) || workshop.level.charAt(0).toUpperCase() + workshop.level.slice(1)}
-                  </span>
+                  <div className="flex items-center">
+                    <span className="text-gray-700">
+                      {t('requiredLevel')}: {tWorkshops(workshop.level) || workshop.level.charAt(0).toUpperCase() + workshop.level.slice(1)}
+                    </span>
+                    <div className="relative group ml-2">
+                      <Icon 
+                        icon="heroicons:information-circle" 
+                        className="w-5 h-5 text-indigo-600 cursor-pointer hover:text-indigo-800" 
+                      />
+                      <div className="absolute left-0 top-full invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 bg-indigo-50 border border-indigo-100 p-3 rounded shadow-md z-10 w-72">
+                        <p className="text-gray-700 text-sm font-medium mb-1">
+                          {workshop.level === 'intermediate' 
+                            ? t('intermediateRequirement') || "Requires at least 1 workshop in the same category (Design, Test, or Prototype)" 
+                            : workshop.level === 'advanced' 
+                              ? t('advancedRequirement') || "Requires at least 2 workshops in the same category (Design, Test, or Prototype)"
+                              : t('beginnerRequirement') || "No previous workshops required"}
+                        </p>
+                        {(workshop.level === 'intermediate' || workshop.level === 'advanced') && (
+                          <p className="text-gray-600 text-xs">
+                            {t('skillEmailInfo') || "If you have relevant skills but haven't taken workshops, please email us."}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 

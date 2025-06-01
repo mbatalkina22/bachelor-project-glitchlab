@@ -268,7 +268,14 @@
     "learnMore": "Scopri di più",
     "workshopCanceled": "Questo workshop è stato annullato",
     "registrationClosed": "La registrazione è chiusa",
-    "canceled": "Annullato"
+    "canceled": "Annullato",
+    "future": "Futuro",
+    "ongoing": "In corso",
+    "past": "Passato",
+    "beginnerRequirement": "Non richiede workshop precedenti",
+    "intermediateRequirement": "Richiede almeno 1 workshop nella stessa categoria (Design, Test, o Prototype)",
+    "advancedRequirement": "Richiede almeno 2 workshop nella stessa categoria (Design, Test, o Prototype)",
+    "skillEmailInfo": "Se hai competenze rilevanti ma non hai partecipato a workshop precedenti, contattaci via email."
   },
   "Profile": {
     "editProfile": "Modifica Profilo",
