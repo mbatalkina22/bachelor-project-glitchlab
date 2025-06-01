@@ -73,14 +73,15 @@ export async function POST(request: Request, { params }: Params) {
       workshop.canceled = true;
       await workshop.save();
       
-      // Find all users registered for this workshop
+      // Find all registered users who have change notifications enabled
       const registeredUsers = await User.find({
-        registeredWorkshops: { $in: [workshopId] }
+        registeredWorkshops: { $in: [workshopId] },
+        'emailNotifications.changes': true
       });
       
       // Send cancellation emails and unregister all users from the workshop
       for (const user of registeredUsers) {
-        // Send cancellation email in user's preferred language
+        // Send cancellation email in user's preferred language if they have notifications enabled
         await sendWorkshopCancellationEmail(
           user.email,
           workshop.nameTranslations?.[user.emailLanguage || 'en'] || workshop.name,

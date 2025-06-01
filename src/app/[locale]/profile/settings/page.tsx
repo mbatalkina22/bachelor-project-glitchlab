@@ -100,6 +100,8 @@ const ProfileSettingsPage = () => {
         }
 
         const data = await response.json();
+        
+        // Set initial user data without notification preferences
         setUserData({
           name: data.user.name,
           email: data.user.email,
@@ -110,6 +112,10 @@ const ProfileSettingsPage = () => {
             changes: true
           }
         });
+        
+        // Fetch notification preferences separately
+        fetchNotificationPreferences(token);
+        
       } catch (err) {
         console.error('Error fetching user data:', err);
         setError('Failed to load user data');
@@ -121,6 +127,40 @@ const ProfileSettingsPage = () => {
     fetchUserData();
   }, [router]);
 
+  // Extract fetchNotificationPreferences as a separate function
+  const fetchNotificationPreferences = async (token?: string) => {
+    try {
+      const authToken = token || localStorage.getItem('token');
+      if (!authToken) {
+        router.push('/login');
+        return;
+      }
+
+      const response = await fetch('/api/users/notification-preferences', {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch notification preferences');
+      }
+
+      const data = await response.json();
+      console.log('Fetched notification preferences:', data);
+      
+      setUserData(prev => ({
+        ...prev,
+        emailNotifications: data.emailNotifications || {
+          workshops: true,
+          changes: true
+        }
+      }));
+    } catch (error) {
+      console.error('Error fetching notification preferences:', error);
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setUserData({
@@ -131,12 +171,17 @@ const ProfileSettingsPage = () => {
 
   const handleNotificationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
-    setUserData({
-      ...userData,
-      emailNotifications: {
-        ...userData.emailNotifications,
-        [name]: checked
-      }
+    console.log('Notification change:', { name, checked });
+    setUserData(prev => {
+      const newData = {
+        ...prev,
+        emailNotifications: {
+          ...prev.emailNotifications,
+          [name]: checked
+        }
+      };
+      console.log('New user data:', newData);
+      return newData;
     });
   };
 
@@ -295,7 +340,29 @@ const ProfileSettingsPage = () => {
         return;
       }
 
-      // Update email language preference
+      console.log('Submitting preferences:', userData.emailNotifications);
+
+      // Update notification preferences
+      const notificationResponse = await fetch('/api/users/notification-preferences', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          emailNotifications: userData.emailNotifications
+        })
+      });
+
+      if (!notificationResponse.ok) {
+        const errorData = await notificationResponse.json();
+        throw new Error(errorData.error || 'Failed to update notification preferences');
+      }
+
+      const responseData = await notificationResponse.json();
+      console.log('Server response:', responseData);
+
+      // Update email language
       const emailLanguageResponse = await fetch('/api/users/email-language', {
         method: 'PUT',
         headers: {
@@ -312,9 +379,7 @@ const ProfileSettingsPage = () => {
         throw new Error(errorData.error || 'Failed to update email language');
       }
 
-      // Update other notification settings here if needed
-      
-      setSuccessMessage(t('preferencesUpdated') || 'Preferences updated successfully!');
+      setSuccessMessage(t('preferencesUpdated'));
     } catch (err: any) {
       console.error('Error updating preferences:', err);
       setError(err.message || 'Failed to update preferences');

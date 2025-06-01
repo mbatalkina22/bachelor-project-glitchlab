@@ -140,7 +140,7 @@ export async function PUT(request: Request, { params }: Params) {
     // Compare locations
     const hasLocationChanged = updatedData.location !== workshop.location;
 
-    // If either date/time or location changed, send email
+    // If either date/time or location changed, notify users who have change notifications enabled
     if (hasDateChanged || hasLocationChanged) {
       console.log('Changes detected:', {
         hasDateChanged,
@@ -157,12 +157,13 @@ export async function PUT(request: Request, { params }: Params) {
         newLocation: updatedData.location
       });
 
-      // Find all registered users
+      // Find all registered users who have change notifications enabled
       const registeredUsers = await User.find({
-        registeredWorkshops: { $in: [params.id] }
+        registeredWorkshops: { $in: [params.id] },
+        'emailNotifications.changes': true
       });
 
-      // Send update emails to all registered users
+      // Send update emails to users who have change notifications enabled
       for (const user of registeredUsers) {
         try {
           await sendWorkshopUpdateEmail(

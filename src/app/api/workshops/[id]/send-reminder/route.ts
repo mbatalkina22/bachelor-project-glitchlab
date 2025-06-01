@@ -11,6 +11,7 @@ interface Params {
   };
 }
 
+// Update workshop sending reminders to respect notification preferences
 export async function POST(request: Request, { params }: Params) {
   try {
     // Verify authentication token
@@ -72,9 +73,10 @@ export async function POST(request: Request, { params }: Params) {
         );
       }
 
-      // Find all users registered for this workshop
+      // Find all users registered for this workshop who have workshop notifications enabled
       const registeredUsers = await User.find({
-        registeredWorkshops: { $in: [workshopId] }
+        registeredWorkshops: { $in: [workshopId] },
+        'emailNotifications.workshops': true
       });
 
       // Send reminder emails to all registered users

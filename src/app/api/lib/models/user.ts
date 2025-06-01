@@ -18,6 +18,18 @@ const BadgeSchema = new Schema({
   }
 });
 
+// Define the email notifications schema
+const EmailNotificationsSchema = new Schema({
+  workshops: {
+    type: Boolean,
+    default: true
+  },
+  changes: {
+    type: Boolean,
+    default: true
+  }
+}, { _id: false });
+
 const UserSchema = new Schema({
   name: {
     type: String,
@@ -42,6 +54,13 @@ const UserSchema = new Schema({
     type: String,
     enum: ['en', 'it'],
     default: 'en',
+  },
+  emailNotifications: {
+    type: EmailNotificationsSchema,
+    default: {
+      workshops: true,
+      changes: true
+    }
   },
   avatar: {
     type: String,
