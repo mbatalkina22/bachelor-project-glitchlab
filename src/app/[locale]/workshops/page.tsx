@@ -234,34 +234,36 @@ const WorkshopsPage = () => {
 
     return (
         <div className="pt-16 min-h-screen bg-gray-50">
-            {/* Main Content Container */}
-            <div className="mx-auto px-2 sm:px-4 lg:px-8 py-8">
-                {/* Content area - full width */}
-                <div className="w-full">
-                    {/* Header with filters, results count and create button */}
-                    <div className="flex flex-wrap justify-between items-center mb-6 px-4">
-                        {/* Left side with filters */}
-                        <div className="w-auto relative">
-                            <WorkshopFilters 
-                                ageFilter={ageFilter}
-                                skillFilter={skillFilter}
-                                locationFilter={locationFilter}
-                                categoryFilter={categoryFilter}
-                                techFilter={techFilter}
-                                statusFilter={statusFilter}
-                                handleFilterChange={handleFilterChange}
-                                resetFilters={resetFilters}
-                            />
-                        </div>
-                        
-                        <div className="flex items-center">
+            {/* Main Content Container - No padding */}
+            <div className="py-8">
+                {/* Flex container for sidebar and content */}
+                <div className="flex gap-8">
+                    {/* Left Sidebar - Filters - Slightly bigger padding from edge */}
+                    <div className="flex-shrink-0 pl-4">
+                        <WorkshopFilters 
+                            ageFilter={ageFilter}
+                            skillFilter={skillFilter}
+                            locationFilter={locationFilter}
+                            categoryFilter={categoryFilter}
+                            techFilter={techFilter}
+                            statusFilter={statusFilter}
+                            handleFilterChange={handleFilterChange}
+                            resetFilters={resetFilters}
+                        />
+                    </div>
+                    
+                    {/* Right Content Area */}
+                    <div className="flex-1 min-w-0 pr-8">
+                        {/* Header with results count and create button */}
+                        <div className="flex justify-between items-center mb-6">
                             {/* Results Count */}
-                            <p className="text-gray-600 mr-4">
+                            <p className="text-gray-600">
                                 {t('showing')} {filteredWorkshops.length} {t('of')} {workshops.length} {t('workshops')}
                             </p>
                             
-                            {/* Create button for instructors */}
-                            {user && user.role === 'instructor' && (
+                            {/* Create button for instructors - Original simple version */}
+                             {/* Create button for instructors */}
+                             {user && user.role === 'instructor' && (
                                 <Link 
                                     href={`/${params.locale}/workshops/create`}
                                     className="flex items-center mt-2 sm:mt-0"
@@ -272,37 +274,37 @@ const WorkshopsPage = () => {
                                 </Link>
                             )}
                         </div>
-                    </div>
 
-                    {/* Workshop Cards Grid - Updated to show 3 cards per row with increased gap spacing */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mx-2 mb-10">
-                        {filteredWorkshops.length > 0 ? (
-                            filteredWorkshops.map((workshop, index) => (
-                                <ScrollReveal key={workshop._id} className={workshop.delay}>
-                                    <WorkshopCard 
-                                        id={workshop._id}
-                                        title={workshop.name}
-                                        nameTranslations={workshop.nameTranslations}
-                                        description={workshop.description}
-                                        descriptionTranslations={workshop.descriptionTranslations}
-                                        startDate={new Date(workshop.startDate)}
-                                        endDate={new Date(workshop.endDate)}
-                                        imageSrc={workshop.imageSrc}
-                                        delay={workshop.delay || ""}
-                                        bgColor={workshop.bgColor}
-                                        isRegistered={user?.registeredWorkshops?.includes(workshop._id) || false}
-                                        isInstructing={workshop.instructorIds?.includes(user?._id) || false}
-                                        canceled={workshop.canceled || false}
-                                    />
-                                </ScrollReveal>
-                            ))
-                        ) : (
-                            <div className="col-span-full py-12 text-center">
-                                <Icon icon="heroicons:face-frown" className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                                <h3 className="text-xl font-medium text-gray-900 mb-2">{t('noWorkshopsFound')}</h3>
-                                <p className="text-gray-500">{t('tryAdjusting')}</p>
-                            </div>
-                        )}
+                        {/* Workshop Cards Grid */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+                            {filteredWorkshops.length > 0 ? (
+                                filteredWorkshops.map((workshop, index) => (
+                                    <ScrollReveal key={workshop._id} className={workshop.delay}>
+                                        <WorkshopCard 
+                                            id={workshop._id}
+                                            title={workshop.name}
+                                            nameTranslations={workshop.nameTranslations}
+                                            description={workshop.description}
+                                            descriptionTranslations={workshop.descriptionTranslations}
+                                            startDate={new Date(workshop.startDate)}
+                                            endDate={new Date(workshop.endDate)}
+                                            imageSrc={workshop.imageSrc}
+                                            delay={workshop.delay || ""}
+                                            bgColor={workshop.bgColor}
+                                            isRegistered={user?.registeredWorkshops?.includes(workshop._id) || false}
+                                            isInstructing={workshop.instructorIds?.includes(user?._id) || false}
+                                            canceled={workshop.canceled || false}
+                                        />
+                                    </ScrollReveal>
+                                ))
+                            ) : (
+                                <div className="col-span-full py-12 text-center">
+                                    <Icon icon="heroicons:face-frown" className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+                                    <h3 className="text-xl font-medium text-gray-900 mb-2">{t('noWorkshopsFound')}</h3>
+                                    <p className="text-gray-500">{t('tryAdjusting')}</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

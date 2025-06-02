@@ -14,7 +14,8 @@
   },
   "Hero": {
     "title": "Glitch Lab",
-    "exploreButton": "Esplora"
+    "exploreButton": "Esplora",
+     "subtitle": "GlitchLab è un living lab dedicato alla progettazione partecipativa di tecnologie nato in collaborazione con il Servizio Pari Opportunità dell'Università della Svizzera italiana (USI) e ospitato da LUXIA – laboratorio di User Experience, Interaction and Accessibility."
   },
   "Services": {
     "howItWorks": {
