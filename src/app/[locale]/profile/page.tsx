@@ -385,7 +385,7 @@ const ProfilePage = () => {
                             </div>
                           </div>
                           <h3 className="text-lg font-bold text-indigo-700 mb-2">{badge.name}</h3>
-                          <p className="text-gray-600 text-sm mb-2">{badge.description}</p>
+                          <p className="text-gray-600 text-sm mb-2 text-center">{badge.description}</p>
                           <p className="text-gray-500 text-xs">{new Date(badge.date).toLocaleDateString()}</p>
                         </div>
                       </div>
