@@ -6,6 +6,11 @@
     "aboutUs": "Chi siamo",
     "yourProfile": "Il tuo Profilo",
     "profile": "Profilo",
+      "confirmCancelWorkshop": "Sei sicuro di voler annullare questo workshop? Tutti i partecipanti registrati verranno automaticamente cancellati.",
+    "cancelling": "Annullamento in corso...",
+    "workshopCanceled": "Workshop annullato con successo!",
+    "reset": "Reset",
+    "resetFilters": "Resetta tutti i filtri",
     "settings": "Impostazioni",
     "signOut": "Esci",
     "login": "Accedi",
@@ -188,7 +193,9 @@
     "cancelWorkshopDesc": "Se hai bisogno di annullare questo workshop, puoi farlo qui. Questo rimuoverà tutte le registrazioni e contrassegnerà il workshop come annullato.",
     "confirmCancelWorkshop": "Sei sicuro di voler annullare questo workshop? Tutti i partecipanti registrati saranno automaticamente cancellati.",
     "cancelling": "Annullamento in corso...",
-    "workshopCanceled": "Workshop annullato con successo!"
+    "workshopCanceled": "Workshop annullato con successo!",
+    "reset": "Reset",
+    "resetFilters": "Resetta tutti i filtri"
   },
   "WorkshopDetail": {
     "home": "Home",
@@ -301,7 +308,10 @@
     "featureReview": "Metti in Evidenza",
     "removeFromFeatured": "Rimuovi da Evidenza",
     "reviewFeatured": "Recensione messa in evidenza con successo!",
-    "reviewUnfeatured": "Recensione rimossa dall'evidenza con successo!"
+    "reviewUnfeatured": "Recensione rimossa dall'evidenza con successo!",
+    "sendReminder": "Invia promemoria agli utenti registrati",
+    "reminderAlreadySent": "Promemoria già inviato",
+    "actions": "Azioni"
   },
   "Profile": {
     "editProfile": "Modifica Profilo",
@@ -469,7 +479,18 @@
     "passwordTooShort": "La password deve contenere almeno 8 caratteri",
     "passwordResetSuccess": "Password reimpostata con successo! Reindirizzamento al login...",
     "resetFailed": "Reimpostazione della password fallita. Riprova.",
-    "email": "Email"
+    "email": "Email",
+    "verifyEmail": "Verifica la Tua Email",
+    "verificationCodeSent": "Un codice di verifica è stato inviato a",
+    "enterVerificationCode": "Inserisci il codice di verifica a 6 cifre",
+    "enterFullCode": "Per favore inserisci il codice completo a 6 cifre",
+    "verificationFailed": "Verifica email fallita. Riprova.",
+    "resendFailed": "Invio del codice di verifica fallito. Riprova.",
+    "resendCode": "Reinvia codice di verifica",
+    "resendIn": "Reinvia tra",
+    "resendSuccess": "Codice di verifica reinviato con successo",
+    "emailLanguage": "Lingua Preferita per Email",
+    "enterEmailToReset": "Inserisci il tuo indirizzo email e ti invieremo un codice di verifica per reimpostare la password."
   },
   "Calendar": {
     "title": "Calendario Workshop",

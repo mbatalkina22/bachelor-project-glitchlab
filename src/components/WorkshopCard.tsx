@@ -122,13 +122,13 @@ const WorkshopCard = ({
         <h3 className="text-lg font-secularone mb-2 line-clamp-1 text-black">{localizedTitle}</h3>
         <p className="text-gray-600 mb-4 h-20 overflow-hidden line-clamp-4 text-sm leading-tight">{localizedDescription}</p>
         {status !== 'past' && (
-          <div className="flex flex-col text-xs text-gray-500 mb-4 space-y-1">
+          <div className="flex flex-col text-sm text-gray-600 mb-4 space-y-2 font-medium">
             <div className="flex items-center">
-              <Icon icon="heroicons:calendar" className="w-3 h-3 mr-1" />
+              <Icon icon="heroicons:calendar" className="w-4 h-4 mr-2" />
               <span>{formatDate(startDate)}</span>
             </div>
             <div className="flex items-center">
-              <Icon icon="heroicons:clock" className="w-3 h-3 mr-1" />
+              <Icon icon="heroicons:clock" className="w-4 h-4 mr-2" />
               <span>{formatTime(startDate)} - {formatTime(endDate)}</span>
             </div>
           </div>

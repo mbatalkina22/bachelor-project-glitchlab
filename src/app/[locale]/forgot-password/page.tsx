@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import HeroButton from '@/components/HeroButton';
+import { useParams } from 'next/navigation';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -12,9 +12,11 @@ export default function ForgotPasswordPage() {
   const [error, setError] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string;
   const t = useTranslations('Auth');
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -26,7 +28,7 @@ export default function ForgotPasswordPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, locale }),
       });
 
       const data = await response.json();
@@ -35,7 +37,7 @@ export default function ForgotPasswordPage() {
         setMessage(data.message);
         setIsSubmitted(true);
         // Redirect to verification page
-        router.push(`/forgot-password/verify?email=${encodeURIComponent(email)}`);
+        router.push(`/forgot-password/verify?email=${encodeURIComponent(email)}&locale=${locale}`);
       } else {
         setError(data.message || 'Something went wrong');
       }
@@ -87,14 +89,13 @@ export default function ForgotPasswordPage() {
             </div>
 
             <div>
-              <HeroButton
-                text={loading ? t('sending') : t('sendResetCode')}
+              <button
                 type="submit"
                 disabled={loading}
-                backgroundColor="#7471f9"
-                textColor="white"
-                className="w-full"
-              />
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7471f9] hover:bg-[#6361e4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7471f9] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? t('sending') : t('sendResetCode')}
+              </button>
             </div>
           </form>
         ) : (

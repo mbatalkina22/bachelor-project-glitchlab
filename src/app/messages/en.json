@@ -184,7 +184,9 @@
     "cancelWorkshopDesc": "If you need to cancel this workshop, you can do it here. This will remove all registrations and mark the workshop as canceled.",
     "confirmCancelWorkshop": "Are you sure you want to cancel this workshop? All registered participants will be automatically unregistered.",
     "cancelling": "Canceling...",
-    "workshopCanceled": "Workshop canceled successfully!"
+    "workshopCanceled": "Workshop canceled successfully!",
+    "reset": "Reset",
+    "resetFilters": "Reset all filters"
   },
   "WorkshopDetail": {
     "home": "Home",
@@ -289,7 +291,10 @@
     "featureReview": "Feature Review",
     "removeFromFeatured": "Remove from Featured",
     "reviewFeatured": "Review featured successfully!",
-    "reviewUnfeatured": "Review removed from featured successfully!"
+    "reviewUnfeatured": "Review removed from featured successfully!",
+    "sendReminder": "Send reminder to registered users",
+    "reminderAlreadySent": "Reminder already sent",
+    "actions": "Actions"
   },
   "Profile": {
     "editProfile": "Edit Profile",
@@ -454,7 +459,18 @@
     "passwordTooShort": "Password must be at least 8 characters long",
     "passwordResetSuccess": "Password reset successfully! Redirecting to login...",
     "resetFailed": "Password reset failed. Please try again.",
-    "email": "Email"
+    "email": "Email",
+    "verifyEmail": "Verify Your Email",
+    "verificationCodeSent": "A verification code has been sent to",
+    "enterVerificationCode": "Enter the 6-digit verification code",
+    "enterFullCode": "Please enter the complete 6-digit code",
+    "verificationFailed": "Email verification failed. Please try again.",
+    "resendFailed": "Failed to resend verification code. Please try again.",
+    "resendCode": "Resend verification code",
+    "resendIn": "Resend in",
+    "resendSuccess": "Verification code resent successfully",
+    "emailLanguage": "Preferred Email Language",
+    "enterEmailToReset": "Enter your email address and we'll send you a verification code to reset your password."
   },
   "Calendar": {
     "title": "Workshop Calendar",
