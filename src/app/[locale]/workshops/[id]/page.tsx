@@ -414,22 +414,41 @@ const WorkshopDetailPage = () => {
             <div className="md:w-2/3 p-6">
               <div className="flex justify-between items-center mb-4">
                 <div className="flex flex-wrap gap-2">
-                  {workshop.categories.map((category, index) => (
-                    <span key={index} className="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-800">
-                      {category === 'in-class' ? tWorkshops('inClass') : 
-                       category === 'out-of-class' ? tWorkshops('outClass') : 
-                       category === 'beginner' ? tWorkshops('beginner') :
-                       category === 'intermediate' ? tWorkshops('intermediate') :
-                       category === 'advanced' ? tWorkshops('advanced') :
-                       category === 'design' ? tWorkshops('design') :
-                       category === 'test' ? tWorkshops('test') :
-                       category === 'prototype' ? tWorkshops('prototype') :
-                       category === 'plug' ? tWorkshops('plug') :
-                       category === 'unplug' ? tWorkshops('unplug') :
-                       // Age ranges can remain as they are
-                       category}
-                    </span>
-                  ))}
+                  {workshop.categories.map((category, index) => {
+                    const getCategoryTranslation = (cat: string) => {
+                      try {
+                        const translated = tWorkshops(cat === 'in-class' ? 'inClass' : 
+                                                     cat === 'out-of-class' ? 'outClass' : cat);
+                        // If translation contains namespace, it failed - use fallback
+                        if (translated && !translated.includes('WorkshopsPage.')) {
+                          return translated;
+                        }
+                        // Manual fallback for skill levels
+                        const categoryMap: { [key: string]: string } = {
+                          'beginner': 'Beginner',
+                          'intermediate': 'Intermediate',
+                          'advanced': 'Advanced',
+                          'in-class': 'In Class',
+                          'out-of-class': 'Out Class',
+                          'design': 'Design',
+                          'test': 'Test',
+                          'prototype': 'Prototype',
+                          'plug': 'Plug',
+                          'unplug': 'Unplug'
+                        };
+                        return categoryMap[cat] || cat;
+                      } catch (error) {
+                        console.error('Translation error for category:', cat, error);
+                        return cat.charAt(0).toUpperCase() + cat.slice(1);
+                      }
+                    };
+                    
+                    return (
+                      <span key={index} className="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-800">
+                        {getCategoryTranslation(category)}
+                      </span>
+                    );
+                  })}
                 </div>
                 
                 {/* Instructor Action Buttons - Now shown for all instructors, not just workshop instructors */}
@@ -520,7 +539,25 @@ const WorkshopDetailPage = () => {
                   <Icon icon="heroicons:academic-cap" className="w-5 h-5 mr-2 text-gray-500" />
                   <div className="flex items-center">
                     <span className="text-gray-700">
-                      {t('requiredLevel')}: {tWorkshops(workshop.level) || workshop.level.charAt(0).toUpperCase() + workshop.level.slice(1)}
+                      {t('requiredLevel')}: {(() => {
+                        try {
+                          const translated = tWorkshops(workshop.level);
+                          // If the translation returns the namespace.key format, it means translation failed
+                          if (translated && !translated.includes('WorkshopsPage.')) {
+                            return translated;
+                          }
+                          // Fallback to manual translation mapping
+                          const levelMap: { [key: string]: string } = {
+                            'beginner': 'Beginner',
+                            'intermediate': 'Intermediate', 
+                            'advanced': 'Advanced'
+                          };
+                          return levelMap[workshop.level] || workshop.level.charAt(0).toUpperCase() + workshop.level.slice(1);
+                        } catch (error) {
+                          console.error('Translation error for level:', workshop.level, error);
+                          return workshop.level.charAt(0).toUpperCase() + workshop.level.slice(1);
+                        }
+                      })()}
                     </span>
                     <div className="relative group ml-2">
                       <Icon 
@@ -529,13 +566,13 @@ const WorkshopDetailPage = () => {
                       />
                       <div className="absolute left-0 top-full invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 bg-indigo-50 border border-indigo-100 p-3 rounded shadow-md z-10 w-72">
                         <p className="text-gray-700 text-sm font-medium mb-1">
-                          {workshop.level === 'intermediate' 
+                          {workshop.level.toLowerCase() === 'intermediate' 
                             ? t('intermediateRequirement') || "Requires at least 1 workshop in the same category (Design, Test, or Prototype)" 
-                            : workshop.level === 'advanced' 
+                            : workshop.level.toLowerCase() === 'advanced' 
                               ? t('advancedRequirement') || "Requires at least 2 workshops in the same category (Design, Test, or Prototype)"
                               : t('beginnerRequirement') || "No previous workshops required"}
                         </p>
-                        {(workshop.level === 'intermediate' || workshop.level === 'advanced') && (
+                        {(workshop.level.toLowerCase() === 'intermediate' || workshop.level.toLowerCase() === 'advanced') && (
                           <p className="text-gray-600 text-xs">
                             {t('skillEmailInfo') || "If you have relevant skills but haven't taken workshops, please email us."}
                           </p>

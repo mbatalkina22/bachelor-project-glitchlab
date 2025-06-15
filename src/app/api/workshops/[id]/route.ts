@@ -15,7 +15,8 @@ export async function GET(request: Request, { params }: Params) {
   try {
     await dbConnect();
 
-    const workshop = await Workshop.findById(params.id);
+    const { id } = await params;
+    const workshop = await Workshop.findById(id);
     
     if (!workshop) {
       return NextResponse.json({ error: 'Workshop not found' }, { status: 404 });

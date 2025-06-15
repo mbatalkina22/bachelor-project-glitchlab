@@ -14,7 +14,15 @@ import HeroButton from '@/components/HeroButton';
 interface Workshop {
     _id: string;
     name: string;
+    nameTranslations?: {
+        en: string;
+        it: string;
+    };
     description: string;
+    descriptionTranslations?: {
+        en: string;
+        it: string;
+    };
     startDate: Date;
     endDate: Date;
     imageSrc: string;
@@ -25,6 +33,7 @@ interface Workshop {
     instructorIds?: string[]; // Adding instructorIds property
     delay?: string;
     bgColor?: string;
+    canceled?: boolean;
 }
 
 const WorkshopsPage = () => {
@@ -118,7 +127,7 @@ const WorkshopsPage = () => {
                             ageFilter.includes(age) && ["6-8", "9-11", "12-13", "14-16", "16+"].includes(age)));
         
         // Skill level filter with multiple selections
-        const matchesLevel = isFilterSetToAll(skillFilter) || skillFilter.includes(workshop.level);
+        const matchesLevel = isFilterSetToAll(skillFilter) || skillFilter.includes(workshop.level.toLowerCase());
         
         // Status filter (future, ongoing, past)
         const now = new Date();
@@ -292,7 +301,7 @@ const WorkshopsPage = () => {
                                             delay={workshop.delay || ""}
                                             bgColor={workshop.bgColor}
                                             isRegistered={user?.registeredWorkshops?.includes(workshop._id) || false}
-                                            isInstructing={workshop.instructorIds?.includes(user?._id) || false}
+                                            isInstructing={workshop.instructorIds?.includes(user?._id || '') || false}
                                             canceled={workshop.canceled || false}
                                         />
                                     </ScrollReveal>

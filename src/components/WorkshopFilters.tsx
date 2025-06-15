@@ -99,7 +99,25 @@ const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
       icon: 'heroicons:academic-cap',
       options: ['all', 'beginner', 'intermediate', 'advanced'],
       filterValue: skillFilter,
-      getLabel: (option: string) => option === 'all' ? t('all') || 'All' : t(option) || option.charAt(0).toUpperCase() + option.slice(1)
+      getLabel: (option: string) => {
+        if (option === 'all') return t('all') || 'All';
+        try {
+          const translated = t(option);
+          // If translation contains namespace, it failed - use fallback
+          if (translated && !translated.includes('WorkshopsPage.')) {
+            return translated;
+          }
+          // Manual fallback for skill levels
+          const skillMap: { [key: string]: string } = {
+            'beginner': 'Beginner',
+            'intermediate': 'Intermediate',
+            'advanced': 'Advanced'
+          };
+          return skillMap[option] || option.charAt(0).toUpperCase() + option.slice(1);
+        } catch (error) {
+          return option.charAt(0).toUpperCase() + option.slice(1);
+        }
+      }
     },
     {
       key: 'age',
