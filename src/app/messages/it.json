@@ -164,6 +164,7 @@
     "startTime": "Ora di Inizio",
     "endTime": "Ora di Fine",
     "capacity": "Capacità Massima",
+    "capacityNote": "Minimo 1 persona richiesta",
     "ageRange": "Fascia di Età",
     "location": "Luogo",
     "inClass": "In Classe",
@@ -194,6 +195,7 @@
     "confirmCancelWorkshop": "Sei sicuro di voler annullare questo workshop? Tutti i partecipanti registrati saranno automaticamente cancellati.",
     "cancelling": "Annullamento in corso...",
     "workshopCanceled": "Workshop annullato con successo!",
+    "language": "Lingua",
     "reset": "Reset",
     "resetFilters": "Resetta tutti i filtri"
   },

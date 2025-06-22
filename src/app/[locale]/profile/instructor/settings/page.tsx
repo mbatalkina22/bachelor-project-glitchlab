@@ -15,7 +15,7 @@ const InstructorSettingsPage = () => {
   const router = useRouter();
   const params = useParams();
   const locale = params.locale as string;
-  const { user, isAuthenticated, isInstructor } = useAuth();
+  const { user, isAuthenticated, isInstructor, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -344,8 +344,8 @@ const InstructorSettingsPage = () => {
         throw new Error(errorData.error || t('failedToDeleteAccount'));
       }
 
-      localStorage.removeItem('token');
-      router.push(`/${locale}`);
+      // Use logout function to properly clear all authentication state
+      logout();
     } catch (err: any) {
       console.error('Error deleting account:', err);
       setError(err.message || t('failedToDeleteAccount'));

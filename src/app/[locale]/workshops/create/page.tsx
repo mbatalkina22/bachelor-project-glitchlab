@@ -44,9 +44,9 @@ const CreateWorkshopPage = () => {
       for (let minute = 0; minute < 60; minute += 15) {
         // Skip times after 19:00
         if (hour === 19 && minute > 0) continue;
-        
-        const formattedHour = hour.toString().padStart(2, '0');
-        const formattedMinute = minute.toString().padStart(2, '0');
+
+        const formattedHour = hour.toString().padStart(2, "0");
+        const formattedMinute = minute.toString().padStart(2, "0");
         options.push(`${formattedHour}:${formattedMinute}`);
       }
     }
@@ -65,15 +65,15 @@ const CreateWorkshopPage = () => {
     const fetchInstructors = async () => {
       try {
         setLoadingInstructors(true);
-        const response = await fetch('/api/instructors');
+        const response = await fetch("/api/instructors");
         if (!response.ok) {
-          throw new Error('Failed to fetch instructors');
+          throw new Error("Failed to fetch instructors");
         }
         const data = await response.json();
         setInstructors(data.instructors);
       } catch (err) {
-        console.error('Error fetching instructors:', err);
-        setError('Failed to load instructors');
+        console.error("Error fetching instructors:", err);
+        setError("Failed to load instructors");
       } finally {
         setLoadingInstructors(false);
       }
@@ -87,25 +87,25 @@ const CreateWorkshopPage = () => {
     name: "",
     nameTranslations: {
       en: "",
-      it: ""
+      it: "",
     },
     description: "",
     descriptionTranslations: {
       en: "",
-      it: ""
+      it: "",
     },
     imageSrc: "/images/workshop.jpg",
     badgeName: "",
     badgeNameTranslations: {
       en: "",
-      it: ""
+      it: "",
     },
     startDate: "",
     startTime: "10:00",
     endTime: "11:00",
     level: "beginner",
     location: "",
-    capacity: 10,
+    capacity: 10 as number | string,
     categories: [] as string[],
     ageRanges: [] as string[], // Changed from ageRange string to ageRanges array
     instructorIds: [] as string[], // Changed to array for multiple instructors
@@ -139,12 +139,12 @@ const CreateWorkshopPage = () => {
       [name]: value,
     });
   };
-  
+
   // Add toggle instructor selection handler
   const handleInstructorToggle = (instructorId: string) => {
     const updatedInstructorIds = [...workshopData.instructorIds];
     const index = updatedInstructorIds.indexOf(instructorId);
-    
+
     if (index !== -1) {
       // If already selected, remove it
       updatedInstructorIds.splice(index, 1);
@@ -152,7 +152,7 @@ const CreateWorkshopPage = () => {
       // If not selected, add it
       updatedInstructorIds.push(instructorId);
     }
-    
+
     setWorkshopData({
       ...workshopData,
       instructorIds: updatedInstructorIds,
@@ -160,13 +160,26 @@ const CreateWorkshopPage = () => {
   };
 
   const handleCapacityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
+    const inputValue = e.target.value;
+
+    // Allow empty string (fully deleted)
+    if (inputValue === "") {
+      setWorkshopData({
+        ...workshopData,
+        capacity: "" as any, // Allow empty string temporarily
+      });
+      return;
+    }
+
+    const value = parseInt(inputValue);
+    // Only allow positive numbers, reject 0
     if (!isNaN(value) && value > 0) {
       setWorkshopData({
         ...workshopData,
         capacity: value,
       });
     }
+    // If invalid input (like 0 or negative), don't update state
   };
 
   const handleAgeChange = (age: string) => {
@@ -190,11 +203,11 @@ const CreateWorkshopPage = () => {
   const handleCategoryChange = (category: string) => {
     const updatedCategories = [...workshopData.categories];
     const mainCategories = ["design", "test", "prototype"];
-    
+
     // Only for main categories (design, test, prototype)
     if (mainCategories.includes(category)) {
       const index = updatedCategories.indexOf(category);
-      
+
       if (index !== -1) {
         // If already selected, remove it
         updatedCategories.splice(index, 1);
@@ -202,7 +215,7 @@ const CreateWorkshopPage = () => {
         // If not selected, add it
         updatedCategories.push(category);
       }
-      
+
       setWorkshopData({
         ...workshopData,
         categories: updatedCategories,
@@ -214,14 +227,14 @@ const CreateWorkshopPage = () => {
     // Determine the group the tech belongs to
     const isLocationType = ["in-class", "out-of-class"].includes(tech);
     const isTechType = ["plug", "unplug"].includes(tech);
-    
+
     // Get the current categories
     const updatedCategories = [...workshopData.categories];
-    
+
     // Remove any existing selection from the same group
     if (isLocationType) {
       // Remove any existing location type
-      ["in-class", "out-of-class"].forEach(locType => {
+      ["in-class", "out-of-class"].forEach((locType) => {
         const index = updatedCategories.indexOf(locType);
         if (index !== -1) {
           updatedCategories.splice(index, 1);
@@ -229,19 +242,19 @@ const CreateWorkshopPage = () => {
       });
     } else if (isTechType) {
       // Remove any existing tech type
-      ["plug", "unplug"].forEach(techType => {
+      ["plug", "unplug"].forEach((techType) => {
         const index = updatedCategories.indexOf(techType);
         if (index !== -1) {
           updatedCategories.splice(index, 1);
         }
       });
     }
-    
+
     // If this tech was not already selected (which means we just removed it), add it
     if (!workshopData.categories.includes(tech)) {
       updatedCategories.push(tech);
     }
-    
+
     setWorkshopData({
       ...workshopData,
       categories: updatedCategories,
@@ -251,9 +264,9 @@ const CreateWorkshopPage = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      
+
       // Validate file type
-      if (!file.type.includes('image/')) {
+      if (!file.type.includes("image/")) {
         setError("Please upload an image file");
         return;
       }
@@ -263,20 +276,20 @@ const CreateWorkshopPage = () => {
         setError("Image size should be less than 5MB");
         return;
       }
-      
+
       setError("");
-      
+
       // Create a preview URL for the selected file
       const objectUrl = URL.createObjectURL(file);
       setPreviewImageUrl(objectUrl);
-      
+
       // Store the file reference but don't upload yet
       setSelectedImageFile(file);
-      
+
       // Update the UI to show the preview
       setWorkshopData({
         ...workshopData,
-        imageSrc: objectUrl
+        imageSrc: objectUrl,
       });
     }
   };
@@ -293,13 +306,21 @@ const CreateWorkshopPage = () => {
     setSuccessMessage("");
 
     // Validate form
-    if (!workshopData.nameTranslations.en || !workshopData.nameTranslations.it) {
+    if (
+      !workshopData.nameTranslations.en ||
+      !workshopData.nameTranslations.it
+    ) {
       setError("Please provide a workshop name in both English and Italian");
       return;
     }
 
-    if (!workshopData.descriptionTranslations.en || !workshopData.descriptionTranslations.it) {
-      setError("Please provide a workshop description in both English and Italian");
+    if (
+      !workshopData.descriptionTranslations.en ||
+      !workshopData.descriptionTranslations.it
+    ) {
+      setError(
+        "Please provide a workshop description in both English and Italian"
+      );
       return;
     }
 
@@ -308,7 +329,10 @@ const CreateWorkshopPage = () => {
       return;
     }
 
-    if (!workshopData.badgeNameTranslations.en || !workshopData.badgeNameTranslations.it) {
+    if (
+      !workshopData.badgeNameTranslations.en ||
+      !workshopData.badgeNameTranslations.it
+    ) {
       setError("Please provide a badge name in both English and Italian");
       return;
     }
@@ -318,7 +342,11 @@ const CreateWorkshopPage = () => {
       return;
     }
 
-    if (workshopData.categories.filter(cat => ["design", "test", "prototype"].includes(cat)).length === 0) {
+    if (
+      workshopData.categories.filter((cat) =>
+        ["design", "test", "prototype"].includes(cat)
+      ).length === 0
+    ) {
       setError("Please select at least one category");
       return;
     }
@@ -328,16 +356,27 @@ const CreateWorkshopPage = () => {
       return;
     }
 
+    // Validate capacity
+    if (
+      !workshopData.capacity ||
+      (typeof workshopData.capacity === "string" &&
+        workshopData.capacity === "") ||
+      workshopData.capacity <= 0
+    ) {
+      setError("Please provide a valid capacity (minimum 1 person)");
+      return;
+    }
+
     try {
       setIsLoading(true);
 
       // If there's a selected image file, upload it to Cloudinary now
       let imageSrcUrl = workshopData.imageSrc;
-      
+
       if (selectedImageFile) {
         try {
           // Upload the image to Cloudinary using direct upload (no Base64)
-          imageSrcUrl = await uploadImage(selectedImageFile, 'workshops');
+          imageSrcUrl = await uploadImage(selectedImageFile, "workshops");
         } catch (imageError) {
           console.error("Error uploading image:", imageError);
           throw new Error("Failed to upload workshop image. Please try again.");
@@ -366,12 +405,12 @@ const CreateWorkshopPage = () => {
         name: workshopData.nameTranslations.en,
         nameTranslations: {
           en: workshopData.nameTranslations.en,
-          it: workshopData.nameTranslations.it
+          it: workshopData.nameTranslations.it,
         },
         description: workshopData.descriptionTranslations.en,
         descriptionTranslations: {
           en: workshopData.descriptionTranslations.en,
-          it: workshopData.descriptionTranslations.it
+          it: workshopData.descriptionTranslations.it,
         },
         startDate: startDateTime.toISOString(),
         endDate: endDateTime.toISOString(),
@@ -379,7 +418,7 @@ const CreateWorkshopPage = () => {
         badgeName: workshopData.badgeNameTranslations.en,
         badgeNameTranslations: {
           en: workshopData.badgeNameTranslations.en,
-          it: workshopData.badgeNameTranslations.it
+          it: workshopData.badgeNameTranslations.it,
         },
         categories: [...workshopData.categories, ...workshopData.ageRanges],
         level: workshopData.level,
@@ -388,7 +427,7 @@ const CreateWorkshopPage = () => {
         capacity: workshopData.capacity,
         bgColor: workshopData.bgColor,
       };
-      
+
       // Send request to create workshop
       const token = localStorage.getItem("token");
       if (!token) {
@@ -430,16 +469,19 @@ const CreateWorkshopPage = () => {
 
   // Helper function to handle translation field changes
   const handleTranslationChange = (
-    field: 'nameTranslations' | 'descriptionTranslations' | 'badgeNameTranslations',
-    language: 'en' | 'it',
+    field:
+      | "nameTranslations"
+      | "descriptionTranslations"
+      | "badgeNameTranslations",
+    language: "en" | "it",
     value: string
   ) => {
     setWorkshopData({
       ...workshopData,
       [field]: {
         ...workshopData[field],
-        [language]: value
-      }
+        [language]: value,
+      },
     });
   };
 
@@ -554,163 +596,237 @@ const CreateWorkshopPage = () => {
               </div>
             </div>
 
-            <div className="mb-6">
-              <label
-                className="block text-sm font-medium text-gray-900 mb-1"
-                htmlFor="badgeName"
-              >
-                {t("badgeName") || "Badge Name"}
-              </label>
-              
-              {/* Badge Name Translations - Only language fields */}
-              <div className="space-y-3">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
-                    <Icon icon="emojione:flag-for-united-kingdom" className="w-5 h-5" />
-                  </div>
-                  <div className="ml-2 flex-grow">
-                    <input
-                      type="text"
-                      value={workshopData.badgeNameTranslations.en}
-                      onChange={(e) => handleTranslationChange('badgeNameTranslations', 'en', e.target.value)}
-                      className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
-                      placeholder="English badge name"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
-                    <Icon icon="emojione:flag-for-italy" className="w-5 h-5" />
-                  </div>
-                  <div className="ml-2 flex-grow">
-                    <input
-                      type="text"
-                      value={workshopData.badgeNameTranslations.it}
-                      onChange={(e) => handleTranslationChange('badgeNameTranslations', 'it', e.target.value)}
-                      className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
-                      placeholder="Italian badge name"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              <p className="mt-2 text-xs text-gray-500">
-                {t("badgeNameDesc") ||
-                  "Give a name to the badge that participants will earn."}
-              </p>
-            </div>
-
             {/* Basic Workshop Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div>
-                <label
-                  className="block text-sm font-medium text-gray-900 mb-1"
-                  htmlFor="name"
-                >
-                  {t("workshopName") || "Workshop Name"}
-                </label>
-                
-                {/* Workshop Name Translations - Only language fields */}
-                <div className="space-y-3">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
-                      <Icon icon="emojione:flag-for-united-kingdom" className="w-5 h-5" />
-                    </div>
-                    <div className="ml-2 flex-grow">
-                      <input
-                        type="text"
-                        id="name"
-                        value={workshopData.nameTranslations.en}
-                        onChange={(e) => handleTranslationChange('nameTranslations', 'en', e.target.value)}
-                        className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
-                        placeholder="English workshop name"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
-                      <Icon icon="emojione:flag-for-italy" className="w-5 h-5" />
-                    </div>
-                    <div className="ml-2 flex-grow">
-                      <input
-                        type="text"
-                        value={workshopData.nameTranslations.it}
-                        onChange={(e) => handleTranslationChange('nameTranslations', 'it', e.target.value)}
-                        className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
-                        placeholder="Italian workshop name"
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label
-                  className="block text-sm font-medium text-gray-900 mb-1"
-                  htmlFor="level"
-                >
-                  {t("requiredLevel")}
-                </label>
-                <select
-                  id="level"
-                  name="level"
-                  value={workshopData.level}
-                  onChange={handleInputChange}
-                  className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base bg-white appearance-none"
-                  required
-                >
-                  <option value="beginner">{t("beginner")}</option>
-                  <option value="intermediate">{t("intermediate")}</option>
-                  <option value="advanced">{t("advanced")}</option>
-                </select>
-              </div>
-            </div>
-
             <div className="mb-6">
+              <div>
               <label
-                className="block text-sm font-medium text-gray-900 mb-1"
-                htmlFor="description"
+              className="block text-sm font-medium text-gray-900 mb-1"
+              htmlFor="name"
               >
-                {t("workshopDescription") || "Workshop Description"}
+              {t("workshopName") || "Workshop Name"}
               </label>
-              
+
+              {/* Workshop Name Translations - Only language fields */}
+              <div className="space-y-3">
+              <div className="flex items-center">
+              <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
+                <Icon
+                icon="emojione:flag-for-united-kingdom"
+                className="w-5 h-5"
+                />
+              </div>
+              <div className="ml-2 flex-grow">
+                <input
+                type="text"
+                id="name"
+                value={workshopData.nameTranslations.en}
+                onChange={(e) =>
+                handleTranslationChange(
+                "nameTranslations",
+                "en",
+                e.target.value
+                )
+                }
+                className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
+                placeholder="English workshop name"
+                required
+                />
+              </div>
+              </div>
+              <div className="flex items-center">
+              <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
+                <Icon
+                icon="emojione:flag-for-italy"
+                className="w-5 h-5"
+                />
+              </div>
+              <div className="ml-2 flex-grow">
+                <input
+                type="text"
+                value={workshopData.nameTranslations.it}
+                onChange={(e) =>
+                handleTranslationChange(
+                "nameTranslations",
+                "it",
+                e.target.value
+                )
+                }
+                className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
+                placeholder="Italian workshop name"
+                required
+                />
+              </div>
+              </div>
+              </div>
+              </div>
+
+              <div className="mt-6">
+              <label
+              className="block text-sm font-medium text-gray-900 mb-1"
+              htmlFor="description"
+              >
+              {t("workshopDescription") || "Workshop Description"}
+              </label>
+
               {/* Description Translations - Only language fields */}
               <div className="space-y-3">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
-                    <Icon icon="emojione:flag-for-united-kingdom" className="w-5 h-5" />
-                  </div>
-                  <div className="ml-2 flex-grow">
-                    <textarea
-                      id="description"
-                      value={workshopData.descriptionTranslations.en}
-                      onChange={(e) => handleTranslationChange('descriptionTranslations', 'en', e.target.value)}
-                      rows={3}
-                      className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
-                      placeholder="English description"
-                      required
-                    ></textarea>
-                  </div>
+              <div className="flex items-center">
+              <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
+                <Icon
+                icon="emojione:flag-for-united-kingdom"
+                className="w-5 h-5"
+                />
+              </div>
+              <div className="ml-2 flex-grow">
+                <textarea
+                id="description"
+                value={workshopData.descriptionTranslations.en}
+                onChange={(e) =>
+                handleTranslationChange(
+                "descriptionTranslations",
+                "en",
+                e.target.value
+                )
+                }
+                rows={3}
+                className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
+                placeholder="English description"
+                required
+                ></textarea>
+              </div>
+              </div>
+              <div className="flex items-center">
+              <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
+                <Icon
+                icon="emojione:flag-for-italy"
+                className="w-5 h-5"
+                />
+              </div>
+              <div className="ml-2 flex-grow">
+                <textarea
+                value={workshopData.descriptionTranslations.it}
+                onChange={(e) =>
+                handleTranslationChange(
+                "descriptionTranslations",
+                "it",
+                e.target.value
+                )
+                }
+                rows={3}
+                className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
+                placeholder="Italian description"
+                required
+                ></textarea>
+              </div>
+              </div>
+              </div>
+              </div>
+
+              {/* Badge Name */}
+              <div className="mt-6">
+              <label
+              className="block text-sm font-medium text-gray-900 mb-1"
+              htmlFor="badgeName"
+              >
+              {t("badgeName") || "Badge Name"}
+              </label>
+              {/* Badge Name Translations - Only language fields */}
+              <div className="space-y-3">
+              <div className="flex items-center">
+                <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
+                <Icon
+                icon="emojione:flag-for-united-kingdom"
+                className="w-5 h-5"
+                />
                 </div>
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
-                    <Icon icon="emojione:flag-for-italy" className="w-5 h-5" />
-                  </div>
-                  <div className="ml-2 flex-grow">
-                    <textarea
-                      value={workshopData.descriptionTranslations.it}
-                      onChange={(e) => handleTranslationChange('descriptionTranslations', 'it', e.target.value)}
-                      rows={3}
-                      className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
-                      placeholder="Italian description"
-                      required
-                    ></textarea>
-                  </div>
+                <div className="ml-2 flex-grow">
+                <input
+                type="text"
+                value={workshopData.badgeNameTranslations.en}
+                onChange={(e) =>
+                handleTranslationChange(
+                  "badgeNameTranslations",
+                  "en",
+                  e.target.value
+                )
+                }
+                className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
+                placeholder="English badge name"
+                required
+                />
                 </div>
+              </div>
+              <div className="flex items-center">
+                <div className="flex-shrink-0 w-8 h-6 flex items-center justify-center">
+                <Icon
+                icon="emojione:flag-for-italy"
+                className="w-5 h-5"
+                />
+                </div>
+                <div className="ml-2 flex-grow">
+                <input
+                type="text"
+                value={workshopData.badgeNameTranslations.it}
+                onChange={(e) =>
+                handleTranslationChange(
+                  "badgeNameTranslations",
+                  "it",
+                  e.target.value
+                )
+                }
+                className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-2 px-4"
+                placeholder="Italian badge name"
+                required
+                />
+                </div>
+              </div>
+              </div>
+              <p className="mt-2 text-xs text-gray-500">
+              {t("badgeNameDesc") ||
+                "Give a name to the badge that participants will earn."}
+              </p>
+              </div>
+
+              {/* Required Level and Language Selection in a row */}
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+              <label
+              className="block text-sm font-medium text-gray-900 mb-1"
+              htmlFor="level"
+              >
+              {t("requiredLevel")}
+              </label>
+              <select
+              id="level"
+              name="level"
+              value={workshopData.level}
+              onChange={handleInputChange}
+              className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base bg-white appearance-none"
+              required
+              >
+              <option value="beginner">{t("beginner")}</option>
+              <option value="intermediate">{t("intermediate")}</option>
+              <option value="advanced">{t("advanced")}</option>
+              </select>
+              </div>
+              
+              <div>
+              <label
+              className="block text-sm font-medium text-gray-900 mb-1"
+              htmlFor="language"
+              >
+              {t("language") || "Language"}
+              </label>
+              <select
+              id="language"
+              name="language"
+              className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base bg-white appearance-none"
+              required
+              >
+              <option value="en">English</option>
+              <option value="it">Italian</option>
+              </select>
+              </div>
               </div>
             </div>
 
@@ -795,9 +911,13 @@ const CreateWorkshopPage = () => {
                 min="1"
                 value={workshopData.capacity}
                 onChange={handleCapacityChange}
+                placeholder="Enter number of people"
                 className="w-full md:w-1/3 border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
                 required
               />
+              <p className="mt-1 text-xs text-gray-500">
+                {t("capacityNote") || "Minimum 1 person required"}
+              </p>
             </div>
 
             {/* Location */}
@@ -825,11 +945,16 @@ const CreateWorkshopPage = () => {
               >
                 {t("instructors") || "Instructors"}
               </label>
-              
+
               {loadingInstructors ? (
                 <div className="flex items-center justify-center p-6 border rounded-md">
-                  <Icon icon="heroicons:arrow-path" className="w-5 h-5 mr-2 animate-spin text-[#7471f9]" />
-                  <span>{t("loadingInstructors") || "Loading instructors..."}</span>
+                  <Icon
+                    icon="heroicons:arrow-path"
+                    className="w-5 h-5 mr-2 animate-spin text-[#7471f9]"
+                  />
+                  <span>
+                    {t("loadingInstructors") || "Loading instructors..."}
+                  </span>
                 </div>
               ) : instructors.length === 0 ? (
                 <div className="p-4 border rounded-md bg-gray-50 text-gray-500">
@@ -839,22 +964,26 @@ const CreateWorkshopPage = () => {
                 <>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {instructors.map((instructor) => (
-                      <div 
+                      <div
                         key={instructor._id}
                         onClick={() => handleInstructorToggle(instructor._id)}
                         className={`
                           flex items-center p-3 rounded-lg border cursor-pointer transition-all
-                          ${workshopData.instructorIds.includes(instructor._id) 
-                            ? "border-[#7471f9] bg-[#7471f9]/5 shadow-sm" 
-                            : "border-gray-300 hover:border-[#7471f9] hover:bg-gray-50"}
+                          ${
+                            workshopData.instructorIds.includes(instructor._id)
+                              ? "border-[#7471f9] bg-[#7471f9]/5 shadow-sm"
+                              : "border-gray-300 hover:border-[#7471f9] hover:bg-gray-50"
+                          }
                         `}
                       >
                         <div className="flex-shrink-0 relative w-12 h-12 rounded-full overflow-hidden bg-gray-200">
-                          <Image 
-                            src={instructor.avatar || "/images/avatar.jpg"} 
-                            alt={`${instructor.name} ${instructor.surname || ''}`}
+                          <Image
+                            src={instructor.avatar || "/images/avatar.jpg"}
+                            alt={`${instructor.name} ${
+                              instructor.surname || ""
+                            }`}
                             fill
-                            className="object-cover" 
+                            className="object-cover"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               target.src = "/images/avatar.jpg";
@@ -863,30 +992,38 @@ const CreateWorkshopPage = () => {
                         </div>
                         <div className="ml-3 flex-grow">
                           <p className="font-medium text-gray-900 text-sm">
-                            {instructor.name} {instructor.surname || ''}
+                            {instructor.name} {instructor.surname || ""}
                           </p>
                         </div>
-                        {workshopData.instructorIds.includes(instructor._id) && (
+                        {workshopData.instructorIds.includes(
+                          instructor._id
+                        ) && (
                           <div className="flex-shrink-0 ml-2">
-                            <Icon icon="heroicons:check-circle" className="w-5 h-5 text-[#7471f9]" />
+                            <Icon
+                              icon="heroicons:check-circle"
+                              className="w-5 h-5 text-[#7471f9]"
+                            />
                           </div>
                         )}
                       </div>
                     ))}
                   </div>
-                  
+
                   {workshopData.instructorIds.length > 0 && (
                     <div className="mt-3 text-sm">
                       <p className="font-medium text-gray-900">
                         {t("selectedInstructors") || "Selected instructors"}:{" "}
-                        <span className="text-[#7471f9]">{workshopData.instructorIds.length}</span>
+                        <span className="text-[#7471f9]">
+                          {workshopData.instructorIds.length}
+                        </span>
                       </p>
                     </div>
                   )}
                 </>
               )}
               <p className="mt-2 text-xs text-gray-500">
-                {t("multipleInstructorsNote") || "You can select multiple instructors for the workshop"}
+                {t("multipleInstructorsNote") ||
+                  "You can select multiple instructors for the workshop"}
               </p>
             </div>
 
@@ -915,12 +1052,15 @@ const CreateWorkshopPage = () => {
                 <div className="mt-3 text-sm">
                   <p className="font-medium text-gray-900">
                     {t("selectedAgeRanges") || "Selected age ranges"}:{" "}
-                    <span className="text-[#7471f9]">{workshopData.ageRanges.length}</span>
+                    <span className="text-[#7471f9]">
+                      {workshopData.ageRanges.length}
+                    </span>
                   </p>
                 </div>
               )}
               <p className="mt-2 text-xs text-gray-500">
-                {t("multipleAgeRangesNote") || "You can select multiple age ranges for the workshop"}
+                {t("multipleAgeRangesNote") ||
+                  "You can select multiple age ranges for the workshop"}
               </p>
             </div>
 
@@ -941,9 +1081,9 @@ const CreateWorkshopPage = () => {
                     }`}
                     onClick={() => handleTechChange(classType)}
                   >
-                    {classType === "in-class" ? 
-                      t("inClass") || "In Class" : 
-                      t("outClass") || "Out Class"}
+                    {classType === "in-class"
+                      ? t("inClass") || "In Class"
+                      : t("outClass") || "Out Class"}
                   </button>
                 ))}
               </div>
@@ -966,23 +1106,31 @@ const CreateWorkshopPage = () => {
                     }`}
                     onClick={() => handleCategoryChange(category)}
                   >
-                    {t(category) || category.charAt(0).toUpperCase() + category.slice(1)}
+                    {t(category) ||
+                      category.charAt(0).toUpperCase() + category.slice(1)}
                   </button>
                 ))}
               </div>
               {/* Display count of selected main categories */}
-              {workshopData.categories.filter(cat => ["design", "test", "prototype"].includes(cat)).length > 0 && (
+              {workshopData.categories.filter((cat) =>
+                ["design", "test", "prototype"].includes(cat)
+              ).length > 0 && (
                 <div className="mt-3 text-sm">
                   <p className="font-medium text-gray-900">
                     {t("selectedCategories") || "Selected categories"}:{" "}
-                    <span className="text-[#7471f9]">{
-                      workshopData.categories.filter(cat => ["design", "test", "prototype"].includes(cat)).length
-                    }</span>
+                    <span className="text-[#7471f9]">
+                      {
+                        workshopData.categories.filter((cat) =>
+                          ["design", "test", "prototype"].includes(cat)
+                        ).length
+                      }
+                    </span>
                   </p>
                 </div>
               )}
               <p className="mt-2 text-xs text-gray-500">
-                {t("multipleCategoriesNote") || "You can select multiple categories for the workshop"}
+                {t("multipleCategoriesNote") ||
+                  "You can select multiple categories for the workshop"}
               </p>
             </div>
 
@@ -1019,7 +1167,7 @@ const CreateWorkshopPage = () => {
                   "#c3c2fc", // Soft purple
                   "#f8c5f4", // Soft pink
                   "#fee487", // Soft yellow
-                  "#aef9e1"  // Soft mint
+                  "#aef9e1", // Soft mint
                 ].map((color) => (
                   <button
                     key={color}
@@ -1030,10 +1178,12 @@ const CreateWorkshopPage = () => {
                         : "border-gray-300"
                     }`}
                     style={{ backgroundColor: color }}
-                    onClick={() => setWorkshopData({
-                      ...workshopData,
-                      bgColor: color
-                    })}
+                    onClick={() =>
+                      setWorkshopData({
+                        ...workshopData,
+                        bgColor: color,
+                      })
+                    }
                     aria-label={`Select ${color} as card background color`}
                   >
                     {workshopData.bgColor === color && (
@@ -1046,12 +1196,14 @@ const CreateWorkshopPage = () => {
                 ))}
               </div>
               <div className="mt-3">
-                <div 
+                <div
                   className="p-3 rounded-md border border-gray-200 shadow-sm"
                   style={{ backgroundColor: workshopData.bgColor }}
                 >
                   <p className="text-xs text-gray-600">
-                    {t("cardPreview") || "Card Preview"} - {t("selectedColor") || "Selected color"}: <span className="font-medium">{workshopData.bgColor}</span>
+                    {t("cardPreview") || "Card Preview"} -{" "}
+                    {t("selectedColor") || "Selected color"}:{" "}
+                    <span className="font-medium">{workshopData.bgColor}</span>
                   </p>
                 </div>
               </div>

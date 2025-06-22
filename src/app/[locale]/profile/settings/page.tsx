@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import HeroButton from '@/components/HeroButton';
 import { useRouter, useParams } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 import ConfirmationModal from '@/components/modals/ConfirmationModal';
 
 const ProfileSettingsPage = () => {
@@ -14,6 +15,7 @@ const ProfileSettingsPage = () => {
   const router = useRouter();
   const params = useParams();
   const locale = params.locale as string;
+  const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
   const [showAvatarSelector, setShowAvatarSelector] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -317,8 +319,8 @@ const ProfileSettingsPage = () => {
         throw new Error(errorData.error || 'Failed to delete account');
       }
 
-      localStorage.removeItem('token');
-      router.push('/');
+      // Use logout function to properly clear all authentication state
+      logout();
     } catch (err: any) {
       console.error('Error deleting account:', err);
       setError(err.message || 'Failed to delete account');

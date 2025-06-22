@@ -74,7 +74,7 @@ export async function POST(request: Request) {
       }
 
       // Create a new verified user from the pending user data
-      const userData = {
+      const userData: any = {
         name: pendingUser.name,
         email: pendingUser.email,
         password: pendingUser.password, // Already hashed in the PendingUser model
@@ -91,7 +91,11 @@ export async function POST(request: Request) {
       if (pendingUser.linkedin) userData.linkedin = pendingUser.linkedin;
 
       // Create the actual user in the database
-      const user = await User.create(userData);
+      // Since the password is already hashed from PendingUser, we use insertOne to bypass Mongoose middleware
+      const userDoc = await User.collection.insertOne(userData);
+      
+      // Get the inserted user document
+      const user = await User.findById(userDoc.insertedId);
 
       // Delete the pending user now that we've created the real user
       await PendingUser.deleteOne({ _id: pendingUser._id });

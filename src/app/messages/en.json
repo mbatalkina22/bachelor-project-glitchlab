@@ -152,6 +152,7 @@
     "startTime": "Start Time",
     "endTime": "End Time",
     "capacity": "Maximum Capacity",
+    "capacityNote": "Minimum 1 person required",
     "ageRange": "Age Range",
     "location": "Location",
     "inClass": "In Class",
@@ -185,6 +186,7 @@
     "confirmCancelWorkshop": "Are you sure you want to cancel this workshop? All registered participants will be automatically unregistered.",
     "cancelling": "Canceling...",
     "workshopCanceled": "Workshop canceled successfully!",
+    "language": "Language",
     "reset": "Reset",
     "resetFilters": "Reset all filters"
   },

@@ -92,7 +92,7 @@ const EditWorkshopPage = () => {
     endTime: "11:00",
     level: "beginner",
     location: "",
-    capacity: 10,
+    capacity: 10 as number | string,
     categories: [] as string[],
     ageRanges: [] as string[],
     instructorIds: [] as string[],
@@ -260,13 +260,26 @@ const EditWorkshopPage = () => {
   };
 
   const handleCapacityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
+    const inputValue = e.target.value;
+    
+    // Allow empty string (fully deleted)
+    if (inputValue === "") {
+      setWorkshopData({
+        ...workshopData,
+        capacity: "" as any, // Allow empty string temporarily
+      });
+      return;
+    }
+    
+    const value = parseInt(inputValue);
+    // Only allow positive numbers, reject 0
     if (!isNaN(value) && value > 0) {
       setWorkshopData({
         ...workshopData,
         capacity: value,
       });
     }
+    // If invalid input (like 0 or negative), don't update state
   };
 
   const handleAgeChange = (age: string) => {
@@ -425,6 +438,13 @@ const EditWorkshopPage = () => {
 
     if (workshopData.instructorIds.length === 0) {
       setError("Please select at least one instructor");
+      return;
+    }
+
+    // Validate capacity
+    const capacityValue = typeof workshopData.capacity === 'string' ? parseInt(workshopData.capacity) : workshopData.capacity;
+    if (!workshopData.capacity || workshopData.capacity === "" || isNaN(capacityValue) || capacityValue <= 0) {
+      setError("Please provide a valid capacity (minimum 1 person)");
       return;
     }
 
@@ -975,9 +995,13 @@ const EditWorkshopPage = () => {
                 min="1"
                 value={workshopData.capacity}
                 onChange={handleCapacityChange}
+                placeholder="Enter number of people"
                 className="w-full md:w-1/3 border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
                 required
               />
+              <p className="mt-1 text-xs text-gray-500">
+                {t("capacityNote") || "Minimum 1 person required"}
+              </p>
             </div>
 
             {/* Location */}
