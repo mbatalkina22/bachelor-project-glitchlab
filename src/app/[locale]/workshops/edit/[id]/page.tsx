@@ -42,6 +42,7 @@ interface Workshop {
   };
   categories: string[];
   level: string;
+  language?: string;
   location: string;
   instructorIds: string[];
   capacity: number;
@@ -91,6 +92,7 @@ const EditWorkshopPage = () => {
     startTime: "10:00",
     endTime: "11:00",
     level: "beginner",
+    language: "en", // Add language field
     location: "",
     capacity: 10 as number | string,
     categories: [] as string[],
@@ -186,6 +188,7 @@ const EditWorkshopPage = () => {
           startTime: formattedStartTime,
           endTime: formattedEndTime,
           level: data.level || "beginner",
+          language: data.language || "en",
           location: data.location || "",
           capacity: data.capacity || 10,
           categories: mainCategories || [],
@@ -503,6 +506,7 @@ const EditWorkshopPage = () => {
         },
         categories: [...workshopData.categories, ...workshopData.ageRanges],
         level: workshopData.level,
+        language: workshopData.language,
         location: workshopData.location,
         instructorIds: workshopData.instructorIds,
         capacity: workshopData.capacity,
@@ -802,7 +806,7 @@ const EditWorkshopPage = () => {
             </div>
 
             {/* Basic Workshop Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
               <div>
                 <label
                   className="block text-sm font-medium text-gray-900 mb-1"
@@ -865,6 +869,26 @@ const EditWorkshopPage = () => {
                   <option value="beginner">{t("beginner")}</option>
                   <option value="intermediate">{t("intermediate")}</option>
                   <option value="advanced">{t("advanced")}</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  className="block text-sm font-medium text-gray-900 mb-1"
+                  htmlFor="language"
+                >
+                  {t("language") || "Language"}
+                </label>
+                <select
+                  id="language"
+                  name="language"
+                  value={workshopData.language}
+                  onChange={handleInputChange}
+                  className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base bg-white appearance-none"
+                  required
+                >
+                  <option value="en">{t("languageEnglish")}</option>
+                  <option value="it">{t("languageItalian")}</option>
                 </select>
               </div>
             </div>
@@ -1330,7 +1354,7 @@ const EditWorkshopPage = () => {
                       }, 2000);
                     } catch (err) {
                       console.error("Error uncanceling workshop:", err);
-                      setError(err.message || t("failedToUncancelWorkshop") || "Failed to uncancel workshop");
+                      setError((err as any).message || t("failedToUncancelWorkshop") || "Failed to uncancel workshop");
                     } finally {
                       setIsLoading(false);
                     }
@@ -1400,7 +1424,7 @@ const EditWorkshopPage = () => {
                 }, 2000);
               } catch (err) {
                 console.error("Error canceling workshop:", err);
-                setError(err.message || "Failed to cancel workshop");
+                setError((err as any).message || "Failed to cancel workshop");
               } finally {
                 setIsLoading(false);
               }

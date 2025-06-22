@@ -104,6 +104,7 @@ const CreateWorkshopPage = () => {
     startTime: "10:00",
     endTime: "11:00",
     level: "beginner",
+    language: "en", // Add language field
     location: "",
     capacity: 10 as number | string,
     categories: [] as string[],
@@ -357,11 +358,13 @@ const CreateWorkshopPage = () => {
     }
 
     // Validate capacity
+    const capacityValue = typeof workshopData.capacity === 'string' ? parseInt(workshopData.capacity) : workshopData.capacity;
     if (
       !workshopData.capacity ||
       (typeof workshopData.capacity === "string" &&
         workshopData.capacity === "") ||
-      workshopData.capacity <= 0
+      isNaN(capacityValue) ||
+      capacityValue <= 0
     ) {
       setError("Please provide a valid capacity (minimum 1 person)");
       return;
@@ -422,6 +425,7 @@ const CreateWorkshopPage = () => {
         },
         categories: [...workshopData.categories, ...workshopData.ageRanges],
         level: workshopData.level,
+        language: workshopData.language,
         location: workshopData.location,
         instructorIds: workshopData.instructorIds,
         capacity: workshopData.capacity,
@@ -820,11 +824,13 @@ const CreateWorkshopPage = () => {
               <select
               id="language"
               name="language"
+              value={workshopData.language}
+              onChange={handleInputChange}
               className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base bg-white appearance-none"
               required
               >
-              <option value="en">English</option>
-              <option value="it">Italian</option>
+              <option value="en">{t("languageEnglish")}</option>
+              <option value="it">{t("languageItalian")}</option>
               </select>
               </div>
               </div>

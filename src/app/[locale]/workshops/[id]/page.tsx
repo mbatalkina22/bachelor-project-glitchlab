@@ -40,6 +40,7 @@ interface Workshop {
   imageSrc: string;
   categories: string[];
   level: string;
+  language?: string;
   location: string;
   instructorIds?: string[];
   instructorDetails?: InstructorDetails;
@@ -580,6 +581,13 @@ const WorkshopDetailPage = () => {
                       </div>
                     </div>
                   </div>
+                </div>
+                
+                <div className="flex items-center">
+                  <Icon icon="heroicons:language" className="w-5 h-5 mr-2 text-gray-500" />
+                  <span className="text-gray-700">
+                    {t('language')}: {workshop.language === 'en' ? t('languageEnglish') : workshop.language === 'it' ? t('languageItalian') : workshop.language || t('languageEnglish')}
+                  </span>
                 </div>
               </div>
 

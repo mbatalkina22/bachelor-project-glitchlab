@@ -77,6 +77,12 @@ const WorkshopSchema = new Schema({
     type: String,
     default: '#ffffff',
   },
+  language: {
+    type: String,
+    enum: ['en', 'it'],
+    required: [true, 'Please specify the workshop language'],
+    default: 'en'
+  },
   canceled: {
     type: Boolean,
     default: false,

@@ -6,16 +6,13 @@
     "aboutUs": "Chi siamo",
     "yourProfile": "Il tuo Profilo",
     "profile": "Profilo",
-      "confirmCancelWorkshop": "Sei sicuro di voler annullare questo workshop? Tutti i partecipanti registrati verranno automaticamente cancellati.",
-    "cancelling": "Annullamento in corso...",
-    "workshopCanceled": "Workshop annullato con successo!",
-    "reset": "Reset",
-    "resetFilters": "Resetta tutti i filtri",
     "settings": "Impostazioni",
     "signOut": "Esci",
     "login": "Accedi",
     "register": "Registrati",
-    "ourTeam": "Il nostro Team"
+    "ourTeam": "Il nostro Team",
+    "languageEnglish": "Inglese",
+    "languageItalian": "Italiano"
   },
   "Hero": {
     "title": "Glitch Lab",
@@ -196,6 +193,8 @@
     "cancelling": "Annullamento in corso...",
     "workshopCanceled": "Workshop annullato con successo!",
     "language": "Lingua",
+    "languageEnglish": "Inglese",
+    "languageItalian": "Italiano",
     "reset": "Reset",
     "resetFilters": "Resetta tutti i filtri"
   },
@@ -215,6 +214,9 @@
     "instructed": "Insegnato",
     "fullWorkshop": "Workshop Completo",
     "requiredLevel": "Livello Richiesto",
+    "language": "Lingua",
+    "languageEnglish": "Inglese",
+    "languageItalian": "Italiano",
     "reviews": "Recensioni",
     "earnableBadge": "Badge di Risultato",
     "badgeDescription": "Completa questo workshop per guadagnare questo badge esclusivo. Aggiungilo al tuo profilo per mostrare le tue competenze e i tuoi risultati a potenziali datori di lavoro e colleghi.",
@@ -261,7 +263,6 @@
     "comment": "Commento",
     "optional": "Opzionale",
     "enterComment": "Inserisci il tuo commento qui...",
-    "language": "Lingua",
     "inspiring": "Ispirante",
     "boring": "Noioso",
     "fun": "Divertente",
@@ -492,6 +493,8 @@
     "resendIn": "Reinvia tra",
     "resendSuccess": "Codice di verifica reinviato con successo",
     "emailLanguage": "Lingua Preferita per Email",
+    "languageEnglish": "Inglese",
+    "languageItalian": "Italiano",
     "enterEmailToReset": "Inserisci il tuo indirizzo email e ti invieremo un codice di verifica per reimpostare la password."
   },
   "Calendar": {

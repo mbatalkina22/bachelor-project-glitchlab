@@ -184,8 +184,8 @@ export default function RegisterPage() {
               value={emailLanguage}
               onChange={(e) => setEmailLanguage(e.target.value)}
             >
-              <option value="en">English</option>
-              <option value="it">Italian</option>
+              <option value="en">{t('languageEnglish')}</option>
+              <option value="it">{t('languageItalian')}</option>
             </select>
           </div>
 

@@ -10,7 +10,9 @@
     "signOut": "Sign Out",
     "login": "Login",
     "register": "Register",
-    "ourTeam": "Our Team"
+    "ourTeam": "Our Team",
+    "languageEnglish": "English",
+    "languageItalian": "Italian"
   },
   "Hero": {
     "title": "Glitch Lab",
@@ -187,6 +189,8 @@
     "cancelling": "Canceling...",
     "workshopCanceled": "Workshop canceled successfully!",
     "language": "Language",
+    "languageEnglish": "English",
+    "languageItalian": "Italian",
     "reset": "Reset",
     "resetFilters": "Reset all filters"
   },
@@ -206,6 +210,9 @@
     "instructed": "Instructed",
     "fullWorkshop": "Workshop Full",
     "requiredLevel": "Required Level",
+    "language": "Language",
+    "languageEnglish": "English",
+    "languageItalian": "Italian",
     "reviews": "Reviews",
     "earnableBadge": "Earnable Badge",
     "badgeDescription": "Complete this workshop to earn this unique badge that you can showcase on your profile.",
@@ -472,6 +479,8 @@
     "resendIn": "Resend in",
     "resendSuccess": "Verification code resent successfully",
     "emailLanguage": "Preferred Email Language",
+    "languageEnglish": "English",
+    "languageItalian": "Italian",
     "enterEmailToReset": "Enter your email address and we'll send you a verification code to reset your password."
   },
   "Calendar": {
