@@ -385,7 +385,13 @@ const ProfilePage = () => {
                             </div>
                           </div>
                           <h3 className="text-lg font-bold text-indigo-700 mb-2">{badge.name}</h3>
-                          <p className="text-gray-600 text-sm mb-2 text-center">{badge.description}</p>
+                          <Link 
+                            href={`/${locale}/workshops/${badge.workshopId}`}
+                            className="text-indigo-600 hover:text-indigo-800 text-sm mb-2 text-center inline-flex items-center font-medium transition-colors"
+                          >
+                            <Icon icon="heroicons:arrow-top-right-on-square" className="w-4 h-4 mr-1" />
+                            {t('viewWorkshop') || 'View Workshop'}
+                          </Link>
                           <p className="text-gray-500 text-xs">{new Date(badge.date).toLocaleDateString()}</p>
                         </div>
                       </div>
@@ -421,7 +427,7 @@ const ProfilePage = () => {
               ) : userReviews.length > 0 ? (
                 <div className="space-y-4">
                   {userReviews.map((review) => (
-                    <div key={review._id} className="bg-white rounded-lg shadow-sm p-4 border border-indigo-100 bg-indigo-50">
+                    <div key={review._id} className="bg-indigo-50 rounded-lg shadow-sm p-4 border border-indigo-100">
                       {/* Review content */}
                       <div className="flex items-start">
                         <div className="flex-shrink-0 mr-4">

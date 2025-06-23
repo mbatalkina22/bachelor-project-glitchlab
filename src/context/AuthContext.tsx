@@ -16,6 +16,14 @@ interface User {
   linkedin?: string;
   isVerified?: boolean;
   emailLanguage?: string;
+  badges?: Array<{
+    id: string;
+    workshopId: string;
+    name: string;
+    image: string;
+    date: Date;
+    description: string;
+  }>;
 }
 
 interface PendingUser {
