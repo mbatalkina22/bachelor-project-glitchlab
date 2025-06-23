@@ -699,11 +699,6 @@ const ProfileSettingsPage = () => {
                         className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
                         required
                       />
-                      <div className="text-right mt-1">
-                        <Link href={`/${locale}/forgot-password${userData.email ? `?email=${encodeURIComponent(userData.email)}` : ''}`} className="text-sm text-[#7471f9] hover:underline">
-                          {t('forgotPassword') || 'Forgot password?'}
-                        </Link>
-                      </div>
                     </div>
                     
                     <div>
