@@ -9,6 +9,7 @@ interface WorkshopFiltersProps {
   categoryFilter: string[] | string;
   techFilter: string[] | string;
   statusFilter: string[] | string;
+  languageFilter: string[] | string;
   typeFilter?: string[] | string;
   selectedDate?: Date | null;
   handleFilterChange: (filterType: string, value: string) => void;
@@ -23,6 +24,7 @@ const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
   categoryFilter,
   techFilter,
   statusFilter,
+  languageFilter,
   typeFilter,
   selectedDate,
   handleFilterChange,
@@ -62,7 +64,8 @@ const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
     getActiveCount(skillFilter) + 
     getActiveCount(locationFilter) + 
     getActiveCount(categoryFilter) + 
-    getActiveCount(techFilter);
+    getActiveCount(techFilter) +
+    getActiveCount(languageFilter);
 
   // Toggle section expansion
   const toggleSection = (section: string) => {
@@ -147,6 +150,19 @@ const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
       options: ['all', 'plug', 'unplug'],
       filterValue: techFilter,
       getLabel: (option: string) => option === 'all' ? t('all') || 'All' : t(option) || option.charAt(0).toUpperCase() + option.slice(1)
+    },
+    {
+      key: 'language',
+      title: t('language') || 'Language',
+      icon: 'heroicons:language',
+      options: ['all', 'en', 'it'],
+      filterValue: languageFilter,
+      getLabel: (option: string) => {
+        if (option === 'all') return t('all') || 'All';
+        if (option === 'en') return t('languageEnglish') || 'English';
+        if (option === 'it') return t('languageItalian') || 'Italian';
+        return option;
+      }
     }
   ];
 

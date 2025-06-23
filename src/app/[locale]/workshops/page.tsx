@@ -28,6 +28,7 @@ interface Workshop {
     imageSrc: string;
     categories: string[];
     level: string;
+    language?: string;
     location: string;
     instructor: string;
     instructorIds?: string[]; // Adding instructorIds property
@@ -52,6 +53,7 @@ const WorkshopsPage = () => {
     const [categoryFilter, setCategoryFilter] = useState<string[]>(['all']);
     const [techFilter, setTechFilter] = useState<string[]>(['all']);
     const [statusFilter, setStatusFilter] = useState<string[]>(['all']);
+    const [languageFilter, setLanguageFilter] = useState<string[]>(['all']);
 
     // Filter option counts for checking if all options are selected
     const filterCounts = {
@@ -61,6 +63,7 @@ const WorkshopsPage = () => {
         category: 3, // 'design', 'test', 'prototype'
         tech: 2, // 'plug', 'unplug'
         status: 3, // 'future', 'ongoing', 'past'
+        language: 2, // 'en', 'it'
     };
 
     const fetchWorkshops = async () => {
@@ -129,6 +132,10 @@ const WorkshopsPage = () => {
         // Skill level filter with multiple selections
         const matchesLevel = isFilterSetToAll(skillFilter) || skillFilter.includes(workshop.level.toLowerCase());
         
+        // Language filter with multiple selections
+        const matchesLanguage = isFilterSetToAll(languageFilter) || 
+                               (workshop.language && languageFilter.includes(workshop.language));
+        
         // Status filter (future, ongoing, past)
         const now = new Date();
         const startDate = new Date(workshop.startDate);
@@ -143,7 +150,7 @@ const WorkshopsPage = () => {
         
         const matchesStatus = isFilterSetToAll(statusFilter) || statusFilter.includes(status);
         
-        return matchesCategory && matchesLocation && matchesTech && matchesAge && matchesLevel && matchesStatus;
+        return matchesCategory && matchesLocation && matchesTech && matchesAge && matchesLevel && matchesLanguage && matchesStatus;
     });
 
     const handleFilterChange = (filterType: string, value: string) => {
@@ -155,16 +162,19 @@ const WorkshopsPage = () => {
                 updateFilterArray(setSkillFilter, value, filterType);
                 break;
             case 'location':
-                updateFilterArray(setLocationFilter, value, filterType);
+                updateSingleSelectFilter(setLocationFilter, value);
                 break;
             case 'category':
                 updateFilterArray(setCategoryFilter, value, filterType);
                 break;
             case 'tech':
-                updateFilterArray(setTechFilter, value, filterType);
+                updateSingleSelectFilter(setTechFilter, value);
                 break;
             case 'status':
                 updateFilterArray(setStatusFilter, value, filterType);
+                break;
+            case 'language':
+                updateSingleSelectFilter(setLanguageFilter, value);
                 break;
             default:
                 break;
@@ -205,6 +215,28 @@ const WorkshopsPage = () => {
         });
     };
 
+    // Helper function for single-select filters (language, location, tech)
+    const updateSingleSelectFilter = (
+        setterFunction: React.Dispatch<React.SetStateAction<string[]>>,
+        value: string
+    ) => {
+        setterFunction(prevState => {
+            // If "all" is selected
+            if (value === 'all') {
+                return ['all'];
+            }
+            
+            // If the current filter already includes this value, remove it and go back to "all"
+            if (prevState.includes(value)) {
+                return ['all'];
+            } 
+            // Otherwise, replace the current selection with the new value
+            else {
+                return [value];
+            }
+        });
+    };
+
     // Function to reset all filters to their default values
     const resetFilters = () => {
         setAgeFilter(['all']);
@@ -213,6 +245,7 @@ const WorkshopsPage = () => {
         setCategoryFilter(['all']);
         setTechFilter(['all']);
         setStatusFilter(['all']);
+        setLanguageFilter(['all']);
     };
 
     if (isLoading) {
@@ -256,6 +289,7 @@ const WorkshopsPage = () => {
                             categoryFilter={categoryFilter}
                             techFilter={techFilter}
                             statusFilter={statusFilter}
+                            languageFilter={languageFilter}
                             handleFilterChange={handleFilterChange}
                             resetFilters={resetFilters}
                         />
