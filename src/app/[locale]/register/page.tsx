@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
@@ -27,8 +27,12 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [emailLanguage, setEmailLanguage] = useState('en');
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations('Auth');
   const { register } = useAuth();
+
+  // Get redirect parameter from URL
+  const redirectPath = searchParams.get('redirect');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,8 +59,12 @@ export default function RegisterPage() {
         // Redirect to verification page if email verification is required
         router.push('/verify-email');
       } else {
-        // Otherwise go to home page
-        router.push('/');
+        // Check if there's a redirect parameter
+        if (redirectPath) {
+          router.push(`/${redirectPath}`);
+        } else {
+          router.push('/');
+        }
       }
     } catch (err: any) {
       setError(err.message || 'Failed to register');
@@ -200,7 +208,7 @@ export default function RegisterPage() {
 
           <div className="text-sm text-center">
             <Link
-              href="/login"
+              href={redirectPath ? `/login?redirect=${redirectPath}` : "/login"}
               className="font-medium text-[#7471f9] hover:underline"
             >
               {t('alreadyHaveAccount')}

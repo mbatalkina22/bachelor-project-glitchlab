@@ -158,6 +158,13 @@ const WorkshopDetailPage = () => {
   };
 
   const handleRegister = async () => {
+    // Check if user is authenticated first
+    if (!isAuthenticated) {
+      // Redirect to login page with workshop ID as redirect parameter
+      router.push(`/${locale}/login?redirect=workshops/${id}`);
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
       if (!token) {

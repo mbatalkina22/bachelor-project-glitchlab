@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
@@ -13,8 +13,12 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations('Auth');
   const { login, needsVerification } = useAuth();
+
+  // Get redirect parameter from URL
+  const redirectPath = searchParams.get('redirect');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +32,12 @@ export default function LoginPage() {
       if (needsVerification || localStorage.getItem('needsVerification') === 'true') {
         router.push('/verify-email');
       } else {
-        router.push('/');
+        // Check if there's a redirect parameter
+        if (redirectPath) {
+          router.push(`/${redirectPath}`);
+        } else {
+          router.push('/');
+        }
       }
     } catch (err: any) {
       setError(err.message || 'Failed to login');
@@ -108,7 +117,7 @@ export default function LoginPage() {
 
           <div className="text-sm text-center">
             <Link
-              href="/register"
+              href={redirectPath ? `/register?redirect=${redirectPath}` : "/register"}
               className="font-medium text-[#7471f9] hover:underline"
             >
               {t('dontHaveAccount')}
