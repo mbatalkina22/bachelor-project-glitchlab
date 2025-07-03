@@ -5,11 +5,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import ScrollReveal from '@/components/ScrollReveal';
-import WorkshopCard from '@/components/WorkshopCard';
-import TestimonialCard from '@/components/TestimonialCard';
 import ReviewList from '@/components/ReviewList';
 import { useTranslations } from 'next-intl';
-import { useParams, useRouter, usePathname } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import HeroButton from '@/components/HeroButton';
 import { useAuth } from '@/context/AuthContext';
 import { getWorkshopStatus, getStatusColor } from '@/utils/workshopStatus';
@@ -56,7 +54,6 @@ interface Workshop {
 const WorkshopDetailPage = () => {
   const params = useParams();
   const router = useRouter();
-  const pathname = usePathname();
   const id = params.id as string;
   const locale = params.locale as string;
   const t = useTranslations('WorkshopDetail');
@@ -158,6 +155,17 @@ const WorkshopDetailPage = () => {
   };
 
   const handleRegister = async () => {
+    // Check if user is authenticated first
+    if (!isAuthenticated) {
+      // Store the workshop ID for redirect after login
+      if (workshop?._id) {
+        localStorage.setItem('redirectAfterLogin', `/${locale}/workshops/${workshop._id}`);
+      }
+      // Redirect to login page
+      router.push(`/${locale}/login`);
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -196,9 +204,10 @@ const WorkshopDetailPage = () => {
       
       // Then refresh the user data in the context
       await refreshUser();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to register for workshop';
       console.error('Registration error:', error);
-      alert(error.message || 'Failed to register for workshop');
+      alert(errorMessage);
     }
   };
 
@@ -241,9 +250,10 @@ const WorkshopDetailPage = () => {
       
       // Then refresh the user data in the context
       await refreshUser();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to unregister from workshop';
       console.error('Unregistration error:', error);
-      alert(error.message || 'Failed to unregister from workshop');
+      alert(errorMessage);
     }
   };
 
@@ -287,18 +297,11 @@ const WorkshopDetailPage = () => {
       setWorkshop(updatedWorkshop);
 
       alert(`Reminder sent successfully to ${data.sentTo} registered users!`);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to send reminder';
       console.error('Error sending reminder:', error);
-      alert(error.message || 'Failed to send reminder');
+      alert(errorMessage);
     }
-  };
-
-  // Check if current user is an instructor for this workshop
-  const isWorkshopInstructor = () => {
-    if (!user || !workshop || !isInstructor) return false;
-    
-    // Check if user is in the instructorIds array
-    return workshop.instructorIds?.some(id => id === user._id);
   };
 
   if (isLoading) {
@@ -632,7 +635,7 @@ const WorkshopDetailPage = () => {
                       />
                     ) : (
                       <HeroButton 
-                        text={t('register')}
+                        text={isAuthenticated ? t('register') : (t('loginToRegister') || 'Login to Register')}
                         onClick={handleRegister}
                         backgroundColor="#4f46e5"
                         textColor="white"

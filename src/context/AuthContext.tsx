@@ -231,6 +231,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('needsVerification');
+    localStorage.removeItem('redirectAfterLogin'); // Clear any stored redirect
     setUser(null);
     setPendingUser(null);
     setNeedsVerification(false);

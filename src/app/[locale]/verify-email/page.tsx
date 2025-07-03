@@ -16,13 +16,6 @@ export default function VerifyEmailPage() {
   const router = useRouter();
   const t = useTranslations('Auth');
 
-  // Redirect if user doesn't need verification
-  useEffect(() => {
-    if (user && !needsVerification) {
-      router.push('/');
-    }
-  }, [user, needsVerification, router]);
-
   // Handle input change for verification code
   const handleCodeChange = (index: number, value: string) => {
     if (value.length > 1) {
@@ -81,9 +74,19 @@ export default function VerifyEmailPage() {
       }
       
       await verifyEmail(code);
-      router.push('/');
-    } catch (err: any) {
-      setError(err.message || t('verificationFailed'));
+      
+      // Check for redirect after verification
+      const redirectPath = localStorage.getItem('redirectAfterLogin');
+      if (redirectPath) {
+        // Clear the redirect path and redirect to the stored path
+        localStorage.removeItem('redirectAfterLogin');
+        router.push(redirectPath);
+      } else {
+        router.push('/');
+      }
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : t('verificationFailed');
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -97,8 +100,9 @@ export default function VerifyEmailPage() {
     
     try {
       await resendVerificationCode();
-    } catch (err: any) {
-      setError(err.message || t('resendFailed'));
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : t('resendFailed');
+      setError(errorMessage);
     }
   };
 

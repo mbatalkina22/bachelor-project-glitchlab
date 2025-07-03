@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
@@ -27,8 +27,17 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [emailLanguage, setEmailLanguage] = useState('en');
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations('Auth');
   const { register } = useAuth();
+
+  // Handle redirect parameter
+  useEffect(() => {
+    const redirectParam = searchParams?.get('redirect');
+    if (redirectParam) {
+      localStorage.setItem('redirectAfterLogin', redirectParam);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,13 +62,23 @@ export default function RegisterPage() {
       
       if (result.needsVerification) {
         // Redirect to verification page if email verification is required
+        // Note: The verification page will handle the workshop redirect after verification
         router.push('/verify-email');
       } else {
-        // Otherwise go to home page
-        router.push('/');
+        // Check for redirect after registration
+        const redirectPath = localStorage.getItem('redirectAfterLogin');
+        if (redirectPath) {
+          // Clear the redirect path and redirect to the stored path
+          localStorage.removeItem('redirectAfterLogin');
+          router.push(redirectPath);
+        } else {
+          // Otherwise go to home page
+          router.push('/');
+        }
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to register');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to register';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -200,7 +219,7 @@ export default function RegisterPage() {
 
           <div className="text-sm text-center">
             <Link
-              href="/login"
+              href={searchParams?.get('redirect') ? `/login?redirect=${encodeURIComponent(searchParams.get('redirect')!)}` : "/login"}
               className="font-medium text-[#7471f9] hover:underline"
             >
               {t('alreadyHaveAccount')}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
@@ -13,8 +13,12 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations('Auth');
   const { login, needsVerification } = useAuth();
+
+  // Get the redirect path if it exists
+  const redirectPath = searchParams?.get('redirect') || localStorage.getItem('redirectAfterLogin');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,14 +28,22 @@ export default function LoginPage() {
     try {
       await login(email, password);
       
+      // Check for redirect after login
+      const redirectPath = localStorage.getItem('redirectAfterLogin');
+      
       // If auth context has needsVerification flag set, redirect to verification page
       if (needsVerification || localStorage.getItem('needsVerification') === 'true') {
         router.push('/verify-email');
+      } else if (redirectPath) {
+        // Clear the redirect path and redirect to the stored path
+        localStorage.removeItem('redirectAfterLogin');
+        router.push(redirectPath);
       } else {
         router.push('/');
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to login');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to login';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -108,7 +120,7 @@ export default function LoginPage() {
 
           <div className="text-sm text-center">
             <Link
-              href="/register"
+              href={redirectPath ? `/register?redirect=${encodeURIComponent(redirectPath)}` : "/register"}
               className="font-medium text-[#7471f9] hover:underline"
             >
               {t('dontHaveAccount')}
