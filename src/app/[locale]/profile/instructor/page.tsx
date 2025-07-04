@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
@@ -10,7 +10,7 @@ import WorkshopCard from '@/components/WorkshopCard';
 import ScrollReveal from '@/components/ScrollReveal';
 import { useAuth } from '@/context/AuthContext';
 import withEmailVerification from '@/components/withEmailVerification';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
 interface Workshop {
   _id: string;
@@ -29,14 +29,45 @@ interface Workshop {
 
 const InstructorProfilePage = () => {
   const t = useTranslations('Profile');
-  const [activeTab, setActiveTab] = useState('about');
   const { user, isAuthenticated, isInstructor } = useAuth();
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const locale = params.locale as string;
+  const router = useRouter();
+  
+  // Get tab from URL or default to 'about'
+  const tabFromUrl = searchParams.get('tab') || 'about';
+  const [activeTab, setActiveTab] = useState(tabFromUrl);
+  
   const [upcomingWorkshops, setUpcomingWorkshops] = useState<Workshop[]>([]);
   const [pastWorkshops, setPastWorkshops] = useState<Workshop[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const params = useParams();
-  const locale = params.locale as string;
-  const router = useRouter();
+
+  // Function to handle tab change and update URL
+  const handleTabChange = useCallback((tab: string) => {
+    setActiveTab(tab);
+    
+    // Update URL with new tab parameter
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    newSearchParams.set('tab', tab);
+    
+    // Use router.replace to update URL without adding to history
+    router.replace(`/${locale}/profile/instructor?${newSearchParams.toString()}`, { scroll: false });
+  }, [locale, router, searchParams]);
+
+  // Ensure activeTab is valid and sync with URL
+  useEffect(() => {
+    const validTabs = ['about', 'upcoming', 'past'];
+    const currentTab = searchParams.get('tab') || 'about';
+    
+    if (!validTabs.includes(currentTab)) {
+      // If invalid tab, redirect to about tab
+      handleTabChange('about');
+    } else if (currentTab !== activeTab) {
+      // Sync state with URL if they differ
+      setActiveTab(currentTab);
+    }
+  }, [searchParams, activeTab, handleTabChange]);
 
   // Redirect to regular profile if not an instructor
   useEffect(() => {
@@ -159,7 +190,7 @@ const InstructorProfilePage = () => {
           <div className="border-t border-gray-200">
             <nav className="flex -mb-px">
               <button
-                onClick={() => setActiveTab('about')}
+                onClick={() => handleTabChange('about')}
                 className={`py-4 px-6 text-sm font-medium ${
                   activeTab === 'about'
                     ? 'border-b-2 border-[#7471f9] text-[#7471f9]'
@@ -169,7 +200,7 @@ const InstructorProfilePage = () => {
                 {t('aboutMe')}
               </button>
               <button
-                onClick={() => setActiveTab('upcoming')}
+                onClick={() => handleTabChange('upcoming')}
                 className={`py-4 px-6 text-sm font-medium ${
                   activeTab === 'upcoming'
                     ? 'border-b-2 border-[#7471f9] text-[#7471f9]'
@@ -179,7 +210,7 @@ const InstructorProfilePage = () => {
                 {t('upcomingWorkshops')}
               </button>
               <button
-                onClick={() => setActiveTab('past')}
+                onClick={() => handleTabChange('past')}
                 className={`py-4 px-6 text-sm font-medium ${
                   activeTab === 'past'
                     ? 'border-b-2 border-[#7471f9] text-[#7471f9]'

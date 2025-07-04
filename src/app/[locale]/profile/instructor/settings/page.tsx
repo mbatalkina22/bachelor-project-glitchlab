@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import HeroButton from '@/components/HeroButton';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { uploadImage } from '@/utils/cloudinaryClient';
 
@@ -14,9 +14,14 @@ const InstructorSettingsPage = () => {
   const t = useTranslations('Settings');
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const locale = params.locale as string;
   const { user, isAuthenticated, isInstructor, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState('profile');
+  
+  // Get tab from URL or default to 'profile'
+  const tabFromUrl = searchParams.get('tab') || 'profile';
+  const [activeTab, setActiveTab] = useState(tabFromUrl);
+  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -26,6 +31,32 @@ const InstructorSettingsPage = () => {
   // Add state for temporary image file storage
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+
+  // Function to handle tab change and update URL
+  const handleTabChange = useCallback((tab: string) => {
+    setActiveTab(tab);
+    
+    // Update URL with new tab parameter
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    newSearchParams.set('tab', tab);
+    
+    // Use router.replace to update URL without adding to history
+    router.replace(`/${locale}/profile/instructor/settings?${newSearchParams.toString()}`, { scroll: false });
+  }, [locale, router, searchParams]);
+
+  // Ensure activeTab is valid and sync with URL
+  useEffect(() => {
+    const validTabs = ['profile', 'about', 'security'];
+    const currentTab = searchParams.get('tab') || 'profile';
+    
+    if (!validTabs.includes(currentTab)) {
+      // If invalid tab, redirect to profile tab
+      handleTabChange('profile');
+    } else if (currentTab !== activeTab) {
+      // Sync state with URL if they differ
+      setActiveTab(currentTab);
+    }
+  }, [searchParams, activeTab, locale, router, handleTabChange]);
 
   // Redirect to regular profile if not an instructor
   useEffect(() => {
@@ -390,7 +421,7 @@ const InstructorSettingsPage = () => {
                 <h2 className="text-xl font-secularone text-gray-900 mb-4">{t('settings')}</h2>
                 <nav className="space-y-1">
                   <button
-                    onClick={() => setActiveTab('profile')}
+                    onClick={() => handleTabChange('profile')}
                     className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md ${
                       activeTab === 'profile' 
                         ? 'bg-purple-50 text-[#7471f9]' 
@@ -401,7 +432,7 @@ const InstructorSettingsPage = () => {
                     {t('profileInfo')}
                   </button>
                   <button
-                    onClick={() => setActiveTab('about')}
+                    onClick={() => handleTabChange('about')}
                     className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md ${
                       activeTab === 'about' 
                         ? 'bg-purple-50 text-[#7471f9]' 
@@ -412,7 +443,7 @@ const InstructorSettingsPage = () => {
                     {t('about')}
                   </button>
                   <button
-                    onClick={() => setActiveTab('security')}
+                    onClick={() => handleTabChange('security')}
                     className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md ${
                       activeTab === 'security' 
                         ? 'bg-purple-50 text-[#7471f9]' 

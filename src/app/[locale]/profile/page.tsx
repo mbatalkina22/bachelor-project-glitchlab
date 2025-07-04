@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
@@ -12,7 +12,7 @@ import { useAuth } from '@/context/AuthContext';
 import withEmailVerification from '@/components/withEmailVerification';
 import { Arvo, Bebas_Neue, Dancing_Script, Lobster } from "next/font/google";
 import { getWorkshopReviewsUrl } from '@/utils/navigation';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
 // Initialize the fonts
 const dancingScript = Dancing_Script({ subsets: ["latin"] });
@@ -60,15 +60,46 @@ interface Badge {
 
 const ProfilePage = () => {
   const t = useTranslations('Profile');
-  const [activeTab, setActiveTab] = useState('workshops');
   const { user, isAuthenticated, isInstructor } = useAuth();
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const locale = params.locale as string;
+  const router = useRouter();
+  
+  // Get tab from URL or default to 'workshops'
+  const tabFromUrl = searchParams.get('tab') || 'workshops';
+  const [activeTab, setActiveTab] = useState(tabFromUrl);
+  
   const [registeredWorkshops, setRegisteredWorkshops] = useState<Workshop[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [userReviews, setUserReviews] = useState<UserReview[]>([]);
   const [isLoadingReviews, setIsLoadingReviews] = useState(true);
-  const params = useParams();
-  const locale = params.locale as string;
-  const router = useRouter();
+
+  // Function to handle tab change and update URL
+  const handleTabChange = useCallback((tab: string) => {
+    setActiveTab(tab);
+    
+    // Update URL with new tab parameter
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    newSearchParams.set('tab', tab);
+    
+    // Use router.replace to update URL without adding to history
+    router.replace(`/${locale}/profile?${newSearchParams.toString()}`, { scroll: false });
+  }, [locale, router, searchParams]);
+
+  // Ensure activeTab is valid and sync with URL
+  useEffect(() => {
+    const validTabs = ['workshops', 'badges', 'reviews'];
+    const currentTab = searchParams.get('tab') || 'workshops';
+    
+    if (!validTabs.includes(currentTab)) {
+      // If invalid tab, redirect to workshops tab
+      handleTabChange('workshops');
+    } else if (currentTab !== activeTab) {
+      // Sync state with URL if they differ
+      setActiveTab(currentTab);
+    }
+  }, [searchParams, activeTab, handleTabChange]);
 
   // Redirect to instructor profile if user is an instructor
   useEffect(() => {
@@ -281,7 +312,7 @@ const ProfilePage = () => {
           <div className="border-t border-gray-200">
             <nav className="flex -mb-px">
               <button
-                onClick={() => setActiveTab('workshops')}
+                onClick={() => handleTabChange('workshops')}
                 className={`py-4 px-6 text-sm font-medium ${
                   activeTab === 'workshops'
                     ? 'border-b-2 border-indigo-500 text-indigo-600'
@@ -291,7 +322,7 @@ const ProfilePage = () => {
                 {t('workshops')}
               </button>
               <button
-                onClick={() => setActiveTab('badges')}
+                onClick={() => handleTabChange('badges')}
                 className={`py-4 px-6 text-sm font-medium ${
                   activeTab === 'badges'
                     ? 'border-b-2 border-indigo-500 text-indigo-600'
@@ -301,7 +332,7 @@ const ProfilePage = () => {
                 {t('badges')}
               </button>
               <button
-                onClick={() => setActiveTab('reviews')}
+                onClick={() => handleTabChange('reviews')}
                 className={`py-4 px-6 text-sm font-medium ${
                   activeTab === 'reviews'
                     ? 'border-b-2 border-indigo-500 text-indigo-600'
