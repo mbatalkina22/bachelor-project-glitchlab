@@ -635,7 +635,7 @@ const WorkshopDetailPage = () => {
                       />
                     ) : (
                       <HeroButton 
-                        text={isAuthenticated ? t('register') : (t('loginToRegister') || 'Login to Register')}
+                        text={t('register')}
                         onClick={handleRegister}
                         backgroundColor="#4f46e5"
                         textColor="white"
