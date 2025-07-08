@@ -103,13 +103,23 @@ const InstructorProfilePage = () => {
         };
       });
       
-      // Split workshops into upcoming and past
+      // Split workshops into upcoming and past (canceled workshops are treated as past)
       const now = new Date();
-      const upcoming = workshopsWithDates.filter((w: Workshop) => new Date(w.startDate) > now);
-      const past = workshopsWithDates.filter((w: Workshop) => new Date(w.startDate) <= now);
+      const upcoming = workshopsWithDates.filter((w: Workshop) => !w.canceled && new Date(w.startDate) > now);
+      const past = workshopsWithDates.filter((w: Workshop) => w.canceled || new Date(w.startDate) <= now);
       
-      setUpcomingWorkshops(upcoming);
-      setPastWorkshops(past);
+      // Sort upcoming workshops by start date (earliest first)
+      const sortedUpcoming = upcoming.sort((a: Workshop, b: Workshop) => 
+        new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+      );
+      
+      // Sort past workshops by start date (most recent first)
+      const sortedPast = past.sort((a: Workshop, b: Workshop) => 
+        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+      );
+      
+      setUpcomingWorkshops(sortedUpcoming);
+      setPastWorkshops(sortedPast);
     } catch (error) {
       console.error('Error fetching instructor workshops:', error);
     } finally {

@@ -135,7 +135,54 @@ const ProfilePage = () => {
         };
       });
       
-      setRegisteredWorkshops(workshopsWithDates);
+      // Sort workshops to display past and canceled workshops at the end
+      const sortedWorkshops = workshopsWithDates.sort((a: any, b: any) => {
+        const now = new Date();
+        const startDateA = new Date(a.startDate);
+        const endDateA = new Date(a.endDate);
+        const startDateB = new Date(b.startDate);
+        const endDateB = new Date(b.endDate);
+        
+        // Determine status for each workshop (canceled workshops are treated like past)
+        let statusA = 'past';
+        if (!a.canceled) {
+          if (startDateA > now) {
+            statusA = 'future';
+          } else if (startDateA <= now && endDateA >= now) {
+            statusA = 'ongoing';
+          }
+        }
+        // If canceled, statusA remains 'past'
+        
+        let statusB = 'past';
+        if (!b.canceled) {
+          if (startDateB > now) {
+            statusB = 'future';
+          } else if (startDateB <= now && endDateB >= now) {
+            statusB = 'ongoing';
+          }
+        }
+        // If canceled, statusB remains 'past'
+        
+        // Sort order: future/ongoing workshops first, then past/canceled workshops
+        if (statusA === 'past' && statusB !== 'past') {
+          return 1; // A (past/canceled) comes after B (not past)
+        }
+        if (statusA !== 'past' && statusB === 'past') {
+          return -1; // A (not past) comes before B (past/canceled)
+        }
+        
+        // Within the same status group, sort by start date
+        // For future/ongoing: earliest first
+        // For past/canceled: most recent first (latest past workshops first)
+        if (statusA === 'past' && statusB === 'past') {
+          return startDateB.getTime() - startDateA.getTime(); // Descending for past/canceled (most recent first)
+        } else {
+          return startDateA.getTime() - startDateB.getTime(); // Ascending for future/ongoing (earliest first)
+        }
+      });
+      
+      setRegisteredWorkshops(sortedWorkshops);
     } catch (error) {
       console.error('Error fetching registered workshops:', error);
     } finally {

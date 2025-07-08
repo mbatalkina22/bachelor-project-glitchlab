@@ -121,7 +121,7 @@ const WorkshopCard = ({
       <div className="p-5 flex flex-col flex-grow">
         <h3 className="text-lg font-secularone mb-2 line-clamp-1 text-black">{localizedTitle}</h3>
         <p className="text-gray-600 mb-4 h-20 overflow-hidden line-clamp-4 text-sm leading-tight">{localizedDescription}</p>
-        {status !== 'past' && (
+        {status !== 'past' && !canceled && (
           <div className="flex flex-col text-sm text-gray-600 mb-4 space-y-2 font-medium">
             <div className="flex items-center">
               <Icon icon="heroicons:calendar" className="w-4 h-4 mr-2" />
