@@ -423,7 +423,11 @@ const ProfilePage = () => {
                             <Icon icon="heroicons:arrow-top-right-on-square" className="w-4 h-4 mr-1" />
                             {t('viewWorkshop') || 'View Workshop'}
                           </Link>
-                          <p className="text-gray-500 text-xs">{new Date(badge.date).toLocaleDateString()}</p>
+                          <p className="text-gray-500 text-xs">{new Date(badge.date).toLocaleDateString(locale === 'it' ? 'it-IT' : 'en-US', {
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}</p>
                         </div>
                       </div>
                     </ScrollReveal>
@@ -474,7 +478,11 @@ const ProfilePage = () => {
                               {review.workshopName}
                             </h4>
                             <span className="text-gray-500 text-sm">
-                              {new Date(review.createdAt).toLocaleDateString()}
+                              {new Date(review.createdAt).toLocaleDateString(locale === 'it' ? 'it-IT' : 'en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                              })}
                             </span>
                           </div>
                           {review.comment && (

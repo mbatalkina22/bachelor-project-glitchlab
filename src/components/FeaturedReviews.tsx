@@ -70,7 +70,11 @@ const FeaturedReviews = () => {
         // Prepare data for display
         const preparedReviews = data.map((review: any) => ({
           ...review,
-          date: review.createdAt ? new Date(review.createdAt).toLocaleDateString() : undefined,
+          date: review.createdAt ? new Date(review.createdAt).toLocaleDateString(locale === 'it' ? 'it-IT' : 'en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+          }) : undefined,
           workshopId: review.workshop
         }));
         
@@ -138,7 +142,11 @@ const FeaturedReviews = () => {
         const data = await refreshResponse.json();
         const preparedReviews = data.map((review: any) => ({
           ...review,
-          date: review.createdAt ? new Date(review.createdAt).toLocaleDateString() : undefined,
+          date: review.createdAt ? new Date(review.createdAt).toLocaleDateString(locale === 'it' ? 'it-IT' : 'en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+          }) : undefined,
           workshopId: review.workshop
         }));
         

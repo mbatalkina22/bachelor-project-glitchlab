@@ -7,7 +7,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import { useTranslations } from "next-intl";
 import HeroButton from "./HeroButton";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import ConfirmationModal from "@/components/modals/ConfirmationModal";
 
 // Add Google Fonts import
@@ -43,6 +43,8 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
   const t = useTranslations("WorkshopDetail");
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string || 'en';
   const reviewSectionRef = React.useRef<HTMLDivElement>(null);
   
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
@@ -806,7 +808,11 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
                       {review.user === user?._id ? `${t("you")} (${review.userName})` : review.userName}
                     </h4>
                     <span className="text-gray-500 text-sm">
-                      {review.date || (review.createdAt ? new Date(review.createdAt).toLocaleDateString() : "2 days ago")}
+                      {review.date || (review.createdAt ? new Date(review.createdAt).toLocaleDateString(locale === 'it' ? 'it-IT' : 'en-US', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric'
+                      }) : "2 days ago")}
                     </span>
                   </div>
                   {review.comment && (
@@ -829,7 +835,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
                   )}
                   {user?.role === 'instructor' && (
                     <button
-                      onClick={() => toggleFeatureReview(review._id as string, review.featured)}
+                      onClick={() => toggleFeatureReview(review._id as string, review.featured || false)}
                       className={`flex items-center text-sm px-2 py-1 rounded-md transition-colors ${
                         review.featured 
                           ? 'text-yellow-600 hover:text-yellow-800 hover:bg-yellow-50' 

@@ -64,7 +64,7 @@ const WorkshopCard = ({
   const cardBgColor = canceled ? "#e5e7eb" : bgColor;
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('en-US', {
+    return new Date(date).toLocaleDateString(locale === 'it' ? 'it-IT' : 'en-US', {
       month: 'long',
       day: 'numeric',
       year: 'numeric'
@@ -72,7 +72,7 @@ const WorkshopCard = ({
   };
 
   const formatTime = (date: Date) => {
-    return new Date(date).toLocaleTimeString('en-US', {
+    return new Date(date).toLocaleTimeString(locale === 'it' ? 'it-IT' : 'en-US', {
       hour: 'numeric',
       minute: 'numeric',
       hour12: false
