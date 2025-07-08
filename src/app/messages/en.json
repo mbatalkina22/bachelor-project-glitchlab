@@ -283,6 +283,8 @@
     "backToWorkshop": "Back to Workshop",
     "pleaseLogin": "Please Login",
     "editWorkshop": "Edit Workshop",
+    "editNotAvailablePast": "Edit not available for past workshops",
+    "reminderNotAvailable": "Reminder not available for canceled workshops",
     "deleteWorkshop": "Delete Workshop",
     "confirmDelete": "Confirm Delete",
     "deleteWorkshopConfirmation": "Are you sure you want to delete this workshop? This action cannot be undone and will remove all registrations.",

@@ -458,27 +458,79 @@ const WorkshopDetailPage = () => {
                 {/* Instructor Action Buttons - Now shown for all instructors, not just workshop instructors */}
                 {isInstructor && (
                   <div className="flex flex-row gap-2">
-                    <Link href={`/${locale}/workshops/edit/${workshop._id}`}>
-                      <button 
-                        className="bg-[#4CAF50] text-white p-2 rounded-full shadow-md hover:bg-[#3d8b40] transition-colors"
-                        title={t('editWorkshop') || "Edit Workshop"}
-                      >
-                        <Icon icon="heroicons:pencil-square" className="w-5 h-5" />
-                      </button>
-                    </Link>
+                    {/* Edit button - disabled only for naturally past workshops (not canceled ones) */}
+                    {(() => {
+                      const now = new Date();
+                      const endDate = new Date(workshop.endDate);
+                      const isPastWorkshop = endDate < now;
+                      
+                      // Disable edit only for workshops that are past AND not canceled
+                      // Canceled workshops can always be edited regardless of date
+                      const shouldDisableEdit = isPastWorkshop && !workshop.canceled;
+                      
+                      return shouldDisableEdit ? (
+                        <button 
+                          className="bg-gray-400 text-white p-2 rounded-full shadow-md cursor-not-allowed opacity-50"
+                          title={t('editNotAvailablePast') || "Edit not available for past workshops"}
+                          disabled
+                        >
+                          <Icon icon="heroicons:pencil-square" className="w-5 h-5" />
+                        </button>
+                      ) : (
+                        <Link href={`/${locale}/workshops/edit/${workshop._id}`}>
+                          <button 
+                            className="bg-[#4CAF50] text-white p-2 rounded-full shadow-md hover:bg-[#3d8b40] transition-colors"
+                            title={t('editWorkshop') || "Edit Workshop"}
+                          >
+                            <Icon icon="heroicons:pencil-square" className="w-5 h-5" />
+                          </button>
+                        </Link>
+                      );
+                    })()}
                     
-                    {!workshop.canceled && getWorkshopStatus(workshop.startDate, workshop.endDate) === 'future' && (
-                      <button
-                        onClick={handleSendReminder}
-                        className={`bg-[#7471f9] text-white p-2 rounded-full shadow-md transition-colors ${
-                          workshop.reminderSent ? 'opacity-50 cursor-not-allowed hover:bg-[#7471f9]' : 'hover:bg-[#5f5dd6]'
-                        }`}
-                        title={workshop.reminderSent ? t('reminderAlreadySent') || 'Reminder already sent' : t('sendReminder') || 'Send reminder to registered users'}
-                        disabled={workshop.reminderSent}
-                      >
-                        <Icon icon="heroicons:bell" className="w-5 h-5" />
-                      </button>
-                    )}
+                    {/* Reminder button - only show for future, non-canceled workshops */}
+                    {(() => {
+                      const now = new Date();
+                      const startDate = new Date(workshop.startDate);
+                      const endDate = new Date(workshop.endDate);
+                      const isPastWorkshop = endDate < now;
+                      const isFutureWorkshop = startDate > now;
+                      
+                      // Only show reminder button for non-canceled, future workshops
+                      if (!workshop.canceled && isFutureWorkshop && !isPastWorkshop) {
+                        return (
+                          <button
+                            onClick={handleSendReminder}
+                            className={`bg-[#7471f9] text-white p-2 rounded-full shadow-md transition-colors ${
+                              workshop.reminderSent ? 'opacity-50 cursor-not-allowed hover:bg-[#7471f9]' : 'hover:bg-[#5f5dd6]'
+                            }`}
+                            title={workshop.reminderSent ? t('reminderAlreadySent') || 'Reminder already sent' : t('sendReminder') || 'Send reminder to registered users'}
+                            disabled={workshop.reminderSent}
+                          >
+                            <Icon icon="heroicons:bell" className="w-5 h-5" />
+                          </button>
+                        );
+                      }
+                      
+                      // For canceled workshops or naturally past workshops, show disabled reminder button
+                      if (workshop.canceled || isPastWorkshop) {
+                        const disabledReason = workshop.canceled 
+                          ? (t('reminderNotAvailable') || 'Reminder not available for canceled workshops')
+                          : (t('reminderNotAvailable') || 'Reminder not available for past workshops');
+                        
+                        return (
+                          <button
+                            className="bg-gray-400 text-white p-2 rounded-full shadow-md cursor-not-allowed opacity-50"
+                            title={disabledReason}
+                            disabled
+                          >
+                            <Icon icon="heroicons:bell" className="w-5 h-5" />
+                          </button>
+                        );
+                      }
+                      
+                      return null;
+                    })()}
                   </div>
                 )}
               </div>

@@ -294,6 +294,8 @@
     "backToWorkshop": "Torna al Workshop",
     "pleaseLogin": "Effettua l'Accesso",
     "editWorkshop": "Modifica Workshop",
+    "editNotAvailablePast": "Modifica non disponibile per workshop passati",
+    "reminderNotAvailable": "Promemoria non disponibile per workshop annullati",
     "deleteWorkshop": "Elimina Workshop",
     "confirmDelete": "Conferma Eliminazione",
     "deleteWorkshopConfirmation": "Sei sicuro di voler eliminare questo workshop? Questa azione non può essere annullata e rimuoverà tutte le registrazioni.",
