@@ -305,7 +305,11 @@
     "reviewUnfeatured": "Review removed from featured successfully!",
     "sendReminder": "Send reminder to registered users",
     "reminderAlreadySent": "Reminder already sent",
-    "actions": "Actions"
+    "actions": "Actions",
+    "workshopRegistrationSuccess": "Successfully Registered!",
+    "workshopRegistrationMessage": "You have been registered for this workshop. Check your profile to see all your registered workshops.",
+    "workshopUnregistrationSuccess": "Unregistered Successfully",
+    "workshopUnregistrationMessage": "You have been unregistered from this workshop."
   },
   "Profile": {
     "editProfile": "Edit Profile",
@@ -483,7 +487,19 @@
     "emailLanguage": "Preferred Email Language",
     "languageEnglish": "English",
     "languageItalian": "Italian",
-    "enterEmailToReset": "Enter your email address and we'll send you a verification code to reset your password."
+    "enterEmailToReset": "Enter your email address and we'll send you a verification code to reset your password.",
+    "registrationSuccess": "Welcome to GlitchLab!",
+    "registrationSuccessMessage": "Your account has been created successfully. Please check your email to verify your account.",
+    "viewWorkshopsInProfile": "View Workshops in Profile",
+    "emailVerified": "Email Verified Successfully!",
+    "emailVerifiedMessage": "Your email has been verified. You can now register for workshops and explore our platform.",
+    "workshopRegistered": "Successfully Registered!",
+    "workshopRegisteredMessage": "You have been successfully registered for this workshop.",
+    "workshopUnregistered": "Successfully Unregistered",
+    "workshopUnregisteredMessage": "You have been successfully unregistered from this workshop.",
+    "instructorWorkshopCreated": "Workshop Created Successfully!",
+    "instructorWorkshopCreatedMessage": "Your workshop has been created and is now available for registration.",
+    "viewWorkshop": "View Workshop"
   },
   "Calendar": {
     "title": "Workshop Calendar",

@@ -453,7 +453,6 @@ const CreateWorkshopPage = () => {
       }
 
       const data = await response.json();
-      setSuccessMessage("Workshop created successfully!");
 
       // Reset selected image file state
       setSelectedImageFile(null);

@@ -10,6 +10,7 @@ import { useTranslations } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
 import HeroButton from '@/components/HeroButton';
 import { useAuth } from '@/context/AuthContext';
+import { useNotifications } from '@/context/NotificationContext';
 import { getWorkshopStatus, getStatusColor } from '@/utils/workshopStatus';
 
 interface InstructorDetails {
@@ -57,8 +58,10 @@ const WorkshopDetailPage = () => {
   const id = params.id as string;
   const locale = params.locale as string;
   const t = useTranslations('WorkshopDetail');
+  const tAuth = useTranslations('Auth');
   const tWorkshops = useTranslations('WorkshopsPage');
   const { user, isAuthenticated, isInstructor, refreshUser } = useAuth();
+  const { addNotification } = useNotifications();
   const [workshop, setWorkshop] = useState<Workshop | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -201,6 +204,18 @@ const WorkshopDetailPage = () => {
           registeredCount: workshop.registeredCount + 1
         });
       }
+      
+      // Show success notification
+      addNotification({
+        type: 'success',
+        title: tAuth('workshopRegistered'),
+        message: tAuth('workshopRegisteredMessage'),
+        action: {
+          label: tAuth('viewWorkshopsInProfile'),
+          href: `/${locale}/profile`
+        },
+        duration: 6000 // Show for 6 seconds
+      });
       
       // Then refresh the user data in the context
       await refreshUser();

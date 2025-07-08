@@ -8,6 +8,7 @@ import { Secular_One } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/AuthContext";
+import { NotificationProvider } from "@/context/NotificationContext";
 import "../../styles/globals.css";
 
 const secularOne = Secular_One({
@@ -79,11 +80,13 @@ export default async function RootLayout({
           key={`intl-provider-${locale}`}
         >
           <AuthProvider>
-            <Navbar />
-            <main className="min-h-screen bg-[#f5f5f5]">
-              {children}
-            </main>
-            <Footer />
+            <NotificationProvider>
+              <Navbar />
+              <main className="min-h-screen bg-[#f5f5f5]">
+                {children}
+              </main>
+              <Footer />
+            </NotificationProvider>
           </AuthProvider>
         </NextIntlClientProvider>
       </body>

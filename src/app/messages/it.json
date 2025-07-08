@@ -17,7 +17,7 @@
   "Hero": {
     "title": "Glitch Lab",
     "exploreButton": "Esplora",
-     "subtitle": "GlitchLab è un living lab dedicato alla progettazione partecipativa di tecnologie nato in collaborazione con il Servizio Pari Opportunità dell'Università della Svizzera italiana (USI) e ospitato da LUXIA – laboratorio di User Experience, Interaction and Accessibility."
+    "subtitle": "GlitchLab è un living lab dedicato alla progettazione partecipativa di tecnologie nato in collaborazione con il Servizio Pari Opportunità dell'Università della Svizzera italiana (USI) e ospitato da LUXIA – laboratorio di User Experience, Interaction and Accessibility."
   },
   "Services": {
     "howItWorks": {
@@ -316,7 +316,11 @@
     "reviewUnfeatured": "Recensione rimossa dall'evidenza con successo!",
     "sendReminder": "Invia promemoria agli utenti registrati",
     "reminderAlreadySent": "Promemoria già inviato",
-    "actions": "Azioni"
+    "actions": "Azioni",
+    "workshopRegistrationSuccess": "Registrazione Completata!",
+    "workshopRegistrationMessage": "Ti sei registrato con successo a questo workshop. Controlla il tuo profilo per vedere tutti i workshop a cui sei registrato.",
+    "workshopUnregistrationSuccess": "Disiscrizione Completata",
+    "workshopUnregistrationMessage": "Ti sei disiscritto con successo da questo workshop."
   },
   "Profile": {
     "editProfile": "Modifica Profilo",
@@ -497,7 +501,19 @@
     "emailLanguage": "Lingua Preferita per Email",
     "languageEnglish": "Inglese",
     "languageItalian": "Italiano",
-    "enterEmailToReset": "Inserisci il tuo indirizzo email e ti invieremo un codice di verifica per reimpostare la password."
+    "enterEmailToReset": "Inserisci il tuo indirizzo email e ti invieremo un codice di verifica per reimpostare la password.",
+    "registrationSuccess": "Benvenuto in GlitchLab!",
+    "registrationSuccessMessage": "Il tuo account è stato creato con successo. Controlla la tua email per verificare il tuo account.",
+    "viewWorkshopsInProfile": "Visualizza Workshop nel Profilo",
+    "emailVerified": "Email Verificata con Successo!",
+    "emailVerifiedMessage": "La tua email è stata verificata. Ora puoi registrarti ai workshop ed esplorare la nostra piattaforma.",
+    "workshopRegistered": "Iscrizione Completata!",
+    "workshopRegisteredMessage": "Ti sei iscritto con successo a questo workshop.",
+    "workshopUnregistered": "Disiscrizione Completata",
+    "workshopUnregisteredMessage": "Ti sei disiscritto con successo da questo workshop.",
+    "instructorWorkshopCreated": "Workshop Creato con Successo!",
+    "instructorWorkshopCreatedMessage": "Il tuo workshop è stato creato ed è ora disponibile per le iscrizioni.",
+    "viewWorkshop": "Visualizza Workshop"
   },
   "Calendar": {
     "title": "Calendario Workshop",
