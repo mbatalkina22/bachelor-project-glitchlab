@@ -82,7 +82,7 @@ export default function VerifyEmailPage() {
         localStorage.removeItem('redirectAfterLogin');
         router.push(redirectPath);
       } else {
-        router.push('/');
+        router.push('/profile');
       }
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : t('verificationFailed');

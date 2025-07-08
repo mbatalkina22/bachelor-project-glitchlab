@@ -72,8 +72,8 @@ export default function RegisterPage() {
           localStorage.removeItem('redirectAfterLogin');
           router.push(redirectPath);
         } else {
-          // Otherwise go to home page
-          router.push('/');
+          // Otherwise go to profile page
+          router.push('/profile');
         }
       }
     } catch (err: unknown) {
