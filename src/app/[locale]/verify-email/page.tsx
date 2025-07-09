@@ -62,6 +62,12 @@ export default function VerifyEmailPage() {
     }
   };
 
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await handleVerify();
+  };
+
   // Handle verify button click
   const handleVerify = async () => {
     setError('');
@@ -140,7 +146,7 @@ export default function VerifyEmailPage() {
         )}
         
         <div className="mt-8">
-          <div className="flex flex-col space-y-4">
+          <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
             <label htmlFor="code-0" className="text-sm font-medium text-gray-700">
               {t('enterVerificationCode')}
             </label>
@@ -165,13 +171,14 @@ export default function VerifyEmailPage() {
             <div className="pt-2">
               <HeroButton
                 text={loading ? t('verifying') : t('verifyEmail')}
-                onClick={handleVerify}
+                onClick={() => handleVerify()}
                 disabled={loading}
                 backgroundColor="#7471f9"
                 textColor="white"
                 className="w-full"
               />
             </div>
+          </form>
             
             <div className="text-center">
               <button
@@ -184,7 +191,6 @@ export default function VerifyEmailPage() {
                   : t('resendCode')}
               </button>
             </div>
-          </div>
         </div>
       </div>
     </div>
