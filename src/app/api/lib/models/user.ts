@@ -18,6 +18,40 @@ const BadgeSchema = new Schema({
   }
 });
 
+// Define the notification schema for user notifications
+const NotificationSchema = new Schema({
+  type: {
+    type: String,
+    enum: ['workshop_removal', 'badge_awarded', 'workshop_update', 'general'],
+    required: true
+  },
+  title: {
+    type: String,
+    required: true
+  },
+  message: {
+    type: String,
+    required: true
+  },
+  workshopId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Workshop'
+  },
+  workshopName: String,
+  read: {
+    type: Boolean,
+    default: false
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  action: {
+    label: String,
+    href: String
+  }
+});
+
 // Define the email notifications schema
 const EmailNotificationsSchema = new Schema({
   workshops: {
@@ -77,6 +111,8 @@ const UserSchema = new Schema({
   }],
   // Added badges array to store user's earned badges
   badges: [BadgeSchema],
+  // Added notifications array to store user notifications
+  notifications: [NotificationSchema],
   // Instructor specific fields
   surname: {
     type: String,

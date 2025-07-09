@@ -72,7 +72,7 @@ export async function POST(request: Request) {
       }
 
       // Check if user has a badge for this workshop - if they do, they can't be removed
-      const hasBadge = user.badges?.some(badge => 
+      const hasBadge = user.badges?.some((badge: any) => 
         badge.workshopId.toString() === workshopId.toString()
       );
       
@@ -85,8 +85,33 @@ export async function POST(request: Request) {
 
       // Remove workshop from user's registered workshops
       user.registeredWorkshops = user.registeredWorkshops.filter(
-        id => id.toString() !== workshopId.toString()
+        (id: any) => id.toString() !== workshopId.toString()
       );
+
+      // Create removal notification for the user
+      const notification = {
+        type: 'workshop_removal',
+        title: 'removalNotificationTitle',
+        message: 'removalNotificationMessage',
+        workshopId: workshopId,
+        workshopName: workshop.name,
+        read: false,
+        createdAt: new Date(),
+        action: {
+          label: 'exploreWorkshopsAction',
+          href: '/workshops'
+        }
+      };
+
+      // Add notification to user's notifications array
+      user.notifications = user.notifications || [];
+      user.notifications.unshift(notification); // Add to beginning of array
+
+      // Keep only the latest 50 notifications per user
+      if (user.notifications.length > 50) {
+        user.notifications = user.notifications.slice(0, 50);
+      }
+
       await user.save();
 
       // Decrement workshop registered count
@@ -99,7 +124,7 @@ export async function POST(request: Request) {
         message: 'User successfully removed from workshop'
       }, { status: 200 });
 
-    } catch (error) {
+    } catch (error: any) {
       if (error.name === 'JsonWebTokenError') {
         return NextResponse.json(
           { error: 'Invalid token' },

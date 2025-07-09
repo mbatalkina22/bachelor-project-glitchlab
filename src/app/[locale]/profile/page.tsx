@@ -58,6 +58,22 @@ interface Badge {
   description: string;
 }
 
+// Add notification interface
+interface UserNotification {
+  _id: string;
+  type: 'workshop_removal' | 'badge_awarded' | 'workshop_update' | 'general';
+  title: string;
+  message: string;
+  workshopId?: string;
+  workshopName?: string;
+  read: boolean;
+  createdAt: Date;
+  action?: {
+    label: string;
+    href: string;
+  };
+}
+
 const ProfilePage = () => {
   const t = useTranslations('Profile');
   const { user, isAuthenticated, isInstructor } = useAuth();
@@ -74,6 +90,9 @@ const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [userReviews, setUserReviews] = useState<UserReview[]>([]);
   const [isLoadingReviews, setIsLoadingReviews] = useState(true);
+  const [notifications, setNotifications] = useState<UserNotification[]>([]);
+  const [isLoadingNotifications, setIsLoadingNotifications] = useState(true);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   // Function to handle tab change and update URL
   const handleTabChange = useCallback((tab: string) => {
@@ -298,6 +317,111 @@ const ProfilePage = () => {
     fetchUserReviews();
   }, [isAuthenticated]);
 
+  // Fetch user notifications
+  const fetchNotifications = async () => {
+    if (!isAuthenticated) {
+      setIsLoadingNotifications(false);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setIsLoadingNotifications(false);
+        return;
+      }
+
+      const response = await fetch('/api/users/removal-notifications', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch notifications');
+      }
+
+      const data = await response.json();
+      const notificationsWithDates = data.notifications.map((notification: any) => ({
+        ...notification,
+        createdAt: new Date(notification.createdAt)
+      }));
+
+      setNotifications(notificationsWithDates);
+      
+      // Show unread notifications automatically
+      const unreadNotifications = notificationsWithDates.filter((n: UserNotification) => !n.read);
+      if (unreadNotifications.length > 0) {
+        setShowNotifications(true);
+      }
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    } finally {
+      setIsLoadingNotifications(false);
+    }
+  };
+
+  // Mark notification as read
+  const markNotificationAsRead = async (notificationId: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await fetch('/api/users/removal-notifications', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ notificationId })
+      });
+
+      if (response.ok) {
+        setNotifications(prev => 
+          prev.map(n => 
+            n._id === notificationId ? { ...n, read: true } : n
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
+
+  // Mark all notifications as read
+  const markAllNotificationsAsRead = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await fetch('/api/users/removal-notifications', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ markAllAsRead: true })
+      });
+
+      if (response.ok) {
+        setNotifications(prev => 
+          prev.map(n => ({ ...n, read: true }))
+        );
+        setShowNotifications(false);
+      }
+    } catch (error) {
+      console.error('Error marking all notifications as read:', error);
+    }
+  };
+
+  // Fetch data when component mounts
+  useEffect(() => {
+    if (isAuthenticated && !isInstructor) {
+      fetchRegisteredWorkshops();
+      fetchNotifications();
+    }
+  }, [isAuthenticated, isInstructor]);
+
   if (!user) {
     return (
       <div className="pt-16 min-h-screen bg-gray-50 flex items-center justify-center">
@@ -391,6 +515,79 @@ const ProfilePage = () => {
             </nav>
           </div>
         </div>
+
+        {/* Notification Banner */}
+        {!isLoadingNotifications && notifications.length > 0 && showNotifications && (
+          <div className="mb-6">
+            {notifications
+              .filter(notification => !notification.read)
+              .slice(0, 3) // Show only the 3 most recent unread notifications
+              .map((notification) => (
+                <div key={notification._id} className="mb-4 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-md shadow-sm">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0">
+                        <Icon 
+                          icon={notification.type === 'workshop_removal' ? 'heroicons:exclamation-triangle' : 'heroicons:information-circle'} 
+                          className="h-5 w-5 text-yellow-400 mt-0.5"
+                        />
+                      </div>
+                      <div className="ml-3 flex-1">
+                        <div className="flex items-center">
+                          <h3 className="text-sm font-medium text-yellow-800">
+                            {t(notification.title)}
+                          </h3>
+                          <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                            {t('newNotification')}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-sm text-yellow-700">
+                          {t(notification.message, { workshopName: notification.workshopName || '' })}
+                        </p>
+                        <div className="mt-3 flex items-center space-x-4">
+                          {notification.action && (
+                            <Link 
+                              href={notification.action.href}
+                              className="text-sm font-medium text-yellow-800 hover:text-yellow-900 underline"
+                            >
+                              {t(notification.action.label)}
+                            </Link>
+                          )}
+                          <button
+                            onClick={() => markNotificationAsRead(notification._id)}
+                            className="text-sm font-medium text-yellow-600 hover:text-yellow-800"
+                          >
+                            {t('markAsRead')}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex-shrink-0 ml-4">
+                      <button
+                        onClick={() => markNotificationAsRead(notification._id)}
+                        className="rounded-md text-yellow-400 hover:text-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                      >
+                        <span className="sr-only">Close</span>
+                        <Icon icon="heroicons:x-mark" className="h-5 w-5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            
+            {/* Show "Mark all as read" button if there are multiple unread notifications */}
+            {notifications.filter(n => !n.read).length > 1 && (
+              <div className="text-right">
+                <button
+                  onClick={markAllNotificationsAsRead}
+                  className="text-sm text-yellow-600 hover:text-yellow-800 font-medium"
+                >
+                  {t('markAllAsRead')}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="mt-6">
           {/* Workshops Tab */}
@@ -513,11 +710,15 @@ const ProfilePage = () => {
                       {/* Review content */}
                       <div className="flex items-start">
                         <div className="flex-shrink-0 mr-4">
-                          <Stamp
-                            color={review.circleColor}
-                            font={review.circleFont}
-                            text={review.circleText}
-                          />
+                          <div 
+                            className="w-12 h-12 rounded-full flex items-center justify-center text-white text-sm font-bold"
+                            style={{ 
+                              backgroundColor: review.circleColor || '#7471f9',
+                              fontFamily: getFontFamily(review.circleFont || 'Arvo')
+                            }}
+                          >
+                            {review.circleText || '★'}
+                          </div>
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-2">

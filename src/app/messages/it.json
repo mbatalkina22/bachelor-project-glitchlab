@@ -1,4 +1,4 @@
-{
+ {
   "Navbar": {
     "home": "Home",
     "workshops": "Workshop",
@@ -390,7 +390,16 @@
     "noEmailProvided": "Nessuna email fornita",
     "notSpecified": "Non specificato",
     "notProvided": "Non fornito",
-    "failedToFetchWorkshops": "Impossibile recuperare i workshop dell'istruttore"
+    "failedToFetchWorkshops": "Impossibile recuperare i workshop dell'istruttore",
+    "removalNotificationTitle": "Registrazione Workshop Rimossa",
+    "removalNotificationMessage": "Sei stato rimosso dal workshop {workshopName} a causa di mancata partecipazione. Puoi registrarti per workshop futuri per continuare il tuo percorso di apprendimento.",
+    "exploreWorkshopsAction": "Esplora Workshop",
+    "markAsRead": "Segna come Letto",
+    "markAllAsRead": "Segna Tutto come Letto",
+    "noNotifications": "Nessuna notifica ancora",
+    "noNotificationsMessage": "Vedrai aggiornamenti importanti e notifiche qui.",
+    "newNotification": "Nuovo",
+    "notificationRemoved": "Notifica segnata come letta"
   },
   "Settings": {
     "settings": "Impostazioni",
@@ -433,6 +442,17 @@
     "emailNotifications": "Notifiche Email",
     "workshopNotifications": "Notifiche Workshop",
     "workshopNotificationsDesc": "Ricevi notifiche sui workshops imminenti e conferme di registrazione",
+    "changeNotifications": "Notifiche di Cambiamento",
+    "changeNotificationsDesc": "Ricevi notifiche quando qualcosa cambia nei workshop a cui sei registrato.",
+    "removalNotificationTitle": "Registrazione Workshop Rimossa",
+    "removalNotificationMessage": "Sei stato rimosso dal workshop {workshopName} a causa di mancata partecipazione. Puoi registrarti per workshop futuri per continuare il tuo percorso di apprendimento.",
+    "exploreWorkshopsAction": "Esplora Workshop",
+    "markAsRead": "Segna come Letto",
+    "markAllAsRead": "Segna Tutto come Letto",
+    "noNotifications": "Nessuna notifica ancora",
+    "noNotificationsMessage": "Vedrai aggiornamenti importanti e notifiche qui.",
+    "newNotification": "Nuovo",
+    "notificationRemoved": "Notifica segnata come letta",
     "savePreferences": "Salva Preferenze",
     "securityDesc": "Aggiorna la tua password e gestisci le tue sessioni",
     "changePassword": "Cambia Password",
