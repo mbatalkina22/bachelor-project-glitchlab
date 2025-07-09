@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -195,20 +196,13 @@ const FeaturedWorkshops = () => {
         <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-secularone mb-6 text-black">{t('title')}</h2>
           <p className="text-gray-500 mb-8">No upcoming workshops available at the moment.</p>
-          <div className="flex justify-center space-x-4">
+          <div className="flex justify-center">
             <HeroButton 
               text={t('viewAllButton')}
               href={`/${locale}/workshops`}
               backgroundColor="#7471f9"
               textColor="white"
             />
-            <button 
-              onClick={fetchWorkshops}
-              className="px-6 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 flex items-center"
-            >
-              <Icon icon="heroicons:arrow-path" className="w-5 h-5 mr-2" />
-              Refresh
-            </button>
           </div>
         </div>
       </div>
@@ -218,41 +212,45 @@ const FeaturedWorkshops = () => {
   return (
     <div className="py-16">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <div className="flex justify-between items-center mb-12">
-          <div className="flex-1 flex justify-center">
-            <ScrollReveal>
-              <h2 className="text-3xl md:text-4xl font-secularone text-black">{t('title')}</h2>
-            </ScrollReveal>
+        <div className="flex justify-center items-center mb-12">
+          <ScrollReveal>
+            <h2 className="text-3xl md:text-4xl font-secularone text-black">{t('title')}</h2>
+          </ScrollReveal>
+        </div>
+        
+        {/* Horizontal scrollable container */}
+        <div className="relative">
+          <div className="flex overflow-x-auto gap-4 md:gap-6 pb-4 scrollbar-hide snap-x snap-mandatory px-4 md:px-0">
+            {workshops.map((workshop, index) => (
+              <div key={workshop._id} className="flex-shrink-0 w-[calc(100vw-2rem)] sm:w-80 md:w-96 snap-center">
+                <ScrollReveal className={workshop.delay}>
+                  <WorkshopCard
+                    id={workshop._id}
+                    title={workshop.name}
+                    description={workshop.description}
+                    startDate={new Date(workshop.startDate)}
+                    endDate={new Date(workshop.endDate)}
+                    imageSrc={workshop.imageSrc}
+                    delay={workshop.delay || ""}
+                    bgColor={workshop.bgColor}
+                  />
+                </ScrollReveal>
+              </div>
+            ))}
           </div>
-          <button 
-            onClick={fetchWorkshops}
-            className="p-2 bg-gray-100 text-gray-800 rounded-full hover:bg-gray-200 flex items-center focus:outline-none"
-            title="Refresh workshops"
-          >
-            <Icon icon="heroicons:arrow-path" className="w-5 h-5" />
-          </button>
+          
+          {/* Scroll indicator hint */}
+          <div className="flex justify-center mt-4">
+            <div className="flex items-center text-gray-500 text-sm">
+              <Icon icon="heroicons:arrow-left" className="w-4 h-4 mr-1" />
+              <span>{t('scrollHint')}</span>
+              <Icon icon="heroicons:arrow-right" className="w-4 h-4 ml-1" />
+            </div>
+          </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-          {visibleWorkshops.map((workshop, index) => (
-            <ScrollReveal key={`${currentPage}-${index}`} className={workshop.delay}>
-              <WorkshopCard
-                key={workshop._id}
-                id={workshop._id}
-                title={workshop.name}
-                description={workshop.description}
-                startDate={new Date(workshop.startDate)}
-                endDate={new Date(workshop.endDate)}
-                imageSrc={workshop.imageSrc}
-                delay={workshop.delay || ""}
-                bgColor={workshop.bgColor}
-              />
-            </ScrollReveal>
-          ))}
-        </div>
-        
-        {/* Pagination Controls */}
-        <div className="flex justify-center items-center mt-12 space-x-4">
+        {/* Pagination Controls - removed since we're using horizontal scroll */}
+        {/* <div className="flex justify-center items-center mt-12 space-x-4">
           <button 
             onClick={handlePrevious}
             disabled={currentPage === 0}
@@ -283,7 +281,7 @@ const FeaturedWorkshops = () => {
           >
             <Icon icon="heroicons:chevron-right" className="w-6 h-6" />
           </button>
-        </div>
+        </div> */}
         
         <div className="text-center mt-12">
           <HeroButton 

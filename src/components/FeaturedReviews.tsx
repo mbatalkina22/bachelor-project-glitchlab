@@ -296,99 +296,113 @@ const FeaturedReviews = () => {
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {visibleReviews.map((review, index) => {
-            const reviewId = review._id || `review-${index}`;
-            const isExpanded = expandedReviews[reviewId] || false;
-            const hasLongComment = review.comment && review.comment.length > characterLimit;
-            
-            return (
-              <ScrollReveal key={`${currentPage}-${index}`} className={`delay-${(index % 3 + 1) * 100}`}>
-                <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-100 h-full flex flex-col transition-all duration-300 hover:shadow-md relative">
-                  {/* Instructor controls */}
-                  {isAuthenticated && user?.role === 'instructor' && (
-                    <div className="absolute top-2 right-2 z-10">
-                      <button
-                        onClick={() => toggleFeatured(review._id, false)}
-                        className="p-1 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition-colors"
-                        title="Remove from featured"
-                      >
-                        <Icon icon="heroicons:x-mark" className="w-4 h-4" />
-                      </button>
-                    </div>
-                  )}
-                  
-                  {/* Review content */}
-                  <div className="flex items-start flex-1">
-                    <div className="flex-shrink-0 mr-4">
-                      <Stamp
-                        color={review.circleColor}
-                        font={review.circleFont}
-                        text={review.circleText}
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex flex-col mb-2">
-                        <h4 className="font-medium text-gray-900">
-                          {review.userName}
-                        </h4>
-                        <h5 className="text-sm text-indigo-600 font-medium mb-1">
-                          {review.workshopName}
-                        </h5>
-                        <span className="text-gray-500 text-xs mb-2">
-                          {review.date}
-                        </span>
-                      </div>
-                      <div className="text-gray-700">
-                        {review.comment ? (
-                          <>
-                            <p className="break-words break-all whitespace-normal overflow-hidden" style={{ 
-                              wordWrap: 'break-word', 
-                              maxWidth: '100%',
-                              textOverflow: 'ellipsis'
-                            }}>
-                              {isExpanded ? review.comment : truncateText(review.comment, characterLimit)}
-                            </p>
-                            
-                            {/* Read More / Read Less button */}
-                            {hasLongComment && (
-                              <button 
-                                onClick={() => toggleExpanded(reviewId)}
-                                className="text-indigo-600 hover:text-indigo-800 text-sm mt-1 focus:outline-none flex items-center"
-                              >
-                                <span>{isExpanded ? 'Read less' : 'Read more'}</span>
-                                <Icon 
-                                  icon={isExpanded ? "heroicons:chevron-up" : "heroicons:chevron-down"} 
-                                  className="w-4 h-4 ml-1" 
-                                />
-                              </button>
+        {/* Horizontal scrollable container */}
+        <div className="relative">
+          <div className="flex overflow-x-auto gap-4 md:gap-6 pb-4 scrollbar-hide snap-x snap-mandatory px-4 md:px-0">
+            {featuredReviews.map((review, index) => {
+              const reviewId = review._id || `review-${index}`;
+              const isExpanded = expandedReviews[reviewId] || false;
+              const hasLongComment = review.comment && review.comment.length > characterLimit;
+              
+              return (
+                <div key={reviewId} className="flex-shrink-0 w-[calc(100vw-2rem)] sm:w-80 md:w-96 snap-center">
+                  <ScrollReveal className={`delay-${(index % 3 + 1) * 100}`}>
+                    <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-100 h-full flex flex-col transition-all duration-300 hover:shadow-md relative">
+                      {/* Instructor controls */}
+                      {isAuthenticated && user?.role === 'instructor' && (
+                        <div className="absolute top-2 right-2 z-10">
+                          <button
+                            onClick={() => toggleFeatured(review._id, false)}
+                            className="p-1 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition-colors"
+                            title="Remove from featured"
+                          >
+                            <Icon icon="heroicons:x-mark" className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                      
+                      {/* Review content */}
+                      <div className="flex items-start flex-1">
+                        <div className="flex-shrink-0 mr-4">
+                          <Stamp
+                            color={review.circleColor}
+                            font={review.circleFont}
+                            text={review.circleText}
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex flex-col mb-2">
+                            <h4 className="font-medium text-gray-900">
+                              {review.userName}
+                            </h4>
+                            <h5 className="text-sm text-indigo-600 font-medium mb-1">
+                              {review.workshopName}
+                            </h5>
+                            <span className="text-gray-500 text-xs mb-2">
+                              {review.date}
+                            </span>
+                          </div>
+                          <div className="text-gray-700">
+                            {review.comment ? (
+                              <>
+                                <p className="break-words break-all whitespace-normal overflow-hidden" style={{ 
+                                  wordWrap: 'break-word', 
+                                  maxWidth: '100%',
+                                  textOverflow: 'ellipsis'
+                                }}>
+                                  {isExpanded ? review.comment : truncateText(review.comment, characterLimit)}
+                                </p>
+                                
+                                {/* Read More / Read Less button */}
+                                {hasLongComment && (
+                                  <button 
+                                    onClick={() => toggleExpanded(reviewId)}
+                                    className="text-indigo-600 hover:text-indigo-800 text-sm mt-1 focus:outline-none flex items-center"
+                                  >
+                                    <span>{isExpanded ? 'Read less' : 'Read more'}</span>
+                                    <Icon 
+                                      icon={isExpanded ? "heroicons:chevron-up" : "heroicons:chevron-down"} 
+                                      className="w-4 h-4 ml-1" 
+                                    />
+                                  </button>
+                                )}
+                              </>
+                            ) : (
+                              <p className="text-gray-400 italic">No comment</p>
                             )}
-                          </>
-                        ) : (
-                          <p className="text-gray-400 italic">No comment</p>
-                        )}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* View Workshop link */}
+                      <div className="flex justify-end mt-4 pt-4 border-t border-gray-100">
+                        <Link 
+                          href={`/${locale}/workshops/${review.workshop}`}
+                          className="flex items-center text-sm text-gray-600 hover:text-gray-800 px-2 py-1 rounded-md hover:bg-gray-50 transition-colors"
+                        >
+                          <Icon icon="heroicons:eye" className="w-4 h-4 mr-1" />
+                          {t('viewWorkshop')}
+                        </Link>
                       </div>
                     </div>
-                  </div>
-                  
-                  {/* View Workshop link */}
-                  <div className="flex justify-end mt-4 pt-4 border-t border-gray-100">
-                    <Link 
-                      href={`/${locale}/workshops/${review.workshop}`}
-                      className="flex items-center text-sm text-gray-600 hover:text-gray-800 px-2 py-1 rounded-md hover:bg-gray-50 transition-colors"
-                    >
-                      <Icon icon="heroicons:eye" className="w-4 h-4 mr-1" />
-                      {t('viewWorkshop')}
-                    </Link>
-                  </div>
+                  </ScrollReveal>
                 </div>
-              </ScrollReveal>
-            );
-          })}
+              );
+            })}
+          </div>
+          
+          {/* Scroll indicator hint */}
+          <div className="flex justify-center mt-4">
+            <div className="flex items-center text-gray-500 text-sm">
+              <Icon icon="heroicons:arrow-left" className="w-4 h-4 mr-1" />
+              <span>{t('scrollHint')}</span>
+              <Icon icon="heroicons:arrow-right" className="w-4 h-4 ml-1" />
+            </div>
+          </div>
         </div>
         
-        {/* Pagination Controls - Same style as FeaturedWorkshops */}
-        {pageCount > 1 && (
+        {/* Pagination Controls - removed since we're using horizontal scroll */}
+        {/* {pageCount > 1 && (
           <div className="flex justify-center items-center mt-12 space-x-4">
             <button 
               onClick={handlePrevious}
@@ -421,7 +435,7 @@ const FeaturedReviews = () => {
               <Icon icon="heroicons:chevron-right" className="w-6 h-6" />
             </button>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

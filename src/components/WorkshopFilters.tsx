@@ -35,6 +35,9 @@ const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
   
   // State to track which filter sections are expanded
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['status']));
+  
+  // State to track if filters panel is open on mobile
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   // Helper function to check if a value is selected in array or string comparison
   const isValueSelected = (filterValue: string[] | string, value: string) => {
@@ -167,78 +170,126 @@ const WorkshopFilters: React.FC<WorkshopFiltersProps> = ({
   ];
 
   return (
-    <div className="w-64 bg-white rounded-lg shadow-sm border border-gray-100 h-fit sticky top-20">
-      {/* Filter header */}
-      <div className="p-4 border-b border-gray-100">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-            <Icon icon="heroicons:adjustments-horizontal" className="w-5 h-5 mr-2" />
-            {t('filters') || "Filters"}
-          </h3>
-          {totalActiveFilters > 0 && (
-            <button 
-              onClick={resetFilters}
-              className="text-sm text-[#7471f9] hover:text-[#5f5dd6] flex items-center px-2 py-1 rounded-md hover:bg-gray-50"
-              title={t('resetFilters') || "Reset all filters"}
-            >
-              <Icon icon="heroicons:arrow-path" className="w-4 h-4 mr-1" />
-              {t('reset') || 'Reset'}
-            </button>
-          )}
-        </div>
-        {totalActiveFilters > 0 && (
-          <div className="mt-2 flex items-center">
-            <span className="bg-[#7471f9] text-white text-xs py-1 px-2 rounded-full">
-              {totalActiveFilters} {totalActiveFilters === 1 ? 'filter' : 'filters'} active
-            </span>
-          </div>
-        )}
-      </div>
-      
-      {/* Filter sections */}
-      <div className="p-4 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto">
-        {filterSections.map((section) => (
-          <div key={section.key} className="border-b border-gray-100 pb-4 last:border-b-0">
-            {/* Section header */}
-            <button
-              onClick={() => toggleSection(section.key)}
-              className="w-full flex items-center justify-between py-2 text-left hover:bg-gray-50 rounded-lg px-2 -mx-2"
-            >
-              <div className="flex items-center">
-                <Icon icon={section.icon} className="w-4 h-4 mr-2 text-gray-600" />
-                <span className="font-medium text-gray-900">{section.title}</span>
-                {getActiveCount(section.filterValue) > 0 && (
-                  <span className="ml-2 bg-[#7471f9] text-white text-xs py-0.5 px-1.5 rounded-full font-medium">
-                    {getActiveCount(section.filterValue)}
-                  </span>
-                )}
-              </div>
-              <Icon 
-                icon={expandedSections.has(section.key) ? "heroicons:chevron-up" : "heroicons:chevron-down"} 
-                className="w-4 h-4 text-gray-400" 
-              />
-            </button>
-            
-            {/* Section options */}
-            {expandedSections.has(section.key) && (
-              <div className="mt-3 space-y-1 pl-6">
-                {section.options.map((option) => (
-                  <button
-                    key={option}
-                    className={`w-full text-left px-3 py-2 text-sm rounded-md transition-all ${
-                      isValueSelected(section.filterValue, option) 
-                        ? 'bg-[#7471f9] text-white shadow-sm' 
-                        : 'text-gray-700 hover:bg-gray-100 border border-gray-200'
-                    }`}
-                    onClick={() => handleFilterClick(section.key, option)}
-                  >
-                    {section.getLabel(option)}
-                  </button>
-                ))}
-              </div>
+    <div className="w-full lg:w-72">
+      {/* Mobile: Collapsible filters toggle */}
+      <div className="lg:hidden mb-4">
+        <button
+          onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+          className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+        >
+          <div className="flex items-center">
+            <Icon icon="heroicons:adjustments-horizontal" className="w-5 h-5 mr-3 text-gray-600" />
+            <span className="font-medium text-gray-900">{t('filters') || "Filters"}</span>
+            {totalActiveFilters > 0 && (
+              <span className="ml-2 bg-[#7471f9] text-white text-xs py-1 px-2 rounded-full">
+                {totalActiveFilters}
+              </span>
             )}
           </div>
-        ))}
+          <Icon 
+            icon={isFiltersOpen ? "heroicons:chevron-up" : "heroicons:chevron-down"} 
+            className="w-5 h-5 text-gray-500" 
+          />
+        </button>
+      </div>
+
+      {/* Filters panel - hidden on mobile when collapsed */}
+      <div className={`
+        ${isFiltersOpen ? 'block' : 'hidden'} lg:block
+        bg-white rounded-lg shadow-sm border border-gray-100 h-fit lg:sticky lg:top-20
+      `}>
+        {/* Filter header - Desktop only */}
+        <div className="hidden lg:block p-4 border-b border-gray-100">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-semibold text-gray-900 flex items-center">
+              <Icon icon="heroicons:adjustments-horizontal" className="w-4 h-4 mr-2" />
+              {t('filters') || "Filters"}
+            </h3>
+            {totalActiveFilters > 0 && (
+              <button 
+                onClick={resetFilters}
+                className="text-xs text-[#7471f9] hover:text-[#5f5dd6] flex items-center px-2 py-1 rounded-md hover:bg-gray-50"
+                title={t('resetFilters') || "Reset all filters"}
+              >
+                <Icon icon="heroicons:arrow-path" className="w-3 h-3 mr-1" />
+                <span>{t('reset') || 'Reset'}</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile header with reset button */}
+        <div className="lg:hidden p-4 border-b border-gray-100">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-900">
+              {t('filters') || "Filters"}
+            </h3>
+            {totalActiveFilters > 0 && (
+              <button 
+                onClick={resetFilters}
+                className="text-sm text-[#7471f9] hover:text-[#5f5dd6] flex items-center px-3 py-1.5 rounded-md hover:bg-gray-50"
+                title={t('resetFilters') || "Reset all filters"}
+              >
+                <Icon icon="heroicons:arrow-path" className="w-4 h-4 mr-1" />
+                {t('reset') || 'Reset'}
+              </button>
+            )}
+          </div>
+        </div>
+        
+        {/* Filter sections - Mobile optimized */}
+        <div className="p-4 space-y-3 max-h-[calc(100vh-200px)] lg:max-h-[calc(100vh-200px)] overflow-y-auto">
+          {filterSections.map((section) => (
+            <div key={section.key} className="mb-3">
+              {/* Section header */}
+              <button
+                onClick={() => toggleSection(section.key)}
+                className="flex items-center justify-between w-full p-2.5 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <div className="flex items-center">
+                  <Icon icon={section.icon} className="w-4 h-4 mr-2 text-gray-600" />
+                  <span className="font-medium text-gray-900 text-sm">{section.title}</span>
+                  {getActiveCount(section.filterValue) > 0 && (
+                    <span className="ml-2 bg-[#7471f9] text-white text-xs py-0.5 px-1.5 rounded-full">
+                      {getActiveCount(section.filterValue)}
+                    </span>
+                  )}
+                </div>
+                <Icon 
+                  icon={expandedSections.has(section.key) ? "heroicons:chevron-up" : "heroicons:chevron-down"} 
+                  className="w-4 h-4 text-gray-500" 
+                />
+              </button>
+              
+              {/* Section content */}
+              {expandedSections.has(section.key) && (
+                <div className="mt-2 pl-1">
+                  {/* Mobile: Use a responsive grid for filter options */}
+                  <div className="grid grid-cols-2 lg:grid-cols-1 gap-2">
+                    {section.options.map((option) => {
+                      const isSelected = isValueSelected(section.filterValue, option);
+                      return (
+                        <button
+                          key={option}
+                          onClick={() => handleFilterClick(section.key, option)}
+                          className={`
+                            px-3 py-2 text-xs lg:text-sm rounded-lg transition-all duration-200 font-medium text-center lg:text-left
+                            ${isSelected 
+                              ? 'bg-[#7471f9] text-white shadow-sm transform scale-105' 
+                              : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-gray-300 hover:shadow-sm'
+                            }
+                          `}
+                        >
+                          {section.getLabel(option)}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

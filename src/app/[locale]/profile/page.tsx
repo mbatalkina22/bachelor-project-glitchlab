@@ -449,7 +449,7 @@ const ProfilePage = () => {
         <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
           <div className="h-32 bg-gradient-to-r from-purple-400 to-indigo-500"></div>
           <div className="px-6 py-4 md:px-8 md:py-6 flex flex-col md:flex-row">
-            <div className="flex flex-col md:flex-row items-center md:items-end -mt-16 mb-4 md:mb-0">
+            <div className="flex flex-col items-center md:flex-row md:items-end -mt-16 mb-4 md:mb-0 w-full md:w-auto">
               <div className="relative h-32 w-32 md:h-36 md:w-36 rounded-full border-4 border-white overflow-hidden bg-white shadow-md">
                 <Image
                   src={user.avatar || "/images/default-avatar.png"}
@@ -468,7 +468,7 @@ const ProfilePage = () => {
               </div>
             </div>
             <div className="flex-grow"></div>
-            <div className="flex flex-col md:flex-row md:items-end space-y-2 md:space-y-0 md:space-x-3 mt-4 md:mt-0">
+            <div className="flex flex-col items-center md:flex-row md:items-end space-y-2 md:space-y-0 md:space-x-3 mt-4 md:mt-0">
               <Link href="/profile/settings">
                 <HeroButton
                   text={t('editProfile')}
@@ -481,7 +481,7 @@ const ProfilePage = () => {
           
           {/* Profile Navigation Tabs */}
           <div className="border-t border-gray-200">
-            <nav className="flex -mb-px">
+            <nav className="flex justify-center sm:justify-start -mb-px">
               <button
                 onClick={() => handleTabChange('workshops')}
                 className={`py-4 px-6 text-sm font-medium ${
@@ -708,24 +708,20 @@ const ProfilePage = () => {
                   {userReviews.map((review) => (
                     <div key={review._id} className="bg-indigo-50 rounded-lg shadow-sm p-4 border border-indigo-100">
                       {/* Review content */}
-                      <div className="flex items-start">
-                        <div className="flex-shrink-0 mr-4">
-                          <div 
-                            className="w-12 h-12 rounded-full flex items-center justify-center text-white text-sm font-bold"
-                            style={{ 
-                              backgroundColor: review.circleColor || '#7471f9',
-                              fontFamily: getFontFamily(review.circleFont || 'Arvo')
-                            }}
-                          >
-                            {review.circleText || '★'}
-                          </div>
+                      <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left">
+                        <div className="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4">
+                          <Stamp
+                            color={review.circleColor || '#7471f9'}
+                            font={review.circleFont || 'Arvo'}
+                            text={review.circleText || '★'}
+                          />
                         </div>
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-2">
-                            <h4 className="font-medium text-gray-900">
+                        <div className="flex-1 w-full">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 space-y-1 sm:space-y-0">
+                            <h4 className="font-medium text-gray-900 text-center sm:text-left">
                               {review.workshopName}
                             </h4>
-                            <span className="text-gray-500 text-sm">
+                            <span className="text-gray-500 text-sm text-center sm:text-right">
                               {new Date(review.createdAt).toLocaleDateString(locale === 'it' ? 'it-IT' : 'en-US', {
                                 month: 'long',
                                 day: 'numeric',
@@ -734,22 +730,22 @@ const ProfilePage = () => {
                             </span>
                           </div>
                           {review.comment && (
-                            <p className="text-gray-700">{review.comment}</p>
+                            <p className="text-gray-700 text-center sm:text-left">{review.comment}</p>
                           )}
                         </div>
                       </div>
                       
                       {/* Edit/Delete buttons */}
-                      <div className="flex space-x-2 mt-3 border-t pt-3 justify-end">
-                        <Link href={`/${locale}/workshops/${review.workshop}`} className="flex items-center text-sm text-gray-600 hover:text-gray-800 px-2 py-1 rounded-md hover:bg-gray-50 transition-colors">
+                      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mt-3 border-t pt-3 justify-center sm:justify-end">
+                        <Link href={`/${locale}/workshops/${review.workshop}`} className="flex items-center justify-center text-sm text-gray-600 hover:text-gray-800 px-2 py-1 rounded-md hover:bg-gray-50 transition-colors">
                           <Icon icon="heroicons:eye" className="w-4 h-4 mr-1" />
                           {t('viewWorkshop')}
                         </Link>
-                        <Link href={getWorkshopReviewsUrl(review.workshop, locale)} className="flex items-center text-sm text-indigo-600 hover:text-indigo-800 px-2 py-1 rounded-md hover:bg-indigo-50 transition-colors">
+                        <Link href={getWorkshopReviewsUrl(review.workshop, locale)} className="flex items-center justify-center text-sm text-indigo-600 hover:text-indigo-800 px-2 py-1 rounded-md hover:bg-indigo-50 transition-colors">
                           <Icon icon="heroicons:pencil-square" className="w-4 h-4 mr-1" />
                           {t('editReview')}
                         </Link>
-                        <Link href={getWorkshopReviewsUrl(review.workshop, locale)} className="flex items-center text-sm text-red-600 hover:text-red-800 px-2 py-1 rounded-md hover:bg-red-50 transition-colors">
+                        <Link href={getWorkshopReviewsUrl(review.workshop, locale)} className="flex items-center justify-center text-sm text-red-600 hover:text-red-800 px-2 py-1 rounded-md hover:bg-red-50 transition-colors">
                           <Icon icon="heroicons:trash" className="w-4 h-4 mr-1" />
                           {t('deleteReview')}
                         </Link>

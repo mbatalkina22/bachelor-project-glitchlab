@@ -238,24 +238,87 @@ const Navbar = () => {
             {/* User avatar or auth buttons for mobile */}
             {!loading && (
               showUserProfile ? (
-                <button
-                  className="mr-2 flex text-sm rounded-full focus:outline-none"
-                  onClick={() => router.push(user.role === 'instructor' ? `/${locale}/profile/instructor` : `/${locale}/profile`)}
-                >
-                  <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-gray-200">
-                    <Image
-                      src={user.avatar}
-                      alt="User avatar"
-                      width={32}
-                      height={32}
-                      className="h-full w-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = "https://via.placeholder.com/32?text=User";
-                      }}
-                    />
-                  </div>
-                </button>
+                <div className="relative mr-2">
+                  <button
+                    className="user-avatar flex text-sm rounded-full focus:outline-none"
+                    onClick={toggleUserMenu}
+                    aria-expanded={isUserMenuOpen ? 'true' : 'false'}
+                  >
+                    <span className="sr-only">Open user menu</span>
+                    <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-gray-200">
+                      <Image
+                        src={user.avatar}
+                        alt="User avatar"
+                        width={32}
+                        height={32}
+                        className="h-full w-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = "https://via.placeholder.com/32?text=User";
+                        }}
+                      />
+                    </div>
+                  </button>
+                  
+                  {/* Mobile User dropdown menu */}
+                  {isUserMenuOpen && (
+                    <div className="user-menu origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                      <div className="py-1">
+                        <div className="px-4 py-2 border-b">
+                          <p className="text-sm font-medium text-gray-900">
+                            {user.name} {user.surname || ''}
+                          </p>
+                          <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                        </div>
+                        
+                        {user.role === 'instructor' ? (
+                          // Instructor profile links
+                          <>
+                            <Link 
+                              href={`/${locale}/profile/instructor`} 
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => setIsUserMenuOpen(false)}
+                            >
+                              {t('yourProfile')}
+                            </Link>
+                            <Link 
+                              href={`/${locale}/profile/instructor/settings`} 
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => setIsUserMenuOpen(false)}
+                            >
+                              {t('settings')}
+                            </Link>
+                          </>
+                        ) : (
+                          // Regular user profile links
+                          <>
+                            <Link 
+                              href={`/${locale}/profile`} 
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => setIsUserMenuOpen(false)}
+                            >
+                              {t('yourProfile')}
+                            </Link>
+                            <Link 
+                              href={`/${locale}/profile/settings`} 
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => setIsUserMenuOpen(false)}
+                            >
+                              {t('settings')}
+                            </Link>
+                          </>
+                        )}
+                        
+                        <button
+                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-t"
+                          onClick={handleLogout}
+                        >
+                          {t('signOut')}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               ) : showAuthButtons && (
                 <div className="flex space-x-2 mr-2">
                   <HeroButton
@@ -316,38 +379,6 @@ const Navbar = () => {
           <Link href={`/${locale}/our-team`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
             {t('ourTeam')}
           </Link>
-          
-          {/* Only show profile links for verified users */}
-          {showUserProfile && (
-            user.role === 'instructor' ? (
-              <>
-                <Link href={`/${locale}/profile/instructor`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
-                  {t('profile')}
-                </Link>
-                <Link href={`/${locale}/profile/instructor/settings`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
-                  {t('settings')}
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link href={`/${locale}/profile`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
-                  {t('profile')}
-                </Link>
-                <Link href={`/${locale}/profile/settings`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
-                  {t('settings')}
-                </Link>
-              </>
-            )
-          )}
-          
-          {showUserProfile && (
-            <button
-              className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}
-              onClick={handleLogout}
-            >
-              {t('signOut')}
-            </button>
-          )}
           
           {/* Language switcher for mobile */}
           <button 

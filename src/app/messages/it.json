@@ -101,11 +101,13 @@
     "viewWorkshop": "Visualizza Workshop",
     "exploreAllWorkshops": "Esplora Tutti i Workshop",
     "noFeaturedReviews": "Nessuna recensione in evidenza disponibile al momento.",
-    "noFeaturedReviewsInstructor": "Nessuna recensione in evidenza ancora. Aggiungi recensioni per metterle in evidenza nella homepage."
+    "noFeaturedReviewsInstructor": "Nessuna recensione in evidenza ancora. Aggiungi recensioni per metterle in evidenza nella homepage.",
+    "scrollHint": "Scorri orizzontalmente per vedere di più"
   },
   "FeaturedWorkshops": {
     "title": "Prossimi Workshop",
-    "viewAllButton": "Visualizza tutti i workshop"
+    "viewAllButton": "Visualizza tutti i workshop",
+    "scrollHint": "Scorri orizzontalmente per vedere di più"
   },
   "WorkshopsPage": {
     "title": "Workshop",

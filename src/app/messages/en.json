@@ -102,11 +102,13 @@
     "viewWorkshop": "View Workshop",
     "exploreAllWorkshops": "Explore All Workshops",
     "noFeaturedReviews": "No featured reviews available yet.",
-    "noFeaturedReviewsInstructor": "No featured reviews yet. Add reviews to feature them on the homepage."
+    "noFeaturedReviewsInstructor": "No featured reviews yet. Add reviews to feature them on the homepage.",
+    "scrollHint": "Scroll horizontally to see more"
   },
   "FeaturedWorkshops": {
     "title": "Upcoming Workshops",
-    "viewAllButton": "View All Workshops"
+    "viewAllButton": "View All Workshops",
+    "scrollHint": "Scroll horizontally to see more"
   },
   "WorkshopsPage": {
     "title": "Workshops",
@@ -420,6 +422,7 @@
     "websitePlaceholder": "https://yourwebsite.com",
     "linkedinPlaceholder": "https://linkedin.com/in/yourname",
     "saveChanges": "Save Changes",
+    "savePreferences": "Save Preferences",
     "accountSettingsDesc": "Manage your account preferences",
     "language": "Language",
     "dangerZone": "Danger Zone",

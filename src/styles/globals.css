@@ -110,3 +110,13 @@ body {
 .slide-in-from-right {
   animation: slideInFromRight 0.3s ease-out forwards;
 }
+
+/* Hide scrollbars for horizontal scroll containers */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}

@@ -764,7 +764,7 @@ const ProfileSettingsPage = () => {
                       />
                     </div>
                     
-                    <div className="pt-2">
+                    <div className="pt-2 flex justify-end">
                       <HeroButton
                         text={t('updatePassword')}
                         backgroundColor="#7471f9" // Updated purple color
@@ -779,14 +779,16 @@ const ProfileSettingsPage = () => {
                     <p className="text-sm text-gray-500 mb-4">
                       {t('deleteAccountWarning')}
                     </p>
-                    <HeroButton
-                      text={t('deleteAccount')}
-                      backgroundColor="#b91c1c" // Red-700 in hex
-                      textColor="white"
-                      onClick={() => setShowDeleteModal(true)}
-                      disabled={isLoading}
-                      className="text-sm"
-                    />
+                    <div className="flex justify-end">
+                      <HeroButton
+                        text={t('deleteAccount')}
+                        backgroundColor="#b91c1c" // Red-700 in hex
+                        textColor="white"
+                        onClick={() => setShowDeleteModal(true)}
+                        disabled={isLoading}
+                        className="text-sm"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

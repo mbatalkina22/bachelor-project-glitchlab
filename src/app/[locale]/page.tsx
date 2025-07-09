@@ -49,7 +49,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <ScrollReveal>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6">
+              <div className="space-y-6 text-center lg:text-left">
                 <h2 className="text-4xl md:text-5xl font-secularone bg-gradient-to-r from-blue-600 via-[#7471f9] to-purple-600 bg-clip-text text-transparent">
                   {aboutT('title')}
                 </h2>
@@ -57,7 +57,7 @@ export default function Home() {
                   {aboutT('description')}
                 </p>
               </div>
-              <div className="relative">
+              <div className="relative flex justify-center lg:justify-end">
                 <div className="absolute -inset-6 bg-gradient-to-br from-[#7471f9]/20 via-[#6366f1]/15 to-[#5c59e8]/20 blur-xl rounded-2xl"></div>
                 <div className="relative">
                   <Image
@@ -76,12 +76,11 @@ export default function Home() {
 
       {/* Services Section */}
       <div className="py-20 px-4 md:px-8 max-w-7xl mx-auto">
-        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <ScrollReveal className="delay-100">
-            <div className="bg-white p-6 rounded-lg shadow-md h-full">
-              <div className="flex items-center mb-4">
-                <Icon icon="heroicons:cog-6-tooth" className="w-8 h-8 text-[#7471f9] mr-3" />
+            <div className="bg-white p-6 rounded-lg shadow-md h-full text-center">
+              <div className="flex flex-col items-center mb-4">
+                <Icon icon="heroicons:cog-6-tooth" className="w-8 h-8 text-[#7471f9] mb-2" />
                 <h3 className="text-xl font-secularone text-black">{servicesT('howItWorks.title')}</h3>
               </div>
               <p className="text-gray-600">{servicesT('howItWorks.description')}</p>
@@ -89,16 +88,16 @@ export default function Home() {
           </ScrollReveal>
           
           <ScrollReveal className="delay-200">
-            <div className="bg-white p-6 rounded-lg shadow-md h-full">
-              <div className="flex items-center mb-4">
-                <Icon icon="heroicons:light-bulb" className="w-8 h-8 text-[#fdcb2a] mr-3" />
+            <div className="bg-white p-6 rounded-lg shadow-md h-full text-center">
+              <div className="flex flex-col items-center mb-4">
+                <Icon icon="heroicons:light-bulb" className="w-8 h-8 text-[#fdcb2a] mb-2" />
                 <h3 className="text-xl font-secularone text-black">{servicesT('themes.title')}</h3>
               </div>
               <ul className="text-gray-600 space-y-2">
                 {servicesT.raw('themes.items').map((item: string, index: number) => (
-                  <li key={index} className="flex items-start">
+                  <li key={index} className="flex items-start justify-center">
                     <span className="text-[#7471f9] mr-2">•</span>
-                    {item}
+                    <span className="text-left">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -106,9 +105,9 @@ export default function Home() {
           </ScrollReveal>
           
           <ScrollReveal className="delay-300">
-            <div className="bg-white p-6 rounded-lg shadow-md h-full">
-              <div className="flex items-center mb-4">
-                <Icon icon="heroicons:heart" className="w-8 h-8 text-[#f39aec] mr-3" />
+            <div className="bg-white p-6 rounded-lg shadow-md h-full text-center">
+              <div className="flex flex-col items-center mb-4">
+                <Icon icon="heroicons:heart" className="w-8 h-8 text-[#f39aec] mb-2" />
                 <h3 className="text-xl font-secularone text-black">{servicesT('whyParticipate.title')}</h3>
               </div>
               <p className="text-gray-600">{servicesT('whyParticipate.description')}</p>

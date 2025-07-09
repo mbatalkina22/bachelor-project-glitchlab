@@ -324,12 +324,26 @@ const WorkshopsPage = () => {
 
     return (
         <div className="pt-16 min-h-screen bg-gray-50">
-            {/* Main Content Container - No padding */}
+            {/* Main Content Container */}
             <div className="py-8">
-                {/* Flex container for sidebar and content */}
-                <div className="flex gap-8">
-                    {/* Left Sidebar - Filters - Slightly bigger padding from edge */}
-                    <div className="flex-shrink-0 pl-4">
+                {/* Mobile-first responsive layout */}
+                <div className="lg:flex lg:gap-12">
+                    {/* Filters Section - Mobile: full width with better spacing, Desktop: sidebar aligned to left */}
+                    <div className="lg:flex-shrink-0 lg:w-72 px-4 lg:pl-4 lg:pr-0 mb-8 lg:mb-0">
+                        {/* Mobile: Create button above filters */}
+                        {user && user.role === 'instructor' && (
+                            <div className="lg:hidden flex justify-end mb-4">
+                                <Link 
+                                    href={`/${params.locale}/workshops/create`}
+                                    className="flex items-center"
+                                >
+                                    <HeroButton className="flex items-center">
+                                        <Icon icon="heroicons:plus" className="h-5 w-5" />
+                                    </HeroButton>
+                                </Link>
+                            </div>
+                        )}
+                        
                         <WorkshopFilters 
                             ageFilter={ageFilter}
                             skillFilter={skillFilter}
@@ -343,31 +357,32 @@ const WorkshopsPage = () => {
                         />
                     </div>
                     
-                    {/* Right Content Area */}
-                    <div className="flex-1 min-w-0 pr-8">
+                    {/* Content Area - Stretch to available space */}
+                    <div className="flex-1 min-w-0 px-4 lg:pl-0 lg:pr-4">
                         {/* Header with results count and create button */}
-                        <div className="flex justify-between items-center mb-6">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 space-y-4 sm:space-y-0">
                             {/* Results Count */}
-                            <p className="text-gray-600">
-                                {t('showing')} {filteredWorkshops.length} {t('of')} {workshops.length} {t('workshops')}
+                            <p className="text-gray-600 text-center sm:text-left text-lg">
+                                {t('showing')} <span className="font-semibold text-gray-900">{filteredWorkshops.length}</span> {t('of')} <span className="font-semibold text-gray-900">{workshops.length}</span> {t('workshops')}
                             </p>
                             
-                            {/* Create button for instructors - Original simple version */}
-                             {/* Create button for instructors */}
-                             {user && user.role === 'instructor' && (
-                                <Link 
-                                    href={`/${params.locale}/workshops/create`}
-                                    className="flex items-center mt-2 sm:mt-0"
-                                >
-                                    <HeroButton className="flex items-center">
-                                        <Icon icon="heroicons:plus" className="h-5 w-5" /> 
-                                    </HeroButton>
-                                </Link>
+                            {/* Create button for instructors - Desktop only */}
+                            {user && user.role === 'instructor' && (
+                                <div className="hidden lg:flex justify-center sm:justify-end">
+                                    <Link 
+                                        href={`/${params.locale}/workshops/create`}
+                                        className="flex items-center"
+                                    >
+                                        <HeroButton className="flex items-center">
+                                            <Icon icon="heroicons:plus" className="h-5 w-5" />
+                                        </HeroButton>
+                                    </Link>
+                                </div>
                             )}
                         </div>
 
-                        {/* Workshop Cards Grid */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+                        {/* Workshop Cards Grid - Full width stretch */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
                             {filteredWorkshops.length > 0 ? (
                                 filteredWorkshops.map((workshop, index) => (
                                     <ScrollReveal key={workshop._id} className={workshop.delay}>
@@ -389,10 +404,10 @@ const WorkshopsPage = () => {
                                     </ScrollReveal>
                                 ))
                             ) : (
-                                <div className="col-span-full py-12 text-center">
-                                    <Icon icon="heroicons:face-frown" className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                                    <h3 className="text-xl font-medium text-gray-900 mb-2">{t('noWorkshopsFound')}</h3>
-                                    <p className="text-gray-500">{t('tryAdjusting')}</p>
+                                <div className="col-span-full py-16 text-center">
+                                    <Icon icon="heroicons:face-frown" className="w-20 h-20 mx-auto text-gray-400 mb-6" />
+                                    <h3 className="text-2xl font-medium text-gray-900 mb-3">{t('noWorkshopsFound')}</h3>
+                                    <p className="text-gray-500 text-lg">{t('tryAdjusting')}</p>
                                 </div>
                             )}
                         </div>
