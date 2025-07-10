@@ -1200,18 +1200,6 @@ const CreateWorkshopPage = () => {
                   </button>
                 ))}
               </div>
-              <div className="mt-3">
-                <div
-                  className="p-3 rounded-md border border-gray-200 shadow-sm"
-                  style={{ backgroundColor: workshopData.bgColor }}
-                >
-                  <p className="text-xs text-gray-600">
-                    {t("cardPreview") || "Card Preview"} -{" "}
-                    {t("selectedColor") || "Selected color"}:{" "}
-                    <span className="font-medium">{workshopData.bgColor}</span>
-                  </p>
-                </div>
-              </div>
             </div>
 
             <div className="flex justify-end">

@@ -194,7 +194,9 @@
     "languageEnglish": "English",
     "languageItalian": "Italian",
     "reset": "Reset",
-    "resetFilters": "Reset all filters"
+    "resetFilters": "Reset all filters",
+    "goBack": "Go Back",
+    "backToWorkshop": "Back to Workshop"
   },
   "WorkshopDetail": {
     "home": "Home",

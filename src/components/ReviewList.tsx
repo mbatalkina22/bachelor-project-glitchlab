@@ -632,13 +632,13 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
           ></div>
 
           <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto m-4 z-10">
-            <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="text-xl font-semibold text-black">
+            <div className="flex items-center justify-center p-4 border-b relative">
+              <h3 className="text-xl font-semibold text-black text-center">
                 {isEditMode ? t("editReview") : t("leaveReview")}
               </h3>
               <button
                 onClick={closeReviewModal}
-                className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                className="absolute right-4 p-1 rounded-full hover:bg-gray-100 transition-colors"
               >
                 <Icon
                   icon="heroicons:x-mark"
@@ -648,14 +648,14 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
             </div>
 
             {message && (
-              <div className={`p-4 ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+              <div className={`p-4 text-center ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                 <p>{message.text}</p>
               </div>
             )}
 
             <form onSubmit={handleSubmitReview} className="p-6 space-y-6">
               {/* Circle Preview */}
-              <div className="mb-6">
+              <div className="mb-6 flex justify-center">
                 <Stamp
                   color={circleColor}
                   font={circleFont}
@@ -664,13 +664,13 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
               </div>
 
               {/* Circle Customization */}
-              <div className="space-y-4">
+              <div className="space-y-4 text-center">
                 {/* Color Selection */}
                 <div>
                   <label className="block text-sm font-medium text-black mb-1">
                     {t("circleColor")}
                   </label>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 justify-center">
                     {[
                       "#383838",
                       "#7471f9",
@@ -698,16 +698,18 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
                   <label className="block text-sm font-medium text-black mb-1">
                     {t("circleFont")}
                   </label>
-                  <select
-                    value={circleFont}
-                    onChange={(e) => setCircleFont(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
-                  >
-                    <option value="Dancing Script">Dancing Script</option>
-                    <option value="Lobster">Lobster</option>
-                    <option value="Arvo">Arvo</option>
-                    <option value="Bebas Neue">Bebas Neue</option>
-                  </select>
+                  <div className="flex justify-center">
+                    <select
+                      value={circleFont}
+                      onChange={(e) => setCircleFont(e.target.value)}
+                      className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black max-w-xs"
+                    >
+                      <option value="Dancing Script">Dancing Script</option>
+                      <option value="Lobster">Lobster</option>
+                      <option value="Arvo">Arvo</option>
+                      <option value="Bebas Neue">Bebas Neue</option>
+                    </select>
+                  </div>
                 </div>
 
                 {/* Word Selection */}
@@ -716,7 +718,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
                     {t("chooseWord")} *
                   </label>
 
-                  <div className="flex flex-wrap gap-2 mt-2">
+                  <div className="flex flex-wrap gap-2 mt-2 justify-center">
                     {sampleWords.map((word) => (
                       <button
                         key={word}
@@ -744,25 +746,29 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
                   <label className="block text-sm font-medium text-black mb-1">
                     {t("comment")} ({t("optional")})
                   </label>
-                  <textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
-                    placeholder={t("enterComment")}
-                  />
+                  <div className="flex justify-center">
+                    <textarea
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      rows={3}
+                      className="w-full max-w-lg px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
+                      placeholder={t("enterComment")}
+                    />
+                  </div>
                 </div>
               </div>
-              <HeroButton
-                text={isSubmittingReview 
-                  ? t("submittingReview") 
-                  : isEditMode ? t("updateReview") : t("submitReview")}
-                onClick={() => handleSubmitReview(new Event('submit') as unknown as FormEvent)}
-                backgroundColor="#7471f9"
-                textColor="white"
-                disabled={isSubmittingReview}
-                className="w-full"
-              />
+              <div className="flex justify-center">
+                <HeroButton
+                  text={isSubmittingReview 
+                    ? t("submittingReview") 
+                    : isEditMode ? t("updateReview") : t("submitReview")}
+                  onClick={() => handleSubmitReview(new Event('submit') as unknown as FormEvent)}
+                  backgroundColor="#7471f9"
+                  textColor="white"
+                  disabled={isSubmittingReview}
+                  className="w-full max-w-xs"
+                />
+              </div>
             </form>
           </div>
         </div>
