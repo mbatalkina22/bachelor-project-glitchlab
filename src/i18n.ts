@@ -14,7 +14,6 @@ export default getRequestConfig(async ({locale}) => {
       timeZone: 'Europe/Rome'
     };
   } catch (error) {
-    console.error(`Error loading messages for locale "${safeLocale}":`, error);
     // Fallback to English if there's an error
     const messages = (await import('./app/messages/en.json')).default;
     

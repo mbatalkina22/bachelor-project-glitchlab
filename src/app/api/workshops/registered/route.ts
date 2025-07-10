@@ -42,7 +42,6 @@ export async function GET(request: Request) {
       );
     }
   } catch (error: any) {
-    console.error('Error fetching registered workshops:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to fetch registered workshops' },
       { status: 500 }

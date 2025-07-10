@@ -56,11 +56,9 @@ export async function POST(request: Request) {
       // Get workshop data from request body
       const body = await request.json();
       
-      console.log("Workshop payload received:", JSON.stringify(body));
       
       // Ensure instructorIds array is provided
       if (!body.instructorIds || !Array.isArray(body.instructorIds) || body.instructorIds.length === 0) {
-        console.error("Invalid instructorIds:", body.instructorIds);
         return NextResponse.json(
           { error: 'At least one instructor ID must be provided' },
           { status: 400 }
@@ -71,7 +69,6 @@ export async function POST(request: Request) {
       const instructorPromises = body.instructorIds.map((id: string) => User.findById(id));
       const instructors = await Promise.all(instructorPromises);
       
-      console.log(`Found ${instructors.filter(Boolean).length} valid instructors out of ${body.instructorIds.length} requested`);
       
       // Check if any instructor is not found or not an instructor
       const invalidInstructors = instructors.filter((instructor, index) => 
@@ -79,7 +76,6 @@ export async function POST(request: Request) {
       );
       
       if (invalidInstructors.length > 0) {
-        console.error("Invalid instructors found:", invalidInstructors.length);
         return NextResponse.json(
           { error: 'One or more selected instructors are not valid' },
           { status: 400 }
@@ -102,20 +98,16 @@ export async function POST(request: Request) {
           
           // Update the imageSrc with the Cloudinary URL
           body.imageSrc = uploadResult.secure_url;
-          console.log('Converted Base64 image to Cloudinary URL:', uploadResult.secure_url);
         } catch (cloudinaryError) {
-          console.error('Error uploading image to Cloudinary:', cloudinaryError);
           // Continue with the create even if Cloudinary upload fails
         }
       }
       
       // Create the workshop
       const workshop = await Workshop.create(body);
-      console.log("Workshop created successfully with ID:", workshop._id);
       return NextResponse.json(workshop, { status: 201 });
     } catch (error: any) {
-      console.error("Error in workshop creation process:", error);
-      if (error.name === 'JsonWebTokenError') {
+      if ((error as any).name === 'JsonWebTokenError') {
         return NextResponse.json(
           { error: 'Invalid token' },
           { status: 401 }
@@ -124,7 +116,6 @@ export async function POST(request: Request) {
       throw error;
     }
   } catch (error: any) {
-    console.error('Error creating workshop:', error);
     return NextResponse.json({ error: error.message || 'Failed to create workshop' }, { status: 500 });
   }
 }

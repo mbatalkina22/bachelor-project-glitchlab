@@ -45,7 +45,6 @@ export default function OurTeamPage() {
         const data = await response.json();
         setInstructors(data.instructors);
       } catch (err) {
-        console.error('Error fetching instructors:', err);
         setError('Failed to load instructors');
       } finally {
         setIsLoading(false);

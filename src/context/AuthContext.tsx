@@ -95,7 +95,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       return data.user;
     } catch (error) {
-      console.error('Error fetching user data:', error);
       localStorage.removeItem('token');
       localStorage.removeItem('needsVerification');
       return null;

@@ -5,15 +5,17 @@ import Workshop from '../../../lib/models/workshop';
 import User from '../../../lib/models/user';
 import { sendWorkshopReminderEmail } from '@/utils/email/verification';
 
-interface Params {
-  params: {
+interface RouteParams {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // Update workshop sending reminders to respect notification preferences
-export async function POST(request: Request, { params }: Params) {
+export async function POST(request: Request, context: RouteParams) {
   try {
+    const params = await context.params;
+    
     // Verify authentication token
     const authHeader = request.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -102,7 +104,7 @@ export async function POST(request: Request, { params }: Params) {
       }, { status: 200 });
 
     } catch (error) {
-      if (error.name === 'JsonWebTokenError') {
+      if ((error as any).name === 'JsonWebTokenError') {
         return NextResponse.json(
           { error: 'Invalid token' },
           { status: 401 }
@@ -111,7 +113,6 @@ export async function POST(request: Request, { params }: Params) {
       throw error;
     }
   } catch (error: any) {
-    console.error('Error sending workshop reminder:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to send workshop reminder' },
       { status: 500 }

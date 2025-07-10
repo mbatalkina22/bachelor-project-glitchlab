@@ -136,7 +136,6 @@ const InstructorSettingsPage = () => {
           linkedin: data.user.linkedin || ""
         });
       } catch (err) {
-        console.error('Error fetching user data:', err);
         setError(t('failedToLoadUserData'));
       } finally {
         setIsLoading(false);
@@ -214,7 +213,6 @@ const InstructorSettingsPage = () => {
           // Upload the image to Cloudinary using direct upload (no Base64)
           avatarUrl = await uploadImage(selectedImageFile, 'instructors');
         } catch (imageError) {
-          console.error("Error uploading image:", imageError);
           throw new Error(t('failedToUploadImage'));
         }
       }
@@ -252,7 +250,6 @@ const InstructorSettingsPage = () => {
 
       setSuccessMessage(t('profileUpdatedSuccess'));
     } catch (err: any) {
-      console.error('Error updating profile:', err);
       setError(err.message || t('failedToUpdateProfile'));
     } finally {
       setIsLoading(false);
@@ -292,7 +289,6 @@ const InstructorSettingsPage = () => {
 
       setSuccessMessage(t('profileUpdatedSuccess'));
     } catch (err: any) {
-      console.error('Error updating about info:', err);
       setError(err.message || t('failedToUpdateProfile'));
     } finally {
       setIsLoading(false);
@@ -347,7 +343,6 @@ const InstructorSettingsPage = () => {
         confirmPassword: ''
       });
     } catch (err: any) {
-      console.error('Error updating password:', err);
       setError(err.message || t('failedToUpdatePassword'));
     } finally {
       setIsLoading(false);
@@ -378,7 +373,6 @@ const InstructorSettingsPage = () => {
       // Use logout function to properly clear all authentication state
       logout();
     } catch (err: any) {
-      console.error('Error deleting account:', err);
       setError(err.message || t('failedToDeleteAccount'));
       setIsLoading(false);
       setShowDeleteModal(false);

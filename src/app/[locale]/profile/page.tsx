@@ -143,7 +143,6 @@ const ProfilePage = () => {
       
       // Convert string dates to Date objects and log the workshop data
       const workshopsWithDates = data.workshops.map((workshop: any) => {
-        console.log('Workshop data:', workshop); // Log each workshop to check bgColor and canceled
         return {
           ...workshop,
           startDate: new Date(workshop.startDate),
@@ -203,7 +202,6 @@ const ProfilePage = () => {
       
       setRegisteredWorkshops(sortedWorkshops);
     } catch (error) {
-      console.error('Error fetching registered workshops:', error);
     } finally {
       setIsLoading(false);
     }
@@ -308,7 +306,6 @@ const ProfilePage = () => {
           setUserReviews(data.reviews);
         }
       } catch (error) {
-        console.error('Error fetching user reviews:', error);
       } finally {
         setIsLoadingReviews(false);
       }
@@ -355,7 +352,6 @@ const ProfilePage = () => {
         setShowNotifications(true);
       }
     } catch (error) {
-      console.error('Error fetching notifications:', error);
     } finally {
       setIsLoadingNotifications(false);
     }
@@ -384,7 +380,6 @@ const ProfilePage = () => {
         );
       }
     } catch (error) {
-      console.error('Error marking notification as read:', error);
     }
   };
 
@@ -410,7 +405,6 @@ const ProfilePage = () => {
         setShowNotifications(false);
       }
     } catch (error) {
-      console.error('Error marking all notifications as read:', error);
     }
   };
 

@@ -17,7 +17,6 @@ let isConnected = false;
  */
 async function dbConnect() {
   if (isConnected) {
-    console.log('Using existing MongoDB connection');
     return;
   }
 
@@ -27,10 +26,8 @@ async function dbConnect() {
     });
 
     isConnected = true;
-    console.log('Connected to MongoDB:', MONGODB_URI);
     return db;
   } catch (error) {
-    console.error('MongoDB connection error:', error);
     throw error;
   }
 }

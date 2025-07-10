@@ -76,7 +76,6 @@ const RegisteredUsersPage = () => {
         setUsers(data.users);
         setWorkshop(data.workshop);
       } catch (error: any) {
-        console.error('Error fetching registered users:', error);
         setError(error.message || 'Something went wrong');
       } finally {
         setIsLoading(false);
@@ -148,7 +147,6 @@ const RegisteredUsersPage = () => {
       }, 3000);
 
     } catch (error: any) {
-      console.error('Error removing user:', error);
       setError(error.message || 'Failed to remove user');
       
       // Clear error after 3 seconds
@@ -217,7 +215,6 @@ const RegisteredUsersPage = () => {
       }, 3000);
 
     } catch (error: any) {
-      console.error('Error awarding badge:', error);
       setError(error.message || 'Failed to award badge');
       
       // Clear error after 3 seconds

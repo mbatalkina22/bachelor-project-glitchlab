@@ -75,7 +75,7 @@ export async function GET(request: Request) {
         // Include only essential badge data if needed
         if (plainUser.badges && plainUser.badges.length > 0) {
           // Keep the badges array but only include relevant fields
-          plainUser.badges = plainUser.badges.map(badge => ({
+          plainUser.badges = plainUser.badges.map((badge: any) => ({
             workshopId: badge.workshopId,
             name: badge.name
           }));
@@ -94,7 +94,7 @@ export async function GET(request: Request) {
       }, { status: 200 });
       
     } catch (error) {
-      if (error.name === 'JsonWebTokenError') {
+      if ((error as any).name === 'JsonWebTokenError') {
         return NextResponse.json(
           { error: 'Invalid token' },
           { status: 401 }
@@ -103,7 +103,6 @@ export async function GET(request: Request) {
       throw error;
     }
   } catch (error: any) {
-    console.error('Error fetching registered users:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to fetch registered users' },
       { status: 500 }

@@ -13,7 +13,6 @@ export async function GET() {
     
     return NextResponse.json({ instructors }, { status: 200 });
   } catch (error) {
-    console.error('Error fetching instructors:', error);
     return NextResponse.json(
       { error: 'Failed to fetch instructors' },
       { status: 500 }

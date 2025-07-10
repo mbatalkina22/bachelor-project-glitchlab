@@ -150,7 +150,6 @@ const ProfileSettingsPage = () => {
         fetchNotificationPreferences(token);
         
       } catch (err) {
-        console.error('Error fetching user data:', err);
         setError('Failed to load user data');
       } finally {
         setIsLoading(false);
@@ -180,7 +179,6 @@ const ProfileSettingsPage = () => {
       }
 
       const data = await response.json();
-      console.log('Fetched notification preferences:', data);
       
       setUserData(prev => ({
         ...prev,
@@ -190,7 +188,6 @@ const ProfileSettingsPage = () => {
         }
       }));
     } catch (error) {
-      console.error('Error fetching notification preferences:', error);
     }
   };
 
@@ -204,7 +201,6 @@ const ProfileSettingsPage = () => {
 
   const handleNotificationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
-    console.log('Notification change:', { name, checked });
     setUserData(prev => {
       const newData = {
         ...prev,
@@ -213,7 +209,6 @@ const ProfileSettingsPage = () => {
           [name]: checked
         }
       };
-      console.log('New user data:', newData);
       return newData;
     });
   };
@@ -267,7 +262,6 @@ const ProfileSettingsPage = () => {
 
       setSuccessMessage('Profile updated successfully!');
     } catch (err: any) {
-      console.error('Error updating profile:', err);
       setError(err.message || 'Failed to update profile');
     } finally {
       setIsLoading(false);
@@ -322,7 +316,6 @@ const ProfileSettingsPage = () => {
         confirmPassword: ''
       });
     } catch (err: any) {
-      console.error('Error updating password:', err);
       setError(err.message || 'Failed to update password');
     } finally {
       setIsLoading(false);
@@ -353,7 +346,6 @@ const ProfileSettingsPage = () => {
       // Use logout function to properly clear all authentication state
       logout();
     } catch (err: any) {
-      console.error('Error deleting account:', err);
       setError(err.message || 'Failed to delete account');
       setIsLoading(false);
       setShowDeleteModal(false);
@@ -373,7 +365,6 @@ const ProfileSettingsPage = () => {
         return;
       }
 
-      console.log('Submitting preferences:', userData.emailNotifications);
 
       // Update notification preferences
       const notificationResponse = await fetch('/api/users/notification-preferences', {
@@ -393,7 +384,6 @@ const ProfileSettingsPage = () => {
       }
 
       const responseData = await notificationResponse.json();
-      console.log('Server response:', responseData);
 
       // Update email language
       const emailLanguageResponse = await fetch('/api/users/email-language', {
@@ -414,7 +404,6 @@ const ProfileSettingsPage = () => {
 
       setSuccessMessage(t('preferencesUpdated'));
     } catch (err: any) {
-      console.error('Error updating preferences:', err);
       setError(err.message || 'Failed to update preferences');
     } finally {
       setIsLoading(false);

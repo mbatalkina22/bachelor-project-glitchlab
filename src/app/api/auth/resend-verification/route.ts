@@ -58,7 +58,7 @@ export async function POST(request: Request) {
       }, { status: 200 });
 
     } catch (error: any) {
-      if (error.name === 'JsonWebTokenError') {
+      if ((error as any).name === 'JsonWebTokenError') {
         return NextResponse.json(
           { error: 'Invalid token' },
           { status: 401 }
@@ -67,7 +67,6 @@ export async function POST(request: Request) {
       throw error;
     }
   } catch (error: any) {
-    console.error('Resend verification error:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to resend verification code' },
       { status: 500 }

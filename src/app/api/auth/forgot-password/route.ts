@@ -46,7 +46,6 @@ export async function POST(request: NextRequest) {
       message: 'If your email is registered, you will receive a password reset code.'
     });
   } catch (error) {
-    console.error('Error in forgot-password:', error);
     return NextResponse.json(
       { success: false, message: 'Something went wrong' },
       { status: 500 }

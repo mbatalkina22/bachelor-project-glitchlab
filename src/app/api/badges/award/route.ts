@@ -72,7 +72,7 @@ export async function POST(request: Request) {
       }
 
       // Check if user already has this badge
-      const existingBadge = user.badges?.find(badge => 
+      const existingBadge = user.badges?.find((badge: any) => 
         badge.workshopId.toString() === workshopId.toString()
       );
 
@@ -112,7 +112,7 @@ export async function POST(request: Request) {
       }, { status: 200 });
 
     } catch (error) {
-      if (error.name === 'JsonWebTokenError') {
+      if ((error as any).name === 'JsonWebTokenError') {
         return NextResponse.json(
           { error: 'Invalid token' },
           { status: 401 }
@@ -121,7 +121,6 @@ export async function POST(request: Request) {
       throw error;
     }
   } catch (error: any) {
-    console.error('Error awarding badge:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to award badge' },
       { status: 500 }

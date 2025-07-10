@@ -198,7 +198,6 @@ const EditWorkshopPage = () => {
           canceled: data.canceled || false,  // Explicitly add the canceled property
         });
       } catch (error: any) {
-        console.error('Error fetching workshop:', error);
         setError(error.message || 'Failed to load workshop details');
       } finally {
         setIsFetching(false);
@@ -222,7 +221,6 @@ const EditWorkshopPage = () => {
         const data = await response.json();
         setInstructors(data.instructors);
       } catch (err) {
-        console.error('Error fetching instructors:', err);
         setError('Failed to load instructors');
       } finally {
         setLoadingInstructors(false);
@@ -462,7 +460,6 @@ const EditWorkshopPage = () => {
           // Upload the image to Cloudinary using direct upload (no Base64)
           imageSrcUrl = await uploadImage(selectedImageFile, 'workshops');
         } catch (imageError) {
-          console.error("Error uploading image:", imageError);
           throw new Error(t('failedToUploadImage') || "Failed to upload workshop image. Please try again.");
         }
       }
@@ -545,7 +542,6 @@ const EditWorkshopPage = () => {
         router.push(`/${locale}/workshops/${id}`);
       }, 2000);
     } catch (err: any) {
-      console.error("Error updating workshop:", err);
       setError(err.message || "Failed to update workshop");
     } finally {
       setIsLoading(false);
@@ -603,7 +599,6 @@ const EditWorkshopPage = () => {
         router.push(`/${locale}/workshops/${id}`);
       }, 2000);
     } catch (err: any) {
-      console.error("Error canceling workshop:", err);
       setError(err.message || "Failed to cancel workshop");
     } finally {
       setIsLoading(false);
@@ -1343,7 +1338,6 @@ const EditWorkshopPage = () => {
                         router.push(`/${locale}/workshops/${id}`);
                       }, 2000);
                     } catch (err) {
-                      console.error("Error uncanceling workshop:", err);
                       setError((err as any).message || t("failedToUncancelWorkshop") || "Failed to uncancel workshop");
                     } finally {
                       setIsLoading(false);
@@ -1413,7 +1407,6 @@ const EditWorkshopPage = () => {
                   router.push(`/${locale}/workshops/${id}`);
                 }, 2000);
               } catch (err) {
-                console.error("Error canceling workshop:", err);
                 setError((err as any).message || "Failed to cancel workshop");
               } finally {
                 setIsLoading(false);

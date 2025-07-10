@@ -50,7 +50,7 @@ export async function PUT(request: Request) {
         emailLanguage: user.emailLanguage
       });
     } catch (error: any) {
-      if (error.name === 'JsonWebTokenError') {
+      if ((error as any).name === 'JsonWebTokenError') {
         return NextResponse.json(
           { error: 'Invalid token' },
           { status: 401 }
@@ -59,7 +59,6 @@ export async function PUT(request: Request) {
       throw error;
     }
   } catch (error: any) {
-    console.error('Error updating email language:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to update email language' },
       { status: 500 }
@@ -98,7 +97,7 @@ export async function GET(request: Request) {
         emailLanguage: user.emailLanguage || 'en'
       }, { status: 200 });
     } catch (error: any) {
-      if (error.name === 'JsonWebTokenError') {
+      if ((error as any).name === 'JsonWebTokenError') {
         return NextResponse.json(
           { error: 'Invalid token' },
           { status: 401 }
@@ -107,7 +106,6 @@ export async function GET(request: Request) {
       throw error;
     }
   } catch (error: any) {
-    console.error('Error getting email language preference:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to get email language preference' },
       { status: 500 }

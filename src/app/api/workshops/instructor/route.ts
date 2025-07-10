@@ -38,7 +38,6 @@ export async function GET(request: Request) {
       );
     }
   } catch (error: any) {
-    console.error('Error fetching instructor workshops:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to fetch instructor workshops' },
       { status: 500 }

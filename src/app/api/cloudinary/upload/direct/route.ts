@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     stream.push(null); // End the stream
 
     // Upload to Cloudinary using the stream API
-    return new Promise((resolve, reject) => {
+    return new Promise<NextResponse>((resolve) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder: folder || 'general',
@@ -37,7 +37,6 @@ export async function POST(request: NextRequest) {
         },
         (error, result) => {
           if (error) {
-            console.error('Error uploading to Cloudinary:', error);
             resolve(NextResponse.json(
               { error: 'Failed to upload to Cloudinary' },
               { status: 500 }
@@ -56,7 +55,6 @@ export async function POST(request: NextRequest) {
       stream.pipe(uploadStream);
     });
   } catch (error) {
-    console.error('Error handling file upload:', error);
     return NextResponse.json(
       { error: 'Failed to process file upload' },
       { status: 500 }

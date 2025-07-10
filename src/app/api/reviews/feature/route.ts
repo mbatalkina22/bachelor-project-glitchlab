@@ -71,7 +71,7 @@ export async function PUT(request: NextRequest) {
 
       return NextResponse.json(review, { status: 200 });
     } catch (error: any) {
-      if (error.name === 'JsonWebTokenError') {
+      if ((error as any).name === 'JsonWebTokenError') {
         return NextResponse.json(
           { error: 'Invalid token' },
           { status: 401 }
@@ -80,7 +80,6 @@ export async function PUT(request: NextRequest) {
       throw error;
     }
   } catch (error: any) {
-    console.error("Error toggling review featured status:", error);
     return NextResponse.json(
       { error: error.message || "Failed to update review" },
       { status: 500 }

@@ -3,7 +3,6 @@ import { verify } from 'jsonwebtoken';
 import dbConnect from '../lib/mongodb';
 import Review from '../lib/models/review';
 import User from '../lib/models/user';
-import mongoose from 'mongoose';
 import { getWorkshopStatus } from '@/utils/workshopStatus';
 import Workshop from '../lib/models/workshop';
 
@@ -47,7 +46,6 @@ export async function GET(request: Request) {
       }
     }, { status: 200 });
   } catch (error) {
-    console.error('Error fetching reviews:', error);
     return NextResponse.json(
       { error: 'Failed to fetch reviews' },
       { status: 500 }
@@ -133,7 +131,7 @@ export async function POST(request: Request) {
       
       return NextResponse.json(review, { status: 201 });
     } catch (error: any) {
-      if (error.name === 'JsonWebTokenError') {
+      if ((error as any).name === 'JsonWebTokenError') {
         return NextResponse.json(
           { error: 'Invalid token' },
           { status: 401 }
@@ -142,7 +140,6 @@ export async function POST(request: Request) {
       throw error;
     }
   } catch (error: any) {
-    console.error('Error creating review:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to create review' },
       { status: 500 }

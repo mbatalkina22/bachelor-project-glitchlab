@@ -10,15 +10,16 @@ if (!process.env.JWT_SECRET) {
   throw new Error('Please define the JWT_SECRET environment variable inside .env');
 }
 
-interface Params {
-  params: {
+interface RouteParams {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // Feature a review - only for instructors
-export async function POST(request: Request, { params }: Params) {
+export async function POST(request: Request, context: RouteParams) {
   try {
+    const params = await context.params;
     const { id } = params;
     
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
@@ -82,14 +83,12 @@ export async function POST(request: Request, { params }: Params) {
       
       return NextResponse.json(updatedReview, { status: 200 });
     } catch (error) {
-      console.error('Error verifying token:', error);
       return NextResponse.json(
         { error: 'Invalid token' },
         { status: 401 }
       );
     }
   } catch (error) {
-    console.error('Error featuring review:', error);
     return NextResponse.json(
       { error: 'Failed to feature review' },
       { status: 500 }
@@ -98,8 +97,9 @@ export async function POST(request: Request, { params }: Params) {
 }
 
 // Remove a review from featured - only for instructors
-export async function DELETE(request: Request, { params }: Params) {
+export async function DELETE(request: Request, context: RouteParams) {
   try {
+    const params = await context.params;
     const { id } = params;
     
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
@@ -152,14 +152,12 @@ export async function DELETE(request: Request, { params }: Params) {
       
       return NextResponse.json(updatedReview, { status: 200 });
     } catch (error) {
-      console.error('Error verifying token:', error);
       return NextResponse.json(
         { error: 'Invalid token' },
         { status: 401 }
       );
     }
   } catch (error) {
-    console.error('Error unfeaturing review:', error);
     return NextResponse.json(
       { error: 'Failed to unfeature review' },
       { status: 500 }

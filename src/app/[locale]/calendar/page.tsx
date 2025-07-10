@@ -42,18 +42,15 @@ export default function CalendarPage() {
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
   const [registeredWorkshops, setRegisteredWorkshops] = useState<string[]>([]);
   const [instructingWorkshops, setInstructingWorkshops] = useState<string[]>([]);
-  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchWorkshops = async () => {
       try {
         const response = await fetch('/api/workshops');
         if (!response.ok) {
-          console.error('Failed to fetch workshops:', response.status);
           return;
         }
         const data = await response.json();
-        console.log('Fetched workshops:', data);
         // Ensure dates are properly parsed
         const workshopsWithDates = data.map((workshop: Workshop) => ({
           ...workshop,
@@ -62,7 +59,6 @@ export default function CalendarPage() {
         }));
         setWorkshops(workshopsWithDates);
       } catch (error) {
-        console.error('Error fetching workshops:', error);
       }
     };
 
@@ -70,7 +66,6 @@ export default function CalendarPage() {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          console.log('No token found, skipping registered workshops fetch');
           setRegisteredWorkshops([]);
           return;
         }
@@ -82,12 +77,10 @@ export default function CalendarPage() {
         });
         
         if (!response.ok) {
-          console.error('Failed to fetch registered workshops:', response.status);
           setRegisteredWorkshops([]);
           return;
         }
         const data = await response.json();
-        console.log('Registered workshops response:', data);
         
         // Handle different response formats
         let workshopIds: string[] = [];
@@ -100,10 +93,8 @@ export default function CalendarPage() {
             .filter(Boolean);
         }
         
-        console.log('Processed workshop IDs:', workshopIds);
         setRegisteredWorkshops(workshopIds);
       } catch (error) {
-        console.error('Error fetching registered workshops:', error);
         setRegisteredWorkshops([]);
       }
     };
@@ -113,7 +104,6 @@ export default function CalendarPage() {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          console.log('No token found, skipping instructing workshops fetch');
           setInstructingWorkshops([]);
           return;
         }
@@ -125,13 +115,11 @@ export default function CalendarPage() {
         });
         
         if (!response.ok) {
-          console.error('Failed to fetch instructing workshops:', response.status);
           setInstructingWorkshops([]);
           return;
         }
         
         const data = await response.json();
-        console.log('Instructing workshops response:', data);
         
         // Extract workshop IDs
         let workshopIds: string[] = [];
@@ -143,10 +131,8 @@ export default function CalendarPage() {
             .filter(Boolean);
         }
         
-        console.log('Processed instructing workshop IDs:', workshopIds);
         setInstructingWorkshops(workshopIds);
       } catch (error) {
-        console.error('Error fetching instructing workshops:', error);
         setInstructingWorkshops([]);
       }
     };
@@ -174,10 +160,8 @@ export default function CalendarPage() {
           return;
         }
         
-        const userData = await response.json();
-        setUserId(userData._id);
+        // User data fetched successfully
       } catch (error) {
-        console.error('Error fetching user data:', error);
       }
     };
 
@@ -490,7 +474,6 @@ const MobileCalendarView = ({ workshops, registeredWorkshops, instructingWorksho
                   onClick={(e) => {
                     e.stopPropagation();
                     const workshopId = eventInfo.event.extendedProps.id;
-                    console.log('Workshop clicked:', workshopId, eventInfo.event.extendedProps);
                     if (workshopId) {
                       router.push(`/${locale}/workshops/${workshopId}`);
                     }
@@ -521,7 +504,6 @@ const MobileCalendarView = ({ workshops, registeredWorkshops, instructingWorksho
             }}
             height="auto"
             eventClick={(info) => {
-              console.log('Event clicked:', info.event.extendedProps);
               const workshopId = info.event.extendedProps.id;
               if (workshopId) {
                 router.push(`/${locale}/workshops/${workshopId}`);

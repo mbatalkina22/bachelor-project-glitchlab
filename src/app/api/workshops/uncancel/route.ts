@@ -82,7 +82,7 @@ export async function POST(request: Request) {
       }, { status: 200 });
 
     } catch (error) {
-      if (error.name === 'JsonWebTokenError') {
+      if ((error as any).name === 'JsonWebTokenError') {
         return NextResponse.json(
           { error: 'Invalid token' },
           { status: 401 }
@@ -91,7 +91,6 @@ export async function POST(request: Request) {
       throw error;
     }
   } catch (error: any) {
-    console.error('Error uncanceling workshop:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to uncancel workshop' },
       { status: 500 }

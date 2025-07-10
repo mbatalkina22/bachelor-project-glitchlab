@@ -31,7 +31,6 @@ export async function GET(request: Request) {
       }, { status: 500 });
     }
   } catch (error: any) {
-    console.error('Test email error:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to send test email' },
       { status: 500 }

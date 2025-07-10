@@ -10,15 +10,16 @@ if (!process.env.JWT_SECRET) {
   throw new Error('Please define the JWT_SECRET environment variable inside .env');
 }
 
-interface Params {
-  params: {
+interface RouteParams {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // Toggle a review's featured status (instructors only)
-export async function PUT(request: Request, { params }: Params) {
+export async function PUT(request: Request, context: RouteParams) {
   try {
+    const params = await context.params;
     const { id } = params;
     
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
@@ -85,14 +86,12 @@ export async function PUT(request: Request, { params }: Params) {
       
       return NextResponse.json(updatedReview, { status: 200 });
     } catch (error) {
-      console.error('Error verifying token:', error);
       return NextResponse.json(
         { error: 'Invalid token' },
         { status: 401 }
       );
     }
   } catch (error) {
-    console.error('Error updating featured status:', error);
     return NextResponse.json(
       { error: 'Failed to update review' },
       { status: 500 }

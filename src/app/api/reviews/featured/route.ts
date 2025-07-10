@@ -17,7 +17,6 @@ export async function GET(request: Request) {
     
     return NextResponse.json(featuredReviews, { status: 200 });
   } catch (error) {
-    console.error('Error fetching featured reviews:', error);
     return NextResponse.json(
       { error: 'Failed to fetch featured reviews' },
       { status: 500 }

@@ -33,7 +33,6 @@ export const uploadImage = async (file: File, folder: string): Promise<string> =
     const data = await response.json();
     return data.url;
   } catch (error) {
-    console.error('Error uploading image:', error);
     throw new Error('Failed to upload image');
   }
 };

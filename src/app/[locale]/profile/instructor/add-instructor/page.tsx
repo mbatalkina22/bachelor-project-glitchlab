@@ -96,7 +96,6 @@ const AddInstructorPage = () => {
       }, 1500);
       
     } catch (err: any) {
-      console.error('Error registering instructor:', err);
       setError(err.message || t('failedToRegister'));
     } finally {
       setIsLoading(false);

@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useState, FormEvent, useEffect } from "react";
-import Image from "next/image";
 import { Icon } from "@iconify/react";
-import ScrollReveal from "@/components/ScrollReveal";
 import { useTranslations } from "next-intl";
 import HeroButton from "./HeroButton";
 import { useAuth } from "@/context/AuthContext";
@@ -90,11 +88,9 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
         const response = await fetch(`/api/reviews?workshopId=${workshopId}&limit=${LIMIT}&offset=0`);
         if (response.ok) {
           const data = await response.json();
-          console.log("Fetched reviews:", data); // Debug log
           
           // Make sure we're working with the reviews array from the response
           if (!Array.isArray(data.reviews)) {
-            console.error("Expected reviews array in response, got:", data);
             return;
           }
           
@@ -110,7 +106,6 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
           setHasMore(data.pagination.hasMore);
         }
       } catch (error) {
-        console.error("Error fetching reviews:", error);
       }
     };
     
@@ -142,7 +137,6 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
           }
         }
       } catch (error) {
-        console.error("Error checking review status:", error);
       }
     };
     
@@ -154,17 +148,14 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
     if (!workshopId || isLoadingMore) return;
     
     setIsLoadingMore(true);
-    console.log(`Loading more reviews - current offset: ${offset}, limit: ${LIMIT}`);
     
     try {
       const response = await fetch(`/api/reviews?workshopId=${workshopId}&limit=${LIMIT}&offset=${offset}`);
       
       if (response.ok) {
         const data = await response.json();
-        console.log("Loaded more reviews:", data); // Debug log
         
         if (!Array.isArray(data.reviews)) {
-          console.error("Expected reviews array in response, got:", data);
           setIsLoadingMore(false);
           return;
         }
@@ -185,11 +176,9 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
         
         // Update pagination state
         setOffset(prev => prev + data.reviews.length);
-        console.log(`New offset after loading more: ${offset + data.reviews.length}, has more: ${data.pagination.hasMore}`);
         setHasMore(data.pagination.hasMore);
       }
     } catch (error) {
-      console.error("Error loading more reviews:", error);
     } finally {
       setIsLoadingMore(false);
     }
@@ -310,8 +299,6 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
           throw new Error(responseData.error || 'Failed to update review');
         }
         
-        console.log("Updated review:", responseData); // Debug log
-        
         // Update the review in the list
         const updatedReviews = reviews.map(review => 
           review._id === editingReviewId ? responseData : review
@@ -340,8 +327,6 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
         if (!response.ok) {
           throw new Error(responseData.error || 'Failed to submit review');
         }
-        
-        console.log("Created review:", responseData); // Debug log
 
         // Add the new review to the list
         setReviews([responseData, ...reviews]);
@@ -364,7 +349,6 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
         closeReviewModal();
       }, 2000);
     } catch (error: any) {
-      console.error("Review submission error:", error);
       setMessage({
         text: error.message || 'Failed to submit review',
         type: 'error'
@@ -411,7 +395,6 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
       
       closeDeleteModal();
     } catch (error: any) {
-      console.error("Review deletion error:", error);
       alert(error.message || 'Failed to delete review');
     } finally {
       setIsDeleting(false);
@@ -459,7 +442,6 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
         type: 'success'
       });
     } catch (error: any) {
-      console.error("Toggle feature review error:", error);
       setMessage({
         text: error.message || 'Failed to update review status',
         type: 'error'
@@ -574,8 +556,6 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
           top: y,
           behavior: 'smooth'
         });
-        
-        console.log('Scrolling to reviews section');
       }
     };
     
@@ -664,13 +644,13 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
               </div>
 
               {/* Circle Customization */}
-              <div className="space-y-4 text-center">
+              <div className="space-y-4 text-center md:text-left">
                 {/* Color Selection */}
                 <div>
                   <label className="block text-sm font-medium text-black mb-1">
                     {t("circleColor")}
                   </label>
-                  <div className="flex flex-wrap gap-2 justify-center">
+                  <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                     {[
                       "#383838",
                       "#7471f9",
@@ -698,7 +678,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
                   <label className="block text-sm font-medium text-black mb-1">
                     {t("circleFont")}
                   </label>
-                  <div className="flex justify-center">
+                  <div className="flex justify-center md:justify-start">
                     <select
                       value={circleFont}
                       onChange={(e) => setCircleFont(e.target.value)}
@@ -718,7 +698,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
                     {t("chooseWord")} *
                   </label>
 
-                  <div className="flex flex-wrap gap-2 mt-2 justify-center">
+                  <div className="flex flex-wrap gap-2 mt-2 justify-center md:justify-start">
                     {sampleWords.map((word) => (
                       <button
                         key={word}
@@ -746,18 +726,16 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
                   <label className="block text-sm font-medium text-black mb-1">
                     {t("comment")} ({t("optional")})
                   </label>
-                  <div className="flex justify-center">
-                    <textarea
-                      value={comment}
-                      onChange={(e) => setComment(e.target.value)}
-                      rows={3}
-                      className="w-full max-w-lg px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
-                      placeholder={t("enterComment")}
-                    />
-                  </div>
+                  <textarea
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
+                    placeholder={t("enterComment")}
+                  />
                 </div>
               </div>
-              <div className="flex justify-center">
+              <div className="w-full">
                 <HeroButton
                   text={isSubmittingReview 
                     ? t("submittingReview") 
@@ -766,7 +744,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
                   backgroundColor="#7471f9"
                   textColor="white"
                   disabled={isSubmittingReview}
-                  className="w-full max-w-xs"
+                  className="w-full"
                 />
               </div>
             </form>

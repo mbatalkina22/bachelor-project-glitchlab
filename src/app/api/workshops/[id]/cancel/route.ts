@@ -6,18 +6,19 @@ import User from '../../../lib/models/user';
 import Workshop from '../../../lib/models/workshop';
 import { sendWorkshopCancellationEmail } from '@/utils/email/verification';
 
-interface Params {
-  params: {
+interface RouteParams {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 if (!process.env.JWT_SECRET) {
   throw new Error('Please define the JWT_SECRET environment variable inside .env');
 }
 
-export async function POST(request: Request, { params }: Params) {
+export async function POST(request: Request, context: RouteParams) {
   try {
+    const params = await context.params;
     // Check authentication and instructor role
     const authHeader = request.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -115,7 +116,6 @@ export async function POST(request: Request, { params }: Params) {
       throw error;
     }
   } catch (error: any) {
-    console.error('Error canceling workshop:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to cancel workshop' },
       { status: 500 }

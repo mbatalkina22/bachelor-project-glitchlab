@@ -93,8 +93,6 @@ export const sendVerificationEmail = async (to: string, code: string, language: 
     const localeKey = language === 'it' ? 'it' : 'en';
     const t = translations[localeKey];
 
-    console.log(`Sending verification email in ${localeKey} language to ${to}`);
-
     const info = await transporter.sendMail({
       from: `"GlitchLab" <${process.env.EMAIL_USER}>`,
       to,
@@ -114,10 +112,8 @@ export const sendVerificationEmail = async (to: string, code: string, language: 
       `,
     });
     
-    console.log('Verification email sent:', info.messageId);
     return true;
   } catch (error) {
-    console.error('Failed to send verification email:', error);
     return false;
   }
 };
@@ -127,8 +123,6 @@ export const sendPasswordResetEmail = async (to: string, code: string, language:
     // Get translations for the requested language or fallback to English
     const localeKey = language === 'it' ? 'it' : 'en';
     const t = translations[localeKey];
-
-    console.log(`Sending password reset email in ${localeKey} language to ${to}`);
 
     const info = await transporter.sendMail({
       from: `"GlitchLab" <${process.env.EMAIL_USER}>`,
@@ -149,10 +143,8 @@ export const sendPasswordResetEmail = async (to: string, code: string, language:
       `,
     });
     
-    console.log('Password reset email sent:', info.messageId);
     return true;
   } catch (error) {
-    console.error('Failed to send password reset email:', error);
     return false;
   }
 };
@@ -162,7 +154,6 @@ export const sendWorkshopCancellationEmail = async (to: string, workshopName: st
     const localeKey = language === 'it' ? 'it' : 'en';
     const t = translations[localeKey];
 
-    console.log(`Sending workshop cancellation email in ${localeKey} language to ${to}`);
 
     const formattedDate = originalDate.toLocaleDateString(localeKey === 'it' ? 'it-IT' : 'en-US', {
       weekday: 'long',
@@ -191,10 +182,8 @@ export const sendWorkshopCancellationEmail = async (to: string, workshopName: st
       `,
     });
     
-    console.log('Workshop cancellation email sent:', info.messageId);
     return true;
   } catch (error) {
-    console.error('Failed to send workshop cancellation email:', error);
     return false;
   }
 };
@@ -217,7 +206,6 @@ export const sendWorkshopUpdateEmail = async (
     const localeKey = language === 'it' ? 'it' : 'en';
     const t = translations[localeKey];
 
-    console.log(`Sending workshop update email in ${localeKey} language to ${to}`);
 
     const formatDate = (date: Date) => {
       return date.toLocaleDateString(localeKey === 'it' ? 'it-IT' : 'en-US', {
@@ -278,10 +266,8 @@ export const sendWorkshopUpdateEmail = async (
       `
     });
     
-    console.log('Workshop update email sent:', info.messageId);
     return true;
   } catch (error) {
-    console.error('Failed to send workshop update email:', error);
     return false;
   }
 };
@@ -291,7 +277,6 @@ export const sendWorkshopReminderEmail = async (to: string, workshopName: string
     const localeKey = language === 'it' ? 'it' : 'en';
     const t = translations[localeKey];
 
-    console.log(`Sending workshop reminder email in ${localeKey} language to ${to}`);
 
     const formattedDate = workshopDate.toLocaleDateString(localeKey === 'it' ? 'it-IT' : 'en-US', {
       weekday: 'long',
@@ -320,10 +305,8 @@ export const sendWorkshopReminderEmail = async (to: string, workshopName: string
       `,
     });
     
-    console.log('Workshop reminder email sent:', info.messageId);
     return true;
   } catch (error) {
-    console.error('Failed to send workshop reminder email:', error);
     return false;
   }
 };

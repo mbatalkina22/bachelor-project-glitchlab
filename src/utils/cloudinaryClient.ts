@@ -24,7 +24,6 @@ export const uploadImage = async (file: File, folder: string): Promise<string> =
     const data = await response.json();
     return data.url;
   } catch (error) {
-    console.error('Error uploading image:', error);
     throw new Error('Failed to upload image');
   }
 };
@@ -51,7 +50,6 @@ export const checkImageExists = async (url: string): Promise<boolean> => {
     const response = await fetch(url, { method: 'HEAD' });
     return response.ok;
   } catch (error) {
-    console.error('Error checking image existence:', error);
     return false;
   }
 };

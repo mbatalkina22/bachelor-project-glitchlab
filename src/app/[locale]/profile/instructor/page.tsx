@@ -92,7 +92,6 @@ const InstructorProfilePage = () => {
       
       // Convert string dates to Date objects and ensure bgColor and canceled are included
       const workshopsWithDates = data.workshops.map((workshop: any) => {
-        console.log('Instructor workshop data:', workshop); // Log workshop data for debugging
         return {
           ...workshop,
           startDate: new Date(workshop.startDate),
@@ -121,7 +120,6 @@ const InstructorProfilePage = () => {
       setUpcomingWorkshops(sortedUpcoming);
       setPastWorkshops(sortedPast);
     } catch (error) {
-      console.error('Error fetching instructor workshops:', error);
     } finally {
       setIsLoading(false);
     }

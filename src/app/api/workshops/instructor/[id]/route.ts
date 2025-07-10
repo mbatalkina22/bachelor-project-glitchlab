@@ -5,9 +5,10 @@ import User from '../../../lib/models/user';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params;
     const instructorId = params.id;
     
     await dbConnect();
@@ -26,7 +27,6 @@ export async function GET(
     
     return NextResponse.json({ workshops }, { status: 200 });
   } catch (error: any) {
-    console.error('Error fetching instructor workshops:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to fetch instructor workshops' },
       { status: 500 }

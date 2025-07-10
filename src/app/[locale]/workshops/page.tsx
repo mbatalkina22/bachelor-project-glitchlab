@@ -89,9 +89,7 @@ const WorkshopsPage = () => {
             }));
             
             setWorkshops(workshopsWithUIProps);
-            console.log('Fetched workshops:', workshopsWithUIProps.length);
         } catch (err) {
-            console.error('Error fetching workshops:', err);
             setError('Failed to load workshops. Please try again later.');
         } finally {
             setIsLoading(false);

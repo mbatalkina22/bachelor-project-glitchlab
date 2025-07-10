@@ -61,7 +61,6 @@ const FeaturedWorkshops = () => {
       }
       
       const data = await response.json();
-      console.log('Fetched all workshops:', data.length);
       
       if (!Array.isArray(data)) {
         throw new Error('Invalid data format received from API');
@@ -96,15 +95,12 @@ const FeaturedWorkshops = () => {
       }));
       
       setWorkshops(upcomingWorkshops);
-      console.log('Upcoming workshops:', upcomingWorkshops.length);
       setRetryCount(0); // Reset retry counter on success
     } catch (err) {
-      console.error('Error fetching workshops:', err);
       setError('Failed to load workshops');
       
       // Retry logic for fetch failures
       if (retryCount < maxRetries) {
-        console.log(`Retrying fetch (${retryCount + 1}/${maxRetries})...`);
         setRetryCount(prev => prev + 1);
         setTimeout(() => {
           fetchWorkshops();

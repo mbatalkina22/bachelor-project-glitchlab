@@ -74,7 +74,6 @@ const WorkshopDetailPage = () => {
     if (user && id) {
       const userWorkshops = user.registeredWorkshops || [];
       const registered = userWorkshops.includes(id);
-      console.log('User registration status from context:', { id, isRegistered: registered, workshops: userWorkshops });
       setIsRegistered(registered);
     }
   }, [user, id]);
@@ -114,11 +113,9 @@ const WorkshopDetailPage = () => {
         const userData = await userResponse.json();
         const userWorkshops = userData.registeredWorkshops || [];
         const isUserRegistered = userWorkshops.includes(id);
-        console.log('User registration check:', { id, isRegistered: isUserRegistered, workshops: userWorkshops });
         setIsRegistered(isUserRegistered);
       }
     } catch (error) {
-      console.error('Error checking user registration:', error);
     }
   };
 
@@ -137,7 +134,6 @@ const WorkshopDetailPage = () => {
         
         setIsLoading(false);
       } catch (error) {
-        console.error('Error fetching workshop:', error);
         setError('Failed to load workshop details. Please try again later.');
         setIsLoading(false);
       }
@@ -169,7 +165,6 @@ const WorkshopDetailPage = () => {
       
       setIsLoading(false);
     } catch (error) {
-      console.error('Error fetching workshop:', error);
       setError('Failed to load workshop details. Please try again later.');
       setIsLoading(false);
     }
@@ -239,7 +234,6 @@ const WorkshopDetailPage = () => {
       await refreshUser();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to register for workshop';
-      console.error('Registration error:', error);
       alert(errorMessage);
     }
   };
@@ -285,7 +279,6 @@ const WorkshopDetailPage = () => {
       await refreshUser();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to unregister from workshop';
-      console.error('Unregistration error:', error);
       alert(errorMessage);
     }
   };
@@ -332,7 +325,6 @@ const WorkshopDetailPage = () => {
       alert(`Reminder sent successfully to ${data.sentTo} registered users!`);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to send reminder';
-      console.error('Error sending reminder:', error);
       alert(errorMessage);
     }
   };
@@ -567,7 +559,6 @@ const WorkshopDetailPage = () => {
                         };
                         return categoryMap[cat] || cat.charAt(0).toUpperCase() + cat.slice(1);
                       } catch (error) {
-                        console.error('Translation error for category:', cat, error);
                         return cat.charAt(0).toUpperCase() + cat.slice(1);
                       }
                     };
@@ -743,7 +734,6 @@ const WorkshopDetailPage = () => {
                           };
                           return levelMap[workshop.level.toLowerCase()] || workshop.level.charAt(0).toUpperCase() + workshop.level.slice(1);
                         } catch (error) {
-                          console.error('Translation error for level:', workshop.level, error);
                           return workshop.level.charAt(0).toUpperCase() + workshop.level.slice(1);
                         }
                       })()}

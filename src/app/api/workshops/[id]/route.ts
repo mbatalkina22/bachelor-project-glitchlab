@@ -5,17 +5,17 @@ import Workshop from '../../lib/models/workshop';
 import User from '../../lib/models/user';
 import { sendWorkshopUpdateEmail } from '@/utils/email/verification';
 
-interface Params {
-  params: {
+interface RouteParams {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export async function GET(request: Request, { params }: Params) {
+export async function GET(request: Request, context: RouteParams) {
   try {
     await dbConnect();
 
-    const { id } = await params;
+    const { id } = await context.params;
     const workshop = await Workshop.findById(id);
     
     if (!workshop) {
@@ -35,7 +35,6 @@ export async function GET(request: Request, { params }: Params) {
       instructorDetailsList = instructors.filter(instructor => instructor !== null);
       
       if (instructorDetailsList.length === 0) {
-        console.warn(`No valid instructors found for workshop ${params.id}`);
       }
     }
     // Fallback to old single instructorId if instructorIds doesn't exist (for backward compatibility)
@@ -46,7 +45,6 @@ export async function GET(request: Request, { params }: Params) {
       if (instructorDetails) {
         instructorDetailsList = [instructorDetails];
       } else {
-        console.warn(`Instructor with ID ${workshop.instructorId} not found for workshop ${params.id}`);
       }
     }
 
@@ -73,12 +71,11 @@ export async function GET(request: Request, { params }: Params) {
 
     return NextResponse.json(workshopData, { status: 200 });
   } catch (error) {
-    console.error('Error fetching workshop by ID:', error);
     return NextResponse.json({ error: 'Failed to fetch workshop' }, { status: 500 });
   }
 }
 
-export async function PUT(request: Request, { params }: Params) {
+export async function PUT(request: Request, context: RouteParams) {
   try {
     // Verify authentication and instructor role
     const authHeader = request.headers.get('authorization');
@@ -114,6 +111,8 @@ export async function PUT(request: Request, { params }: Params) {
       );
     }
 
+    const params = await context.params;
+    
     // Find the workshop
     const workshop = await Workshop.findById(params.id);
     
@@ -143,21 +142,6 @@ export async function PUT(request: Request, { params }: Params) {
 
     // If either date/time or location changed, notify users who have change notifications enabled
     if (hasDateChanged || hasLocationChanged) {
-      console.log('Changes detected:', {
-        hasDateChanged,
-        hasLocationChanged,
-        oldDates: { 
-          start: oldStartDate.toISOString(),
-          end: oldEndDate.toISOString()
-        },
-        newDates: { 
-          start: newStartDate.toISOString(),
-          end: newEndDate.toISOString()
-        },
-        oldLocation: workshop.location,
-        newLocation: updatedData.location
-      });
-
       // Find all registered users who have change notifications enabled
       const registeredUsers = await User.find({
         registeredWorkshops: { $in: [params.id] },
@@ -178,9 +162,7 @@ export async function PUT(request: Request, { params }: Params) {
             },
             user.emailLanguage || 'en'
           );
-          console.log('Update email sent to:', user.email);
         } catch (emailError) {
-          console.error('Error sending update email to', user.email, emailError);
           // Continue with other users even if one email fails
         }
       }
@@ -195,9 +177,8 @@ export async function PUT(request: Request, { params }: Params) {
     
     return NextResponse.json(updatedWorkshop, { status: 200 });
   } catch (error: any) {
-    console.error('Error updating workshop:', error);
     
-    if (error.name === 'JsonWebTokenError') {
+    if ((error as any).name === 'JsonWebTokenError') {
       return NextResponse.json(
         { error: 'Invalid token' },
         { status: 401 }

@@ -53,7 +53,7 @@ export async function GET(request: Request) {
         review: existingReview 
       }, { status: 200 });
     } catch (error: any) {
-      if (error.name === 'JsonWebTokenError') {
+      if ((error as any).name === 'JsonWebTokenError') {
         return NextResponse.json(
           { error: 'Invalid token' },
           { status: 401 }
@@ -62,7 +62,6 @@ export async function GET(request: Request) {
       throw error;
     }
   } catch (error) {
-    console.error('Error checking review status:', error);
     return NextResponse.json(
       { error: 'Failed to check review status' },
       { status: 500 }

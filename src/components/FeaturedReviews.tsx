@@ -81,7 +81,6 @@ const FeaturedReviews = () => {
         setFeaturedReviews(preparedReviews);
         setError(null);
       } catch (err) {
-        console.error('Error fetching featured reviews:', err);
         setError('Failed to load featured reviews');
       } finally {
         setIsLoading(false);
@@ -153,7 +152,6 @@ const FeaturedReviews = () => {
         setFeaturedReviews(preparedReviews);
       }
     } catch (err) {
-      console.error('Error toggling featured status:', err);
     }
   };
 

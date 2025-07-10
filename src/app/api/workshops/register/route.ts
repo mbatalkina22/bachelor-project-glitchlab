@@ -94,7 +94,6 @@ export async function POST(request: Request) {
       );
     }
   } catch (error: any) {
-    console.error('Workshop registration error:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to register for workshop' },
       { status: 500 }

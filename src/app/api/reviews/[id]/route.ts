@@ -11,15 +11,16 @@ if (!process.env.JWT_SECRET) {
   throw new Error('Please define the JWT_SECRET environment variable inside .env');
 }
 
-interface Params {
-  params: {
+interface RouteParams {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // Get a specific review
-export async function GET(request: Request, { params }: Params) {
+export async function GET(request: Request, context: RouteParams) {
   try {
+    const params = await context.params;
     const { id } = params;
     
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
@@ -42,7 +43,6 @@ export async function GET(request: Request, { params }: Params) {
     
     return NextResponse.json(review, { status: 200 });
   } catch (error) {
-    console.error('Error fetching review:', error);
     return NextResponse.json(
       { error: 'Failed to fetch review' },
       { status: 500 }
@@ -51,8 +51,9 @@ export async function GET(request: Request, { params }: Params) {
 }
 
 // Update a review
-export async function PUT(request: Request, { params }: Params) {
+export async function PUT(request: Request, context: RouteParams) {
   try {
+    const params = await context.params;
     const { id } = params;
     
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
@@ -123,7 +124,7 @@ export async function PUT(request: Request, { params }: Params) {
       
       return NextResponse.json(review, { status: 200 });
     } catch (error: any) {
-      if (error.name === 'JsonWebTokenError') {
+      if ((error as any).name === 'JsonWebTokenError') {
         return NextResponse.json(
           { error: 'Invalid token' },
           { status: 401 }
@@ -132,7 +133,6 @@ export async function PUT(request: Request, { params }: Params) {
       throw error;
     }
   } catch (error: any) {
-    console.error('Error updating review:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to update review' },
       { status: 500 }
@@ -141,8 +141,9 @@ export async function PUT(request: Request, { params }: Params) {
 }
 
 // Delete a review
-export async function DELETE(request: Request, { params }: Params) {
+export async function DELETE(request: Request, context: RouteParams) {
   try {
+    const params = await context.params;
     const { id } = params;
     
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
@@ -219,7 +220,7 @@ export async function DELETE(request: Request, { params }: Params) {
       
       return NextResponse.json({ message: 'Review deleted successfully' }, { status: 200 });
     } catch (error: any) {
-      if (error.name === 'JsonWebTokenError') {
+      if ((error as any).name === 'JsonWebTokenError') {
         return NextResponse.json(
           { error: 'Invalid token' },
           { status: 401 }
@@ -228,7 +229,6 @@ export async function DELETE(request: Request, { params }: Params) {
       throw error;
     }
   } catch (error: any) {
-    console.error('Error deleting review:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to delete review' },
       { status: 500 }

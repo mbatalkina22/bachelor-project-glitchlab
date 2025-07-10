@@ -16,7 +16,6 @@ export async function POST(request: Request) {
     const workshops = await Workshop.insertMany(body);
     return NextResponse.json(workshops, { status: 201 });
   } catch (error: any) {
-    console.error('Error in batch import:', error);
     return NextResponse.json({ error: error.message || 'Failed to import workshops' }, { status: 500 });
   }
 }
@@ -50,7 +49,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ workshops });
   } catch (error) {
-    console.error('Error fetching workshops:', error);
     return NextResponse.json(
       { error: 'Failed to fetch workshops' },
       { status: 500 }

@@ -26,7 +26,6 @@ export async function POST(request: NextRequest) {
       public_id: uploadResult.public_id,
     });
   } catch (error) {
-    console.error('Error uploading to Cloudinary:', error);
     return NextResponse.json(
       { error: 'Failed to upload to Cloudinary' },
       { status: 500 }

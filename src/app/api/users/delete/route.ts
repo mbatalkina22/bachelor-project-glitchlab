@@ -57,7 +57,7 @@ export async function DELETE(request: Request) {
         message: 'Account deleted successfully' 
       }, { status: 200 });
     } catch (error: any) {
-      if (error.name === 'JsonWebTokenError') {
+      if ((error as any).name === 'JsonWebTokenError') {
         return NextResponse.json(
           { error: 'Invalid token' },
           { status: 401 }
@@ -66,7 +66,6 @@ export async function DELETE(request: Request) {
       throw error;
     }
   } catch (error: any) {
-    console.error('Error deleting account:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to delete account' },
       { status: 500 }

@@ -72,7 +72,6 @@ const CreateWorkshopPage = () => {
         const data = await response.json();
         setInstructors(data.instructors);
       } catch (err) {
-        console.error("Error fetching instructors:", err);
         setError("Failed to load instructors");
       } finally {
         setLoadingInstructors(false);
@@ -381,7 +380,6 @@ const CreateWorkshopPage = () => {
           // Upload the image to Cloudinary using direct upload (no Base64)
           imageSrcUrl = await uploadImage(selectedImageFile, "workshops");
         } catch (imageError) {
-          console.error("Error uploading image:", imageError);
           throw new Error("Failed to upload workshop image. Please try again.");
         }
       }
@@ -463,7 +461,6 @@ const CreateWorkshopPage = () => {
         router.push(`/${locale}/workshops/${data._id}`);
       }, 2000);
     } catch (err: any) {
-      console.error("Error creating workshop:", err);
       setError(err.message || "Failed to create workshop");
     } finally {
       setIsLoading(false);

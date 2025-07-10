@@ -118,7 +118,6 @@ export default function VerifyPasswordResetPage() {
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Password reset form submitted');
     
     // Validate password and confirmation
     if (password !== confirmPassword) {
@@ -136,12 +135,6 @@ export default function VerifyPasswordResetPage() {
     setMessage('');
 
     try {
-      console.log('Sending password reset request with:', { 
-        email, 
-        code: verificationCode.join(''),
-        passwordLength: password.length 
-      });
-      
       const response = await fetch('/api/auth/reset-password', {
         method: 'POST',
         headers: {
@@ -154,9 +147,7 @@ export default function VerifyPasswordResetPage() {
         }),
       });
 
-      console.log('Password reset response status:', response.status);
       const data = await response.json();
-      console.log('Password reset response data:', data);
 
       if (data.success) {
         setMessage(t('passwordResetSuccess') || 'Password reset successfully! Redirecting to login...');
@@ -168,7 +159,6 @@ export default function VerifyPasswordResetPage() {
         setError(data.message || t('resetFailed') || 'Password reset failed. Please try again.');
       }
     } catch (error) {
-      console.error('Password reset error:', error);
       setError(t('serverError') || 'Server error. Please try again later.');
     } finally {
       setLoading(false);
@@ -196,7 +186,7 @@ export default function VerifyPasswordResetPage() {
         throw new Error(t('resendFailed') || 'Failed to resend code');
       }
     } catch (err) {
-      setError(err.message || t('resendFailed') || 'Failed to resend code');
+      setError((err as Error).message || t('resendFailed') || 'Failed to resend code');
     }
   };
 
