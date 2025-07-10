@@ -65,10 +65,23 @@ const Navbar = () => {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+    // Close user menu when burger menu opens
+    if (!isMenuOpen) {
+      setIsUserMenuOpen(false);
+    }
   };
 
   const toggleUserMenu = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
+    // Close burger menu when user menu opens
+    if (!isUserMenuOpen) {
+      setIsMenuOpen(false);
+    }
+  };
+
+  // Function to close mobile menu when link is clicked
+  const closeMobileMenu = () => {
+    setIsMenuOpen(false);
   };
 
   // Create a function to get the URL for changing the language
@@ -367,22 +380,41 @@ const Navbar = () => {
       {/* Mobile menu, show/hide based on menu state */}
       <div className={`${isMenuOpen ? 'block' : 'hidden'} md:hidden ${isScrolled ? 'bg-white' : 'bg-black/40'}`}>
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <Link href={`/${locale}`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
+          <Link 
+            href={`/${locale}`} 
+            className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}
+            onClick={closeMobileMenu}
+          >
             {t('home')}
           </Link>
-          <Link href={`/${locale}/workshops`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
+          <Link 
+            href={`/${locale}/workshops`} 
+            className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}
+            onClick={closeMobileMenu}
+          >
             {t('workshops')}
           </Link>
-          <Link href={`/${locale}/calendar`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
+          <Link 
+            href={`/${locale}/calendar`} 
+            className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}
+            onClick={closeMobileMenu}
+          >
             {t('calendar')}
           </Link>
-          <Link href={`/${locale}/our-team`} className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}>
+          <Link 
+            href={`/${locale}/our-team`} 
+            className={`block px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}
+            onClick={closeMobileMenu}
+          >
             {t('ourTeam')}
           </Link>
           
           {/* Language switcher for mobile */}
           <button 
-            onClick={() => handleLanguageChange(locale === 'en' ? 'it' : 'en')}
+            onClick={() => {
+              handleLanguageChange(locale === 'en' ? 'it' : 'en');
+              closeMobileMenu();
+            }}
             className={`flex items-center w-full text-left px-3 py-2 rounded-md text-base font-medium ${isScrolled ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-50' : 'text-white hover:bg-white/10'}`}
           >
             <Icon icon={locale === 'en' ? 'emojione:flag-for-united-kingdom' : 'emojione:flag-for-italy'} className="w-5 h-5 mr-2" />

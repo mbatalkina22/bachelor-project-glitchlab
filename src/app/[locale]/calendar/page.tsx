@@ -31,6 +31,7 @@ interface Workshop {
   capacity: number;
   registeredCount: number;
   bgColor?: string; // Added bgColor property
+  canceled?: boolean; // Added canceled property
 }
 
 export default function CalendarPage() {
@@ -225,10 +226,236 @@ export default function CalendarPage() {
     };
   });
 
+// Mobile Calendar Component
+const MobileCalendarView = ({ workshops, registeredWorkshops, instructingWorkshops, locale, t, router }: {
+  workshops: Workshop[];
+  registeredWorkshops: string[];
+  instructingWorkshops: string[];
+  locale: string;
+  t: any;
+  router: any;
+}) => {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  // Group workshops by date
+  const workshopsByDate = workshops.reduce((acc, workshop) => {
+    const date = new Date(workshop.startDate).toDateString();
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+    acc[date].push(workshop);
+    return acc;
+  }, {} as Record<string, Workshop[]>);
+
+  // Generate calendar days for current month
+  const generateCalendarDays = () => {
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay());
+
+    const days = [];
+    const current = new Date(startDate);
+
+    for (let i = 0; i < 42; i++) {
+      const dayKey = current.toDateString();
+      const isCurrentMonth = current.getMonth() === month;
+      const isToday = current.toDateString() === new Date().toDateString();
+      const isSelected = current.toDateString() === selectedDate.toDateString();
+      const hasWorkshops = workshopsByDate[dayKey] && workshopsByDate[dayKey].length > 0;
+
+      days.push({
+        date: new Date(current),
+        isCurrentMonth,
+        isToday,
+        isSelected,
+        hasWorkshops,
+        workshops: workshopsByDate[dayKey] || []
+      });
+
+      current.setDate(current.getDate() + 1);
+    }
+
+    return days;
+  };
+
+  const calendarDays = generateCalendarDays();
+  const selectedDayWorkshops = workshopsByDate[selectedDate.toDateString()] || [];
+
+  const formatTime = (date: Date) => {
+    return new Intl.DateTimeFormat(locale, {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }).format(new Date(date));
+  };
+
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat(locale, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    }).format(date);
+  };
+
+  const previousMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
+  };
+
+  const nextMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Month Header */}
+      <div className="bg-white rounded-lg shadow-sm p-4">
+        <div className="flex items-center justify-between mb-4">
+          <button 
+            onClick={previousMonth}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <Icon icon="heroicons:chevron-left" className="w-5 h-5 text-gray-600" />
+          </button>
+          
+          <h2 className="text-lg font-secularone text-gray-900">
+            {new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(currentMonth)}
+          </h2>
+          
+          <button 
+            onClick={nextMonth}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <Icon icon="heroicons:chevron-right" className="w-5 h-5 text-gray-600" />
+          </button>
+        </div>
+
+        {/* Calendar Grid */}
+        <div className="grid grid-cols-7 gap-1 mb-2">
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+            <div key={day} className="text-center text-xs font-medium text-gray-500 p-2">
+              {day}
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-7 gap-1">
+          {calendarDays.map((day, index) => (
+            <button
+              key={index}
+              onClick={() => setSelectedDate(day.date)}
+              className={`
+                p-2 text-sm relative transition-all duration-200
+                ${!day.isCurrentMonth ? 'text-gray-300' : 'text-gray-700'}
+                ${day.isToday ? 'bg-[#7471f9] text-white rounded-full' : ''}
+                ${day.isSelected && !day.isToday ? 'bg-[#c3c2fc] text-gray-900 rounded-full' : ''}
+                ${!day.isSelected && !day.isToday ? 'hover:bg-gray-100 rounded-full' : ''}
+              `}
+            >
+              {day.date.getDate()}
+              {day.hasWorkshops && !day.isToday && (
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-[#7471f9] rounded-full"></div>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Selected Date Workshops */}
+      <div className="bg-white rounded-lg shadow-sm p-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          {formatDate(selectedDate)}
+        </h3>
+
+        {selectedDayWorkshops.length === 0 ? (
+          <div className="text-center py-8">
+            <Icon icon="heroicons:calendar-days" className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+            <p className="text-gray-500 text-sm">No workshops scheduled for this day</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {selectedDayWorkshops.map((workshop) => {
+              const isRegistered = registeredWorkshops.includes(workshop._id);
+              const isInstructing = instructingWorkshops.includes(workshop._id);
+              const localizedTitle = workshop.nameTranslations && workshop.nameTranslations[locale]
+                ? workshop.nameTranslations[locale]
+                : workshop.name;
+
+              return (
+                <div
+                  key={workshop._id}
+                  onClick={() => router.push(`/${locale}/workshops/${workshop._id}`)}
+                  className="border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+                  style={{ borderLeftColor: workshop.bgColor || '#c3c2fc', borderLeftWidth: '4px' }}
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <h4 className="font-semibold text-gray-900 text-sm flex-1 pr-2">
+                      {localizedTitle}
+                    </h4>
+                    <div className="flex flex-col gap-1">
+                      {isRegistered && (
+                        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full flex items-center">
+                          <Icon icon="heroicons:check-circle" className="w-3 h-3 mr-1" />
+                          {t('registered')}
+                        </span>
+                      )}
+                      {isInstructing && (
+                        <span className="text-xs bg-[#7471f9] text-white px-2 py-1 rounded-full flex items-center">
+                          <Icon icon="heroicons:academic-cap" className="w-3 h-3 mr-1" />
+                          {t('instructing')}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 text-xs text-gray-600">
+                    <div className="flex items-center">
+                      <Icon icon="heroicons:clock" className="w-4 h-4 mr-2 text-gray-400" />
+                      {formatTime(new Date(workshop.startDate))} - {formatTime(new Date(workshop.endDate))}
+                    </div>
+                    
+                    {workshop.location && (
+                      <div className="flex items-center">
+                        <Icon icon="heroicons:map-pin" className="w-4 h-4 mr-2 text-gray-400" />
+                        {workshop.location}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
   return (
     <div className="pt-20 pb-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-4">
+        {/* Mobile View */}
+        <div className="block md:hidden">
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('title')}</h1>
+            <p className="text-gray-600 text-sm">{t('subtitle')}</p>
+          </div>
+          <MobileCalendarView 
+            workshops={filteredWorkshops}
+            registeredWorkshops={registeredWorkshops}
+            instructingWorkshops={instructingWorkshops}
+            locale={locale}
+            t={t}
+            router={router}
+          />
+        </div>
+
+        {/* Desktop View */}
+        <div className="hidden md:block bg-white rounded-lg shadow-lg p-4">
           <style jsx global>{`
             .fc-toolbar-title {
               font-family: 'Secular One', sans-serif !important;

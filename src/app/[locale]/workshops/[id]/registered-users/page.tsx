@@ -322,7 +322,83 @@ const RegisteredUsersPage = () => {
                 <p className="text-gray-500">{t('noRegisteredUsersMessage')}</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
+              <>
+                {/* Mobile Layout - Cards */}
+                <div className="block md:hidden space-y-4">
+                  {users.map((user) => (
+                    <div key={user._id} className="bg-gray-50 rounded-lg p-6 border border-gray-200 relative">
+                      {/* Remove button - top right corner */}
+                      {!userHasBadge(user) && (
+                        <button
+                          onClick={() => handleRemoveUser(user._id, user.name)}
+                          disabled={removing[user._id]}
+                          className="absolute top-2 right-2 inline-flex items-center justify-center p-1 text-xs leading-4 font-medium text-gray-500 hover:text-red-600 focus:outline-none transition ease-in-out duration-150 disabled:opacity-50"
+                          title="Remove user from workshop"
+                        >
+                          {removing[user._id] ? (
+                            <Icon icon="heroicons:arrow-path" className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Icon icon="heroicons:x-mark" className="w-4 h-4" />
+                          )}
+                        </button>
+                      )}
+                      
+                      <div className="flex flex-col items-center text-center space-y-4">
+                        {/* Avatar */}
+                        <div className="relative h-20 w-20">
+                          <Image 
+                            src={user.avatar || "/images/default-avatar.png"} 
+                            alt={user.name}
+                            className="rounded-full"
+                            fill
+                            style={{ objectFit: 'cover' }}
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = "/images/default-avatar.png";
+                            }}
+                          />
+                        </div>
+                        
+                        {/* Name */}
+                        <h3 className="text-lg font-medium text-gray-900">{user.name}</h3>
+                        
+                        {/* Email */}
+                        <p className="text-sm text-gray-600">{user.email}</p>
+                        
+                        {/* Buttons */}
+                        <div className="flex items-center justify-center w-full">
+                          {userHasBadge(user) ? (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              <Icon icon="heroicons:check-circle" className="w-4 h-4 mr-1" />
+                              Badge Awarded
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => handleAwardBadge(user._id)}
+                              disabled={awarding[user._id]}
+                              className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs leading-4 font-medium rounded-full text-white bg-[#7471f9] hover:bg-[#5f5dd6] focus:outline-none focus:border-[#5f5dd6] focus:shadow-outline-indigo active:bg-[#5f5dd6] transition ease-in-out duration-150 disabled:opacity-50"
+                            >
+                              {awarding[user._id] ? (
+                                <>
+                                  <Icon icon="heroicons:arrow-path" className="w-4 h-4 mr-1 animate-spin" />
+                                  Awarding...
+                                </>
+                              ) : (
+                                <>
+                                  <Icon icon="heroicons:gift" className="w-4 h-4 mr-1" />
+                                  Award Badge
+                                </>
+                              )}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Desktop Layout - Table */}
+                <div className="hidden md:block overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead>
                     <tr>
@@ -414,6 +490,7 @@ const RegisteredUsersPage = () => {
                   </tbody>
                 </table>
               </div>
+              </>
             )}
           </div>
         </div>

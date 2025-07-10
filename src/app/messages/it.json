@@ -478,7 +478,9 @@
     "failedToLoadUserData": "Impossibile caricare i dati dell'utente",
     "emailLanguage": "Lingua delle Email",
     "emailLanguageDesc": "Scegli la lingua per tutte le email che ricevi da noi",
-    "preferencesUpdated": "Preferenze aggiornate con successo"
+    "preferencesUpdated": "Preferenze aggiornate con successo",
+    "deleting": "Eliminazione...",
+    "cancel": "Annulla"
   },
   "Auth": {
     "signInToAccount": "Accedi al tuo account",
