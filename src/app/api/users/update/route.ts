@@ -65,9 +65,26 @@ export async function PUT(request: Request) {
           { status: 401 }
         );
       }
+      
+      // Handle MongoDB duplicate key error
+      if (error.code === 11000 && (error.keyPattern?.email || error.keyValue?.email || error.message?.includes('email_1'))) {
+        return NextResponse.json(
+          { error: 'This email address is already being used by another account. Please choose a different email address.' },
+          { status: 400 }
+        );
+      }
+      
       throw error;
     }
   } catch (error: any) {
+    // Handle MongoDB duplicate key error at the outer level as well
+    if (error.code === 11000 && (error.keyPattern?.email || error.keyValue?.email || error.message?.includes('email_1'))) {
+      return NextResponse.json(
+        { error: 'This email address is already being used by another account. Please choose a different email address.' },
+        { status: 400 }
+      );
+    }
+    
     return NextResponse.json(
       { error: error.message || 'Failed to update user profile' },
       { status: 500 }

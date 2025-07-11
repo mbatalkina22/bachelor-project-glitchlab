@@ -462,6 +462,7 @@
     "preferencesUpdated": "Preferences updated successfully",
     "profileUpdatedSuccess": "Profile updated successfully!",
     "failedToUpdateProfile": "Failed to update profile",
+    "emailAlreadyExists": "This email address is already being used by another account. Please choose a different email address.",
     "passwordUpdatedSuccess": "Password updated successfully!",
     "failedToUpdatePassword": "Failed to update password",
     "failedToDeleteAccount": "Failed to delete account",

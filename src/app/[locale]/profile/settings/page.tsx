@@ -260,9 +260,15 @@ const ProfileSettingsPage = () => {
         throw new Error(errorData.error || 'Failed to update profile');
       }
 
-      setSuccessMessage('Profile updated successfully!');
+      setSuccessMessage(t('profileUpdatedSuccess'));
     } catch (err: any) {
-      setError(err.message || 'Failed to update profile');
+      console.error('Error updating profile:', err);
+      // Check if it's a duplicate email error and use translation
+      if (err.message && err.message.includes('already being used by another account')) {
+        setError(t('emailAlreadyExists'));
+      } else {
+        setError(err.message || t('failedToUpdateProfile'));
+      }
     } finally {
       setIsLoading(false);
     }

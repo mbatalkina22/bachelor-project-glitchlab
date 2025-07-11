@@ -1,4 +1,4 @@
- {
+{
   "Navbar": {
     "home": "Home",
     "workshops": "Workshop",
@@ -475,6 +475,7 @@
     "revoke": "Revoca",
     "profileUpdatedSuccess": "Profilo aggiornato con successo!",
     "failedToUpdateProfile": "Impossibile aggiornare il profilo",
+    "emailAlreadyExists": "Questo indirizzo email è già utilizzato da un altro account. Scegli un indirizzo email diverso.",
     "passwordUpdatedSuccess": "Password aggiornata con successo!",
     "failedToUpdatePassword": "Impossibile aggiornare la password",
     "failedToDeleteAccount": "Impossibile eliminare l'account",

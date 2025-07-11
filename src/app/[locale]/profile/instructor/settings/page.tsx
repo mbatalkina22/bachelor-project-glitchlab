@@ -250,7 +250,12 @@ const InstructorSettingsPage = () => {
 
       setSuccessMessage(t('profileUpdatedSuccess'));
     } catch (err: any) {
-      setError(err.message || t('failedToUpdateProfile'));
+      // Check if it's a duplicate email error and use translation
+      if (err.message && err.message.includes('already being used by another account')) {
+        setError(t('emailAlreadyExists'));
+      } else {
+        setError(err.message || t('failedToUpdateProfile'));
+      }
     } finally {
       setIsLoading(false);
     }
@@ -289,7 +294,12 @@ const InstructorSettingsPage = () => {
 
       setSuccessMessage(t('profileUpdatedSuccess'));
     } catch (err: any) {
-      setError(err.message || t('failedToUpdateProfile'));
+      // Check if it's a duplicate email error and use translation
+      if (err.message && err.message.includes('already being used by another account')) {
+        setError(t('emailAlreadyExists'));
+      } else {
+        setError(err.message || t('failedToUpdateProfile'));
+      }
     } finally {
       setIsLoading(false);
     }
