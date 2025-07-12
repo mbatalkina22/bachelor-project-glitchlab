@@ -112,6 +112,7 @@ export default function LoginPage() {
           <div>
             <HeroButton
               text={loading ? t('signingIn') : t('signIn')}
+              type="submit"
               backgroundColor="#7471f9"
               textColor="white"
               className="w-full"

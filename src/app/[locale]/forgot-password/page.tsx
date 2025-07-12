@@ -92,7 +92,7 @@ export default function ForgotPasswordPage() {
             <div>
               <HeroButton
                 text={loading ? t('sending') : t('sendResetCode')}
-                onClick={() => handleSubmit()}
+                type="submit"
                 className="w-full"
                 disabled={loading}
               />

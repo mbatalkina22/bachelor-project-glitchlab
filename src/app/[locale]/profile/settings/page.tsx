@@ -593,6 +593,7 @@ const ProfileSettingsPage = () => {
                   <div className="flex justify-end">
                     <HeroButton
                       text={t('saveChanges')}
+                      type="submit"
                       backgroundColor="#7471f9" // Updated purple color
                       textColor="white"
                       disabled={isLoading}
@@ -690,6 +691,7 @@ const ProfileSettingsPage = () => {
                         <div className="mt-6 flex justify-end">
                           <HeroButton
                             text={t('savePreferences')}
+                            type="submit"
                             backgroundColor="#7471f9"
                             textColor="white"
                             disabled={isLoading}
@@ -762,6 +764,7 @@ const ProfileSettingsPage = () => {
                     <div className="pt-2 flex justify-end">
                       <HeroButton
                         text={t('updatePassword')}
+                        type="submit"
                         backgroundColor="#7471f9" // Updated purple color
                         textColor="white"
                         disabled={isLoading}

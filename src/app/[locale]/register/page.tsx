@@ -211,6 +211,7 @@ export default function RegisterPage() {
           <div>
             <HeroButton
               text={loading ? t('creatingAccount') : t('createAccount')}
+              type="submit"
               backgroundColor="#7471f9"
               textColor="white"
               className="w-full"

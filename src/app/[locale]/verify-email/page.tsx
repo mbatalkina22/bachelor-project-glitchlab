@@ -171,7 +171,7 @@ export default function VerifyEmailPage() {
             <div className="pt-2">
               <HeroButton
                 text={loading ? t('verifying') : t('verifyEmail')}
-                onClick={() => handleVerify()}
+                type="submit"
                 disabled={loading}
                 backgroundColor="#7471f9"
                 textColor="white"

@@ -229,6 +229,7 @@ const AddInstructorPage = () => {
               
               <HeroButton
                 text={t('registerInstructor')}
+                type="submit"
                 backgroundColor="#7471f9"
                 textColor="white"
                 disabled={isLoading}

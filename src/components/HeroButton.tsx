@@ -14,6 +14,7 @@ interface HeroButtonProps {
   textColor?: string;
   className?: string; // Optional class name for additional styling
   disabled?: boolean; // Add disabled prop
+  type?: 'button' | 'submit' | 'reset'; // Add type prop for form buttons
 }
 
 // Helper function to darken a color for hover state
@@ -60,6 +61,7 @@ const HeroButton = forwardRef<HTMLButtonElement, HeroButtonProps>(({
   textColor = 'white',
   className = '', // Default empty string for className
   disabled = false, // Default to not disabled
+  type = 'button', // Default to button type
 }, ref) => {
   const t = useTranslations('Hero');
   const router = useRouter();
@@ -113,6 +115,7 @@ const HeroButton = forwardRef<HTMLButtonElement, HeroButtonProps>(({
       <Link href={href} className="inline-block">
         <button 
           ref={ref}
+          type={type}
           className={baseClasses}
           style={buttonStyle}
           onMouseOver={(e) => {
@@ -144,6 +147,7 @@ const HeroButton = forwardRef<HTMLButtonElement, HeroButtonProps>(({
   return (
     <button 
       ref={ref}
+      type={type}
       onClick={handleClick}
       className={baseClasses}
       style={buttonStyle}

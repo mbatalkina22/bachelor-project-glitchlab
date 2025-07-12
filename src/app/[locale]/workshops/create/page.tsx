@@ -1206,6 +1206,7 @@ const CreateWorkshopPage = () => {
                     ? t("creating") || "Creating..."
                     : t("createWorkshop") || "Create Workshop"
                 }
+                type="submit"
                 backgroundColor="#7471f9"
                 textColor="white"
                 disabled={isLoading}

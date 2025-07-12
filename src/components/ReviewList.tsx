@@ -740,7 +740,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ workshopId, initialReviews = []
                   text={isSubmittingReview 
                     ? t("submittingReview") 
                     : isEditMode ? t("updateReview") : t("submitReview")}
-                  onClick={() => handleSubmitReview(new Event('submit') as unknown as FormEvent)}
+                  type="submit"
                   backgroundColor="#7471f9"
                   textColor="white"
                   disabled={isSubmittingReview}

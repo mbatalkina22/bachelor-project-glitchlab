@@ -1277,6 +1277,7 @@ const EditWorkshopPage = () => {
                     ? t("updating") || "Updating..."
                     : t("updateWorkshop") || "Update Workshop"
                 }
+                type="submit"
                 backgroundColor="#4CAF50"
                 textColor="white"
                 disabled={isLoading}

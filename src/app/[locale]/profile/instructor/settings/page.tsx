@@ -582,6 +582,7 @@ const InstructorSettingsPage = () => {
                   <div className="flex justify-end">
                     <HeroButton
                       text={t('saveChanges')}
+                      type="submit"
                       backgroundColor="#7471f9"
                       textColor="white"
                       disabled={isLoading}
@@ -648,6 +649,7 @@ const InstructorSettingsPage = () => {
                   <div className="flex justify-end">
                     <HeroButton
                       text={t('saveChanges')}
+                      type="submit"
                       backgroundColor="#7471f9"
                       textColor="white"
                       disabled={isLoading}
@@ -715,6 +717,7 @@ const InstructorSettingsPage = () => {
                     <div className="pt-2">
                       <HeroButton
                         text={t('updatePassword')}
+                        type="submit"
                         backgroundColor="#7471f9"
                         textColor="white"
                         disabled={isLoading}
