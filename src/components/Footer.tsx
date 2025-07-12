@@ -55,10 +55,7 @@ const Footer = () => {
               <li className="text-base text-gray-500">
                 {t('email')}
               </li>
-              <li className="text-base text-gray-500">
-                {t('phone')}
-              </li>
-              <li className="text-base text-gray-500">
+              <li className="text-base text-gray-500 whitespace-pre-line">
                 {t('address')}
               </li>
             </ul>

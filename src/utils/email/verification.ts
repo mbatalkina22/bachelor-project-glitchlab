@@ -18,14 +18,14 @@ const translations = {
     workshopCanceledSubject: 'Workshop Canceled',
     workshopCanceledTitle: 'Workshop Cancellation Notice',
     workshopCanceledBody: 'We regret to inform you that the following workshop has been canceled:',
-    workshopCanceledContact: 'If you have any questions, please contact us.',
+    workshopCanceledContact: 'If you have any questions, please contact irene.zanardi@usi.ch.',
     workshopCanceledThankYou: 'Thank you for your understanding.',
     // Workshop update translations
     workshopUpdatedSubject: 'Workshop Details Updated',
     workshopUpdatedTitle: 'Workshop Details Updated',
     workshopUpdatedBody: 'We would like to inform you that the details of the following workshop have been updated:',
     workshopUpdatedNote: 'Please note these changes in your calendar.',
-    workshopUpdatedQuestions: 'If you have any questions, please contact us.',
+    workshopUpdatedQuestions: 'If you have any questions, please contact irene.zanardi@usi.ch.',
     workshopUpdatedThankYou: 'Thank you for your understanding.',
     previouslyScheduledFor: 'Previously scheduled for',
     previousLocation: 'Previous location',
@@ -36,7 +36,7 @@ const translations = {
     workshopReminderTitle: 'Upcoming Workshop Reminder',
     workshopReminderBody: 'This is a reminder about your upcoming workshop:',
     workshopReminderNote: 'We look forward to seeing you there!',
-    workshopReminderQuestions: 'If you have any questions, please contact us.',
+    workshopReminderQuestions: 'If you have any questions, please contact irene.zanardi@usi.ch.',
   },
   it: {
     emailVerificationSubject: 'Verifica la tua email',
@@ -54,14 +54,14 @@ const translations = {
     workshopCanceledSubject: 'Workshop Annullato',
     workshopCanceledTitle: 'Avviso di Annullamento Workshop',
     workshopCanceledBody: 'Ci dispiace informarti che il seguente workshop è stato annullato:',
-    workshopCanceledContact: 'Se hai domande, non esitare a contattarci.',
+    workshopCanceledContact: 'Se hai domande, non esitare a contattare irene.zanardi@usi.ch.',
     workshopCanceledThankYou: 'Grazie per la comprensione.',
     // Workshop update translations in Italian
     workshopUpdatedSubject: 'Dettagli Workshop Aggiornati',
     workshopUpdatedTitle: 'Dettagli Workshop Aggiornati',
     workshopUpdatedBody: 'Desideriamo informarti che i dettagli del seguente workshop sono stati aggiornati:',
     workshopUpdatedNote: 'Ti preghiamo di prendere nota di queste modifiche nel tuo calendario.',
-    workshopUpdatedQuestions: 'Se hai domande, non esitare a contattarci.',
+    workshopUpdatedQuestions: 'Se hai domande, non esitare a contattare irene.zanardi@usi.ch.',
     workshopUpdatedThankYou: 'Grazie per la comprensione.',
     previouslyScheduledFor: 'Precedentemente programmato per',
     previousLocation: 'Località precedente',
@@ -72,7 +72,7 @@ const translations = {
     workshopReminderTitle: 'Promemoria Workshop Imminente',
     workshopReminderBody: 'Questo è un promemoria per il tuo prossimo workshop:',
     workshopReminderNote: 'Non vediamo l\'ora di vederti!',
-    workshopReminderQuestions: 'Se hai domande, non esitare a contattarci.',
+    workshopReminderQuestions: 'Se hai domande, non esitare a contattare irene.zanardi@usi.ch.',
   }
 };
 
