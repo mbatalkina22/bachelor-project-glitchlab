@@ -117,13 +117,6 @@ Translation files are located in `src/app/messages/`
 - **Access**: Available to authorized university personnel and research participants
 - **Security**: Enterprise-grade security protocols and university network protection
 
-### Alternative Deployment Options
-For development or testing purposes:
-```bash
-npm run build
-npm start
-```
-
 ## 📄 Academic Context
 
 **Thesis Information:**

@@ -15,6 +15,7 @@ interface HeroButtonProps {
   className?: string; // Optional class name for additional styling
   disabled?: boolean; // Add disabled prop
   type?: 'button' | 'submit' | 'reset'; // Add type prop for form buttons
+  scrollToTop?: boolean; // Add prop to control scroll to top behavior
 }
 
 // Helper function to darken a color for hover state
@@ -62,24 +63,24 @@ const HeroButton = forwardRef<HTMLButtonElement, HeroButtonProps>(({
   className = '', // Default empty string for className
   disabled = false, // Default to not disabled
   type = 'button', // Default to button type
+  scrollToTop = false, // Default to not scroll
 }, ref) => {
   const t = useTranslations('Hero');
   const router = useRouter();
   
-  const defaultScrollHandler = () => {
-    window.scrollTo({
-      top: window.innerHeight,
-      behavior: 'smooth'
-    });
-  };
-
   const handleClick = () => {
     if (onClick) {
       onClick();
     } else if (href) {
       router.push(href);
-    } else {
-      defaultScrollHandler();
+    }
+    
+    // Scroll to top if requested (for workshop create/update actions)
+    if (scrollToTop) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     }
   };
 

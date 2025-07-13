@@ -948,7 +948,7 @@ const EditWorkshopPage = () => {
                   name="startDate"
                   value={workshopData.startDate}
                   onChange={handleInputChange}
-                  className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
+                  className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base bg-white"
                   required
                 />
               </div>
@@ -1281,6 +1281,7 @@ const EditWorkshopPage = () => {
                 backgroundColor="#4CAF50"
                 textColor="white"
                 disabled={isLoading}
+                scrollToTop={true}
               />
             </div>
           </form>

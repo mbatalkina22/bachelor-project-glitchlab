@@ -204,7 +204,9 @@
     "reset": "Reset",
     "resetFilters": "Resetta tutti i filtri",
     "goBack": "Indietro",
-    "backToWorkshop": "Torna al Workshop"
+    "backToWorkshop": "Torna al Workshop",
+    "fileTooLarge": "La dimensione dell'immagine deve essere inferiore a 5MB",
+    "invalidFileType": "Si prega di caricare un file immagine"
   },
   "WorkshopDetail": {
     "home": "Home",
@@ -356,6 +358,7 @@
     "noReviewsMessage": "Non hai ancora lasciato recensioni. Condividi il tuo feedback sui workshops frequentati.",
     "editReview": "Modifica Recensione",
     "deleteReview": "Elimina Recensione",
+    "registeredWorkshops": "Workshop Registrati",
     "notLoggedIn": "Non sei connesso",
     "login": "Accedi per visualizzare il profilo",
     "reviewLeft": "Recensione per il workshop",
@@ -468,6 +471,8 @@
     "newPassword": "Nuova Password",
     "confirmPassword": "Conferma Nuova Password",
     "updatePassword": "Aggiorna Password",
+    "passwordsDoNotMatch": "Le password non corrispondono",
+    "passwordTooShort": "La password deve contenere almeno 8 caratteri",
     "sessionHistory": "Cronologia Sessioni",
     "currentSession": "Sessione Attuale",
     "active": "Attiva",

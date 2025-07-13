@@ -267,13 +267,13 @@ const CreateWorkshopPage = () => {
 
       // Validate file type
       if (!file.type.includes("image/")) {
-        setError("Please upload an image file");
+        setError(t("invalidFileType") || "Please upload an image file");
         return;
       }
 
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        setError("Image size should be less than 5MB");
+        setError(t("fileTooLarge") || "Image size should be less than 5MB");
         return;
       }
 
@@ -847,7 +847,7 @@ const CreateWorkshopPage = () => {
                   name="startDate"
                   value={workshopData.startDate}
                   onChange={handleInputChange}
-                  className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base"
+                  className="w-full border-gray-300 rounded-md shadow-sm hover:shadow-md focus:shadow-md transition-shadow duration-300 focus:ring-[#7471f9] focus:border-[#7471f9] sm:text-sm text-black py-3 px-4 text-base bg-white"
                   required
                 />
               </div>
@@ -1210,6 +1210,7 @@ const CreateWorkshopPage = () => {
                 backgroundColor="#7471f9"
                 textColor="white"
                 disabled={isLoading}
+                scrollToTop={true}
               />
             </div>
           </form>

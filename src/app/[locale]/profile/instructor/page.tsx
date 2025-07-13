@@ -175,7 +175,7 @@ const InstructorProfilePage = () => {
               </div>
             </div>
             <div className="flex-grow"></div>
-            <div className="flex flex-col md:flex-row md:items-end space-y-2 md:space-y-0 md:space-x-3 mt-4 md:mt-0">
+            <div className="flex flex-col md:flex-row md:items-end items-center space-y-2 md:space-y-0 md:space-x-3 mt-4 md:mt-0">
               <Link href={`/${locale}/profile/instructor/settings`}>
                 <HeroButton
                   text={t('editProfile')}

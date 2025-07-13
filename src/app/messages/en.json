@@ -200,7 +200,9 @@
     "reset": "Reset",
     "resetFilters": "Reset all filters",
     "goBack": "Go Back",
-    "backToWorkshop": "Back to Workshop"
+    "backToWorkshop": "Back to Workshop",
+    "fileTooLarge": "Image size should be less than 5MB",
+    "invalidFileType": "Please upload an image file"
   },
   "WorkshopDetail": {
     "home": "Home",
@@ -456,6 +458,8 @@
     "newPassword": "New Password",
     "confirmPassword": "Confirm New Password",
     "updatePassword": "Update Password",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters long",
     "emailLanguage": "Email Language",
     "emailLanguageDesc": "Choose the language for all emails you receive from us",
     "preferencesUpdated": "Preferences updated successfully",
