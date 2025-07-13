@@ -1,7 +1,5 @@
 # 🧪 Glitch Lab - Workshop Management Platform
 
-![Glitch Lab Banner](public/images/main_banner.png)
-
 **Glitch Lab** is a comprehensive digital platform developed as part of a bachelor thesis project to support participatory technology design workshops. This platform was created in collaboration with LUXIA – the User Experience, Interaction and Accessibility laboratory at Università della Svizzera italiana (USI)
 
 ## 🎓 Project Overview
@@ -45,7 +43,7 @@ This full-stack web application demonstrates advanced software engineering princ
 **Third-Party Integrations:**
 - **Cloudinary**: Professional cloud-based image and video management
 - **Nodemailer**: Reliable email delivery system
-- **FullCalendar**: Advanced calendar component with drag-and-drop functionality
+- **FullCalendar**: Advanced calendar component
 - **next-intl**: Comprehensive internationalization framework
 
 **Development Tools:**
@@ -59,51 +57,6 @@ This full-stack web application demonstrates advanced software engineering princ
 - Cloudinary account (for image uploads)
 - SMTP server credentials (for email functionality)
 
-## 🔧 Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/your-username/bachelor-project-glitchlab.git
-   cd bachelor-project-glitchlab
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Environment Setup**
-   Create a `.env` file in the root directory:
-   ```env
-   # Database
-   MONGODB_URI=your_mongodb_connection_string
-   
-   # JWT
-   JWT_SECRET=your_jwt_secret_key
-   
-   # Cloudinary
-   CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-   CLOUDINARY_API_KEY=your_cloudinary_api_key
-   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-   
-   # Email Configuration
-   EMAIL_HOST=your_smtp_host
-   EMAIL_PORT=587
-   EMAIL_USER=your_email_username
-   EMAIL_PASS=your_email_password
-   EMAIL_FROM=noreply@glitchlab.com
-   
-   # App Configuration
-   NEXT_PUBLIC_BASE_URL=http://localhost:3000
-   ```
-
-4. **Run the development server**
-   ```bash
-   npm run dev
-   ```
-
-5. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## 🗂️ Project Structure
 
@@ -163,7 +116,6 @@ Translation files are located in `src/app/messages/`
 - **Environment**: Production VM hosted by USI IT infrastructure
 - **Access**: Available to authorized university personnel and research participants
 - **Security**: Enterprise-grade security protocols and university network protection
-- **Monitoring**: 24/7 uptime monitoring and maintenance support
 
 ### Alternative Deployment Options
 For development or testing purposes:
@@ -171,13 +123,6 @@ For development or testing purposes:
 npm run build
 npm start
 ```
-
-## 🧪 Development
-
-### Available Scripts
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
 
 ## 📄 Academic Context
 
