@@ -32,6 +32,9 @@ export async function generateMetadata({
     return {
       title: t('title'),
       description: t('subtitle'),
+      icons: {
+        icon: '/favicon.ico',
+      },
     };
   } catch (error) {
     // Fallback to hardcoded values
@@ -40,6 +43,9 @@ export async function generateMetadata({
       description: locale === 'en' 
         ? 'Empowering learning through interactive workshops and hands-on experiences.'
         : 'Organizza e gestisci i tuoi workshop con facilità',
+      icons: {
+        icon: '/favicon.ico',
+      },
     };
   }
 }
