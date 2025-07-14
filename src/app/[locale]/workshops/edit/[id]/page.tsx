@@ -1300,6 +1300,7 @@ const EditWorkshopPage = () => {
                   text={isLoading ? t("processing") || "Processing..." : t("uncancelWorkshop") || "Uncancel Workshop"}
                   backgroundColor="#4CAF50"
                   textColor="white"
+                  scrollToTop={true}
                   onClick={async () => {
                     try {
                       setIsLoading(true);
@@ -1362,6 +1363,7 @@ const EditWorkshopPage = () => {
                   text={t("cancelWorkshop") || "Cancel Workshop"}
                   backgroundColor="#FF0000"
                   textColor="white"
+                  scrollToTop={true}
                   onClick={() => setIsCancelModalOpen(true)}
                   disabled={isLoading}
                 />

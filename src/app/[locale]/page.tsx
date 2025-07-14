@@ -40,12 +40,26 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/50 backdrop-blur-xs flex flex-col items-center justify-center text-white px-4">
           <h1 className="text-5xl md:text-6xl font-bold mb-6 text-center font-secularone">{heroT('title')}</h1>
-          <HeroButton text={heroT('exploreButton')} />
+          <HeroButton 
+            text={heroT('exploreButton')} 
+            onClick={() => {
+              const aboutSection = document.getElementById('about-section');
+              if (aboutSection) {
+                const yOffset = -80; // Account for fixed navbar
+                const y = aboutSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                
+                window.scrollTo({
+                  top: y,
+                  behavior: 'smooth'
+                });
+              }
+            }}
+          />
         </div>
       </div>
 
       {/* About Section */}
-      <div className="py-20 px-4 md:px-8 bg-gradient-to-b">
+      <div id="about-section" className="py-20 px-4 md:px-8 bg-gradient-to-b">
         <div className="max-w-7xl mx-auto">
           <ScrollReveal>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
