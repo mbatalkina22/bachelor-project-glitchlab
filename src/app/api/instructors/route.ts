@@ -6,8 +6,11 @@ export async function GET() {
   try {
     await dbConnect();
     
-    // Find all users with role 'instructor'
-    const instructors = await User.find({ role: 'instructor' })
+    // Find all users with role 'instructor' but exclude the test email
+    const instructors = await User.find({ 
+      role: 'instructor',
+      email: { $ne: 'mari.batalkina@gmail.com' } // Exclude this email from display
+    })
       .select('name surname description website linkedin avatar')
       .sort({ name: 1 });
     
