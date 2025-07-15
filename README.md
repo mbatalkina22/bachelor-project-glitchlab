@@ -110,7 +110,7 @@ Translation files are located in `src/app/messages/`
 
 ## 🚀 Deployment
 
-**Current Production Environment**: This application is deployed on the USI (Università della Svizzera italiana) server infrastructure through a dedicated virtual machine setup, ensuring secure and reliable access for academic and research purposes.
+**Current Production Environment**: The platform is deployed on a dedicated Ubuntu virtual machine at Università della Svizzera italiana (USI) using a secure, production-grade setup. The web app runs continuously in the background with PM2 and is served to the public via Nginx as a reverse proxy. HTTPS encryption is enabled using a free, automatically renewed SSL certificate from Let’s Encrypt. This configuration ensures the site is fast, reliable, and always accessible at its official university domain.
 
 ## 📄 Academic Context
 
