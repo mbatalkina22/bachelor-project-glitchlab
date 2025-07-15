@@ -479,6 +479,7 @@
     "revoke": "Revoca",
     "profileUpdatedSuccess": "Profilo aggiornato con successo!",
     "failedToUpdateProfile": "Impossibile aggiornare il profilo",
+    "failedToUploadImage": "Impossibile caricare l'immagine",
     "emailAlreadyExists": "Questo indirizzo email è già utilizzato da un altro account. Scegli un indirizzo email diverso.",
     "passwordUpdatedSuccess": "Password aggiornata con successo!",
     "failedToUpdatePassword": "Impossibile aggiornare la password",
