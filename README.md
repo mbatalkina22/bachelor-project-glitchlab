@@ -112,11 +112,6 @@ Translation files are located in `src/app/messages/`
 
 **Current Production Environment**: This application is deployed on the USI (Università della Svizzera italiana) server infrastructure through a dedicated virtual machine setup, ensuring secure and reliable access for academic and research purposes.
 
-### USI Server Deployment
-- **Environment**: Production VM hosted by USI IT infrastructure
-- **Access**: Available to authorized university personnel and research participants
-- **Security**: Enterprise-grade security protocols and university network protection
-
 ## 📄 Academic Context
 
 **Thesis Information:**
