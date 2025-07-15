@@ -129,5 +129,37 @@ Translation files are located in `src/app/messages/`
 
 *A modern workshop management platform showcasing full-stack development expertise for academic and professional evaluation.*
 
+## 🔧 Setup and Run Instructions
+
+To run this project locally:
+
+1. **Create Environment Variables**
+   Create a `.env` file in the root directory and add the following variables:
+   ```
+   MONGODB_URI=
+   MONGODB_DB_NAME=
+   JWT_SECRET=
+   
+   EMAIL_HOST=
+   EMAIL_PORT=
+   EMAIL_SECURE=
+   EMAIL_USER=
+   EMAIL_PASSWORD=
+   
+   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
+   CLOUDINARY_API_KEY=
+   CLOUDINARY_API_SECRET=
+   ```
+
+2. **Install Dependencies**
+   ```bash
+   yarn install
+   ```
+
+3. **Start Development Server**
+   ```bash
+   yarn dev
+   ```
+
 
 
